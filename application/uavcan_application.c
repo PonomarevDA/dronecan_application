@@ -7,7 +7,6 @@
 
 #include "uavcan_application.h"
 #include <string.h>
-#include "main.h"
 
 #include "uavcan/protocol/get_transport_stats.h"
 #include "uavcan/protocol/node_status.h"

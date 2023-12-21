@@ -6,7 +6,6 @@
  */
 
 #include "uavcan.h"
-#include "main.h"
 #include "can_driver.h"
 
 #define MAX_SUBS_AMOUNT         10

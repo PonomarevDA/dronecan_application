@@ -6,7 +6,6 @@
  */
 
 #include "can_driver.h"
-#include "main.h"
 #include "socketcan.h"
 
 #ifndef SOCKETCAN_INTERFACE_NAME
