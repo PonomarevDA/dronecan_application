@@ -212,7 +212,3 @@ static void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
         }
     }
 }
-
-__attribute__((weak)) uint32_t uavcanGetTimeMs() {
-    return 0;
-}

@@ -203,13 +203,3 @@ static void uavcanProtocolGetTransportStatHandleRequest(CanardRxTransfer* transf
     uavcanEncodeTransportStats(buffer, &iface_stats);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, buffer, 72);
 }
-
-/// *************************** WEAK - USER DEFINED ***************************
-
-__attribute__((weak)) void uavcanRestartNode() {
-    asm("NOP");
-}
-
-__attribute__((weak)) void uavcanReadUniqueID(uint8_t out_uid[16]) {
-    memset(out_uid, 0x00, 16);
-}

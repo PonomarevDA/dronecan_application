@@ -26,6 +26,7 @@ set(DRONECAN_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/Libs/libcanard_v0/canard.c
     ${CMAKE_CURRENT_LIST_DIR}/application/uavcan.c
     ${CMAKE_CURRENT_LIST_DIR}/application/uavcan_application.c
+    ${CMAKE_CURRENT_LIST_DIR}/application/weak.c
 )
 
 set(DRONECAN_HEADERS
