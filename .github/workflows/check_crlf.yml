@@ -1,0 +1,11 @@
+name: check_crlf
+
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: sudo apt-get install dos2unix
+      - run: scripts/check_crlf.sh
