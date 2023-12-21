@@ -8,14 +8,13 @@ define build_example
 	cd build/examples/$(1) && cmake ../../../examples/$(1) && make -s
 endef
 
-ubuntu_minimal:
+ubuntu_minimal: clone_dependencies
 	$(call build_example,ubuntu_minimal)
 	./build/examples/ubuntu_minimal/application
 
-generage_dsdl:
-	if [ ! -d "build/nunavut_out" ]; then echo "not exist"; fi
-	mkdir -p build/nunavut_out
-	./scripts/nnvg_generate_c_headers.sh build/nunavut_out
+clone_dependencies:
+	mkdir -p build
+	if [ ! -d "build/libparams" ]; then git clone https://github.com/PonomarevDA/libparams.git build/libparams; fi
 
 clean:
 	rm -rf build/examples/

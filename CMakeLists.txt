@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15.3)
 
+
 if(DRONECAN_PLATFORM STREQUAL "bxcan")
     set(DRONECAN_PLATFORM_SOURCES)
 	message(SEND_ERROR "not yet!")
@@ -15,10 +16,16 @@ else()
 endif()
 
 
+if(NOT DEFINED LIBPARAMS_PATH)
+	message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
+endif()
+include(${LIBPARAMS_PATH}/CMakeLists.txt)
+
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/Libs/libcanard_v0/canard.c
     ${CMAKE_CURRENT_LIST_DIR}/application/uavcan.c
+    ${CMAKE_CURRENT_LIST_DIR}/application/uavcan_application.c
 )
 
 set(DRONECAN_HEADERS

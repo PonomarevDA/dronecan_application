@@ -6,17 +6,24 @@ project(minimal_ubuntu_example)
 # options: bxcan, fdcan or socketcan
 set(DRONECAN_PLATFORM socketcan)
 
+# 2. Specify path to libparams
+set(LIBPARAMS_PATH        ../../build/libparams)
+set(LIBPARAMS_PLATFORM    ubuntu)
+
 # 2. Include the CMakeLists.txt
 include(../../CMakeLists.txt)
 
 # 3. Add DroneCAN related source files and headers to you target
 add_executable(application
     main.cpp
+    params.cpp
     ${DRONECAN_SOURCES}
+    ${libparamsSrc}
 )
 target_include_directories(application PRIVATE
     .
     ${DRONECAN_HEADERS}
+    ${libparamsHeaders}
 )
 
 
