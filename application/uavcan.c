@@ -40,9 +40,6 @@ static bool shouldAcceptTransfer(const CanardInstance* ins,
   */
 static void onTransferReceived(CanardInstance* ins, CanardRxTransfer* transfer);
 
-__attribute__((weak)) uint32_t uavcanGetTimeMs() {
-    return 0;
-}
 
 CanardInstance g_canard;
 static NodeStatus_t node_status;
@@ -131,7 +128,8 @@ bool uavcanProcessReceiving() {
     CanardCANFrame rx_frame;
     int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
     if (res) {
-        canardHandleRxFrame(&g_canard, &rx_frame, uavcanGetTimeMs() * 1000);
+        uint64_t crnt_time_us = uavcanGetTimeMs() * 1000;
+        canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
         return true;
     }
     return false;
@@ -189,7 +187,9 @@ void uavcanSetVendorSpecificStatusCode(uint16_t vssc) {
     node_status.vendor_specific_status_code = vssc;
 }
 
-bool shouldAcceptTransfer(__attribute__((unused)) const CanardInstance* ins,
+/// ********************************* PRIVATE *********************************
+
+static bool shouldAcceptTransfer(__attribute__((unused)) const CanardInstance* ins,
                           uint64_t* out_data_type_signature,
                           uint16_t data_type_id,
                           CanardTransferType transfer_type,
@@ -204,11 +204,15 @@ bool shouldAcceptTransfer(__attribute__((unused)) const CanardInstance* ins,
     return false;
 }
 
-void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
+static void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
                         CanardRxTransfer* transfer) {
     for (uint8_t sub_idx = 0; sub_idx < subs_amount; sub_idx++) {
         if (transfer->data_type_id == subscribers[sub_idx].id) {
             subscribers[sub_idx].callback(transfer);
         }
     }
+}
+
+__attribute__((weak)) uint32_t uavcanGetTimeMs() {
+    return 0;
 }

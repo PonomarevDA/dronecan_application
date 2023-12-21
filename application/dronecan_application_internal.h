@@ -29,6 +29,8 @@ typedef struct {
 extern "C" {
 #endif
 
+uint32_t uavcanGetTimeMs();
+
 inline float uavcanDecodeF16(const CanardRxTransfer* transfer, uint32_t bit_offset) {
     uint16_t f16_dummy;
     canardDecodeScalar(transfer, bit_offset, 16, true, &f16_dummy);
