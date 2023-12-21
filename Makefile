@@ -12,6 +12,9 @@ endef
 ubuntu_minimal: clone_dependencies
 	$(call build_and_run_sitl,ubuntu_minimal)
 
+ubuntu_publisher_circuit_status: clone_dependencies
+	$(call build_and_run_sitl,ubuntu_publisher_circuit_status)
+
 clone_dependencies:
 	mkdir -p build
 	if [ ! -d "build/libparams" ]; then git clone https://github.com/PonomarevDA/libparams.git build/libparams; fi
