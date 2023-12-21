@@ -76,3 +76,7 @@ node.init();
 // Spin it periodically:
 node.spin_once();
 ```
+
+## License
+
+The software is distributed under term of MPL v2.0 license.
