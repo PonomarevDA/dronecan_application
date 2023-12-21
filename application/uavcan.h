@@ -47,9 +47,7 @@ void uavcanRespond(CanardRxTransfer* transfer,
 /**
   * @brief Functions below should be called periodically to handle the application.
   */
-uint8_t uavcanProcessSending();
-bool uavcanProcessReceiving();
-void canardSpinNodeStatus();
+void uavcanSpinOnce();
 
 /**
   * @brief NodeStatus API

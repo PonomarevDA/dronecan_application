@@ -30,10 +30,12 @@ extern "C" {
 #endif
 
 /**
-  * @brief Weak
-  * A user should write their implementation by his own
+  * @brief Weak platform specific functions.
+  * A user should write an implementation by his own
   */
 uint32_t uavcanGetTimeMs();
+void uavcanRestartNode();
+void uavcanReadUniqueID(uint8_t out_uid[16]);
 
 #ifdef __cplusplus
 }

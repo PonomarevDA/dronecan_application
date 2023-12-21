@@ -17,14 +17,16 @@ extern "C" {
 #endif
 
 
+/**
+  * @brief Initialize the node and minimal required services
+  */
 int16_t uavcanInitApplication(uint8_t node_id);
 
-
-void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
 
 /**
   * @brief NodeInfo API
   */
+void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
 void uavcanSetNodeName(const char* new_node_name);
 
 /**
@@ -38,11 +40,6 @@ void uavcanStatsIncreaseUartTx(uint32_t num);
 void uavcanStatsIncreaseUartRx(uint32_t num);
 uint64_t uavcanGetErrorCount();
 
-/**
-  * @note Weak - user defined
-  */
-void uavcanRestartNode();
-void uavcanReadUniqueID(uint8_t out_uid[16]);
 
 #ifdef __cplusplus
 }

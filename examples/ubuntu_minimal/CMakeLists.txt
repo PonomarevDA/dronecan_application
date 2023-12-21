@@ -1,32 +1,30 @@
 cmake_minimum_required(VERSION 3.15.3)
-project(minimal_ubuntu_example)
+project(ubuntu_minimal_example)
 
-
-# 1. Specify the DRONECAN_PLATFORM
-# options: bxcan, fdcan or socketcan
+# 1. Specify the DRONECAN_PLATFORM. Options: bxcan, fdcan or socketcan
 set(DRONECAN_PLATFORM socketcan)
 
-# 2. Specify path to libparams
+# 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu
 set(LIBPARAMS_PATH        ../../build/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
 
-# 2. Include the CMakeLists.txt
+# 3. Include the CMakeLists.txt
 include(../../CMakeLists.txt)
 
-# 3. Add DroneCAN related source files and headers to you target
+# 4. Add DroneCAN related source files and headers to you target
 add_executable(application
-    main.cpp
-    params.cpp
-    ${DRONECAN_SOURCES}
-    ${libparamsSrc}
+  main.cpp
+  params.cpp
+  ${DRONECAN_SOURCES}
+  ${libparamsSrc}
 )
 target_include_directories(application PRIVATE
-    .
-    ${DRONECAN_HEADERS}
-    ${libparamsHeaders}
+  .
+  ${DRONECAN_HEADERS}
+  ${libparamsHeaders}
 )
 
-
+# 5. (Recommended) Add GIT_HASH based on git repository
 execute_process(
   COMMAND git rev-parse --short=16 HEAD
   COMMAND_ERROR_IS_FATAL ANY

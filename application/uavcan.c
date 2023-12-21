@@ -39,6 +39,13 @@ static bool shouldAcceptTransfer(const CanardInstance* ins,
   */
 static void onTransferReceived(CanardInstance* ins, CanardRxTransfer* transfer);
 
+/**
+  * @brief Functions below should be called periodically to handle the application.
+  */
+static uint8_t uavcanProcessSending();
+static bool uavcanProcessReceiving();
+static void canardSpinNodeStatus();
+
 
 CanardInstance g_canard;
 static NodeStatus_t node_status;
@@ -103,54 +110,10 @@ void uavcanRespond(CanardRxTransfer* transfer,
                            len);
 }
 
-uint8_t uavcanProcessSending() {
-    const CanardCANFrame* txf = canardPeekTxQueue(&g_canard);
-    uint8_t tx_attempt = 0;
-    uint8_t tx_frames_counter = 0;
-    while (txf) {
-        const int tx_res = canDriverTransmit(txf, CAN_DRIVER_FIRST);
-        if (tx_res > 0) {
-            canardPopTxQueue(&g_canard);
-            txf = canardPeekTxQueue(&g_canard);
-            tx_frames_counter++;
-        } else if (tx_res < 0) {
-            break;
-        }
-        if ((tx_attempt++) > 20) {
-            break;
-        }
-    }
-    return tx_frames_counter;
-}
-
-bool uavcanProcessReceiving() {
-    CanardCANFrame rx_frame;
-    int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
-    if (res) {
-        uint64_t crnt_time_us = uavcanGetTimeMs() * 1000;
-        canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
-        return true;
-    }
-    return false;
-}
-
-void canardSpinNodeStatus() {
-    static uint32_t last_spin_time_ms = 0;
-    uint32_t crnt_time_ms = uavcanGetTimeMs();
-    if (crnt_time_ms < last_spin_time_ms + NODE_STATUS_SPIN_PERIOD_MS) {
-        return;
-    }
-    last_spin_time_ms = crnt_time_ms;
-
-    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
-    node_status.uptime_sec = (crnt_time_ms / 1000);
-    uavcanEncodeNodeStatus(buffer, &node_status);
-    uavcanPublish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
-                  UAVCAN_PROTOCOL_NODE_STATUS_ID,
-                  &transfer_id,
-                  CANARD_TRANSFER_PRIORITY_LOW,
-                  buffer,
-                  UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
+void uavcanSpinOnce() {
+    uavcanProcessSending();
+    uavcanProcessReceiving();
+    canardSpinNodeStatus();
 }
 
 int8_t uavcanSubscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
@@ -210,4 +173,54 @@ static void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
             subscribers[sub_idx].callback(transfer);
         }
     }
+}
+
+static uint8_t uavcanProcessSending() {
+    const CanardCANFrame* txf = canardPeekTxQueue(&g_canard);
+    uint8_t tx_attempt = 0;
+    uint8_t tx_frames_counter = 0;
+    while (txf) {
+        const int tx_res = canDriverTransmit(txf, CAN_DRIVER_FIRST);
+        if (tx_res > 0) {
+            canardPopTxQueue(&g_canard);
+            txf = canardPeekTxQueue(&g_canard);
+            tx_frames_counter++;
+        } else if (tx_res < 0) {
+            break;
+        }
+        if ((tx_attempt++) > 20) {
+            break;
+        }
+    }
+    return tx_frames_counter;
+}
+
+static bool uavcanProcessReceiving() {
+    CanardCANFrame rx_frame;
+    int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
+    if (res) {
+        uint64_t crnt_time_us = uavcanGetTimeMs() * 1000;
+        canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
+        return true;
+    }
+    return false;
+}
+
+static void canardSpinNodeStatus() {
+    static uint32_t last_spin_time_ms = 0;
+    uint32_t crnt_time_ms = uavcanGetTimeMs();
+    if (crnt_time_ms < last_spin_time_ms + NODE_STATUS_SPIN_PERIOD_MS) {
+        return;
+    }
+    last_spin_time_ms = crnt_time_ms;
+
+    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
+    node_status.uptime_sec = (crnt_time_ms / 1000);
+    uavcanEncodeNodeStatus(buffer, &node_status);
+    uavcanPublish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
+                  UAVCAN_PROTOCOL_NODE_STATUS_ID,
+                  &transfer_id,
+                  CANARD_TRANSFER_PRIORITY_LOW,
+                  buffer,
+                  UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
 }

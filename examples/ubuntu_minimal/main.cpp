@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 #include <string.h>
-#include "uavcan.h"
+#include "uavcan_application.h"
 
 uint32_t uavcanGetTimeMs() {
     static auto start_time = std::chrono::high_resolution_clock::now();
@@ -17,16 +17,15 @@ uint32_t uavcanGetTimeMs() {
 }
 
 int main (int argc, char *argv[]) {
-    auto init_res = uavcanInit(42);
+    const uint8_t node_id = 42;
+    auto init_res = uavcanInitApplication(node_id);
     if (init_res < 0) {
         std::cout << "CAN interface could be found. Exit with code " << init_res << std::endl;
         return init_res;
     }
 
-    for (int idx = 0; idx < 100; idx++) {
-        uavcanProcessSending();
-        uavcanProcessReceiving();
-        canardSpinNodeStatus();
+    for (int idx = 0; idx < 5000; idx++) {
+        uavcanSpinOnce();
     }
 
     std::cout << "Good." << std::endl;

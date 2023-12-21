@@ -70,10 +70,10 @@ int16_t uavcanInitApplication(uint8_t node_id) {
 
     uavcanReadUniqueID(hw_version.unique_id);
 
-    uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE, uavcanProtocolGetNodeInfoHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET, uavcanProtocolParamGetSetHandleRequest);
+    uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandleRequest);
+    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandleRequest);
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE, uavcanProtocolRestartNodeHandleRequest);
+    uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandleRequest);
     uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandleRequest);
 
     return 0;
