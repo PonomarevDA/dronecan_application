@@ -4,14 +4,18 @@ on: [push]
 jobs:
   build_ubuntu:
     runs-on: ubuntu-20.04
+    timeout-minutes: 5
     steps:
       - name: Install GIT
         run: sudo apt-get update && sudo apt-get install -y git
 
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Install
         run: |
-          sudo apt-get install -y make gcc-multilib g++-multilib
+          sudo apt-get install -y make gcc-multilib g++-multilib linux-modules-extra-$(uname -r)
 
-      - run: make ubuntu_minimal
+      - name: Build and run SITL
+        run: |
+          ./scripts/vcan.sh slcan0
+          make ubuntu_minimal

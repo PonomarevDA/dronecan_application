@@ -4,6 +4,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v2
 

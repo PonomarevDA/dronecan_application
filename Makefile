@@ -10,6 +10,7 @@ endef
 
 ubuntu_minimal:
 	$(call build_example,ubuntu_minimal)
+	./build/examples/ubuntu_minimal/application
 
 generage_dsdl:
 	if [ ! -d "build/nunavut_out" ]; then echo "not exist"; fi
