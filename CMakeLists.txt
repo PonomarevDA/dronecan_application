@@ -30,8 +30,7 @@ include(${LIBPARAMS_PATH}/CMakeLists.txt)
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
     ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
-    ${DRONECAN_LIB_DIR}/application/uavcan.c
-    ${DRONECAN_LIB_DIR}/application/uavcan_application.c
+    ${DRONECAN_LIB_DIR}/application/dronecan.c
     ${DRONECAN_LIB_DIR}/application/weak.c
     ${libparamsSrc}
 )
