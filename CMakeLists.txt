@@ -1,18 +1,20 @@
 cmake_minimum_required(VERSION 3.15.3)
-
+set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 if(DRONECAN_PLATFORM STREQUAL "bxcan")
-    set(DRONECAN_PLATFORM_SOURCES)
-	message(SEND_ERROR "not yet!")
-elseif(DRONECAN_PLATFORM STREQUAL "fdcan")
+    set(DRONECAN_PLATFORM_SOURCES
+        ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/can_driver.c
+        ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/canard_stm32.c
+    )
+elseif(DRONECAN_PLATFORM STREQUAL "DRONECAN_PLATFORM=fdcan is not supported yet!")
 	message(SEND_ERROR "not yet!")
 elseif(DRONECAN_PLATFORM STREQUAL "socketcan")
     set(DRONECAN_PLATFORM_SOURCES
-        ${CMAKE_CURRENT_LIST_DIR}/platform_specific/socketcan/socketcan/can_driver.c
-        ${CMAKE_CURRENT_LIST_DIR}/platform_specific/socketcan/socketcan/socketcan.c
+        ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/can_driver.c
+        ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/socketcan.c
     )
 else()
-	message(SEND_ERROR "DRONECAN_PLATFORM is not specified!")
+	message(SEND_ERROR "DRONECAN_PLATFORM is not specified! Options: bxcan, fdcan, socketcan.")
 endif()
 
 
@@ -23,14 +25,16 @@ include(${LIBPARAMS_PATH}/CMakeLists.txt)
 
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
-    ${CMAKE_CURRENT_LIST_DIR}/Libs/libcanard_v0/canard.c
-    ${CMAKE_CURRENT_LIST_DIR}/application/uavcan.c
-    ${CMAKE_CURRENT_LIST_DIR}/application/uavcan_application.c
-    ${CMAKE_CURRENT_LIST_DIR}/application/weak.c
+    ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
+    ${DRONECAN_LIB_DIR}/application/uavcan.c
+    ${DRONECAN_LIB_DIR}/application/uavcan_application.c
+    ${DRONECAN_LIB_DIR}/application/weak.c
+    ${libparamsSrc}
 )
 
 set(DRONECAN_HEADERS
-    ${CMAKE_CURRENT_LIST_DIR}/Libs
-    ${CMAKE_CURRENT_LIST_DIR}/application
-    ${CMAKE_CURRENT_LIST_DIR}/serialization
+    ${DRONECAN_LIB_DIR}/Libs
+    ${DRONECAN_LIB_DIR}/application
+    ${DRONECAN_LIB_DIR}/serialization
+    ${libparamsHeaders}
 )
