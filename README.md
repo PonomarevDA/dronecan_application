@@ -1,4 +1,4 @@
-# DroneCAN application
+# DroneCAN application [![build](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml)  [![check_crlf](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml)
 
 This is C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform specific drivers and serialization together to build a minimal DroneCAN application.
 
@@ -18,6 +18,7 @@ The following auxilliary features should be provided as well:
 - [ ] airspeed
 - [ ] baro
 - [x] circuit status
+- [x] fuel tank
 - [ ] esc
 - [ ] rangefinder
 - [ ] gnss
@@ -26,8 +27,8 @@ The following auxilliary features should be provided as well:
 
 The library should support the following platforms:
 - [x] Ubuntu: socketcan
-- [ ] stm32f103: BXCAN based on platform specific
-- [ ] stm32g0: FDCAN based on STM32 HAL
+- [x] stm32f103: BXCAN based on platform specific
+- [x] stm32g0: FDCAN based on STM32 HAL
 - [ ] stm32f103: DroneCAN/Serial based on STM32 HAL
 
 ## Design
