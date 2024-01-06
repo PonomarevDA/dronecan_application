@@ -8,16 +8,6 @@
 #include "dronecan_application_internal.h"
 #include <string.h>
 
-/**
-  * @brief Must be provided
-  */
-__attribute__((weak)) uint32_t uavcanGetTimeMs() {
-    return 0;
-}
-
-/**
-  * @brief Recommended to be provided
-  */
 __attribute__((weak)) void uavcanRestartNode() {
     asm("NOP");
 }

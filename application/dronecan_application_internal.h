@@ -30,10 +30,14 @@ extern "C" {
 #endif
 
 /**
+  * @brief This function must be provided by a user
+  */
+uint32_t uavcanGetTimeMs();
+
+/**
   * @brief Weak platform specific functions.
   * A user should write an implementation by his own
   */
-uint32_t uavcanGetTimeMs();
 void uavcanRestartNode();
 void uavcanReadUniqueID(uint8_t out_uid[16]);
 
