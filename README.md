@@ -51,8 +51,8 @@ Notes:
 Add the following lines into CMakeLists.txt of your project:
 
 ```cmake
-# 1. Specify the DRONECAN_PLATFORM. Options: bxcan, fdcan or socketcan.
-set(DRONECAN_PLATFORM ubuntu)
+# 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan.
+set(CAN_PLATFORM ubuntu)
 
 # 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu.
 set(LIBPARAMS_PATH        ../../build/libparams)
