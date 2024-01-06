@@ -77,7 +77,7 @@ target_include_directories(${EXECUTABLE} PRIVATE
 The minimal required application looks is shown below:
 
 ```c++
-#include "uavcan_application.h"
+#include "dronecan.h"
 
 // Initialize the library somewhere
 const uint8_t node_id = 42;

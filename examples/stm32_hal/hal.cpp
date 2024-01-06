@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string.h>
-#include "uavcan.h"
+#include "dronecan.h"
 
 void uavcanReadUniqueID(uint8_t out_uid[4]) {
     const uint32_t UNIQUE_ID_16_BYTES[4] = {

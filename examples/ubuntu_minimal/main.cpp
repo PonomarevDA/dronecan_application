@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 #include <string.h>
-#include "uavcan_application.h"
+#include "dronecan.h"
 
 uint32_t uavcanGetTimeMs() {
     static auto start_time = std::chrono::high_resolution_clock::now();

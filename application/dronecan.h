@@ -5,21 +5,29 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef APPLICATION_UAVCAN_H_
-#define APPLICATION_UAVCAN_H_
+#ifndef APPLICATION_DRONECAN_H_
+#define APPLICATION_DRONECAN_H_
 
 #include "dronecan_application_internal.h"
 #include "uavcan/protocol/node_status.h"
+#include "uavcan/protocol/get_node_info.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+
 /**
-  * @brief Call this function once during initialization.
-  * It will automatically configure STM32 CAN settings.
+  * @brief Initialize the node and minimal required services
   */
-int16_t uavcanInit(uint8_t node_id);
+int16_t uavcanInitApplication(uint8_t node_id);
+
+
+/**
+  * @brief Functions below should be called periodically to handle the application.
+  */
+void uavcanSpinOnce();
+
 
 /**
   * @brief Call this function once per each subscriber.
@@ -29,8 +37,10 @@ int16_t uavcanInit(uint8_t node_id);
 int8_t uavcanSubscribe(uint64_t data_type_signature,
                        uint16_t data_type_id,
                        void (callback)(CanardRxTransfer* transfer));
+
+
 /**
-  * @brief These functions are used to either broadcast messages or respond on RPC-request.
+  * @brief Broadcast a message.
   */
 int16_t uavcanPublish(uint64_t data_type_signature,
                       uint16_t data_type_id,
@@ -38,29 +48,53 @@ int16_t uavcanPublish(uint64_t data_type_signature,
                       uint8_t priority,
                       const void* payload,
                       uint16_t payload_len);
+
+
+/**
+  * @brief Respond on RPC-request.
+  */
 void uavcanRespond(CanardRxTransfer* transfer,
                    uint64_t data_type_signature,
                    uint16_t data_type_id,
                    uint8_t* payload,
                    uint16_t len);
 
+
 /**
-  * @brief Functions below should be called periodically to handle the application.
+  * @brief NodeInfo API
   */
-void uavcanSpinOnce();
+void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
+void uavcanSetNodeName(const char* new_node_name);
+
+
+/**
+  * @note TransportStats API
+  */
+void uavcanStatsIncreaseCanErrors();
+void uavcanStatsIncreaseCanTx(uint8_t num_of_transfers);
+void uavcanStatsIncreaseCanRx();
+void uavcanStatsIncreaseUartErrors();
+void uavcanStatsIncreaseUartTx(uint32_t num);
+void uavcanStatsIncreaseUartRx(uint32_t num);
+uint64_t uavcanGetErrorCount();
+
 
 /**
   * @brief NodeStatus API
   */
 void uavcanSetNodeHealth(NodeStatusHealth_t health);
 NodeStatusHealth_t uavcanGetNodeHealth();
+
 NodeStatusMode_t uavcanGetNodeStatusMode();
 void uavcanSetNodeStatusMode(NodeStatusMode_t mode);
-const NodeStatus_t* uavcanGetNodeStatus();
+
 void uavcanSetVendorSpecificStatusCode(uint16_t vssc);
+
+const NodeStatus_t* uavcanGetNodeStatus();
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // APPLICATION_UAVCAN_H_
+#endif  // APPLICATION_DRONECAN_H_
