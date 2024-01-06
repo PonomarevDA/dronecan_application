@@ -1,20 +1,24 @@
+# Copyright (c) 2023 Dmitry Ponomarev
+# Distributed under the MPL v2.0 License, available in the file LICENSE.
+# Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
+
 cmake_minimum_required(VERSION 3.15.3)
 set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-if(DRONECAN_PLATFORM STREQUAL "bxcan")
+if(CAN_PLATFORM STREQUAL "bxcan")
     set(DRONECAN_PLATFORM_SOURCES
         ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/can_driver.c
         ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/canard_stm32.c
     )
-elseif(DRONECAN_PLATFORM STREQUAL "DRONECAN_PLATFORM=fdcan is not supported yet!")
+elseif(CAN_PLATFORM STREQUAL "CAN_PLATFORM=fdcan is not supported yet!")
 	message(SEND_ERROR "not yet!")
-elseif(DRONECAN_PLATFORM STREQUAL "socketcan")
+elseif(CAN_PLATFORM STREQUAL "socketcan")
     set(DRONECAN_PLATFORM_SOURCES
         ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/can_driver.c
         ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/socketcan.c
     )
 else()
-	message(SEND_ERROR "DRONECAN_PLATFORM is not specified! Options: bxcan, fdcan, socketcan.")
+	message(SEND_ERROR "CAN_PLATFORM is not specified! Options: bxcan, fdcan, socketcan.")
 endif()
 
 
