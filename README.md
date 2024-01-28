@@ -132,7 +132,7 @@ Let's consider a RawCommand example.
 ```c++
 void callback(CanardRxTransfer* transfer) {
     RawCommand_t raw_command;
-    int8_t res = dronecan_equipment_esc_raw_command_deserialize(transfer, raw_command);
+    int8_t res = dronecan_equipment_esc_raw_command_deserialize(transfer, &raw_command);
     if (res > 0) {
         // Do something very quickly, or save the command for later use
     } else {
