@@ -95,6 +95,63 @@ while (true) {
 }
 ```
 
+## Custom publisher example
+
+1. Include a header file, for example:
+
+```c++
+#include "uavcan/equipment/power/BatteryInfo.h"
+```
+
+2. Create a message and trasnfer id, for example:
+
+```c++
+BatteryInfo_t battery_info{};
+static uint8_t transfer_id = 0;
+```
+
+3. Publish a message and increase the `transfer_id`, for example:
+
+```c++
+dronecan_equipment_battery_info_publish(&battery_info, &transfer_id);
+transfer_id++;
+```
+
+## Custom subscriber example
+
+Let's consider a RawCommand example.
+
+1. Include a header file:
+
+```c++
+#include "uavcan/equipment/esc/RawCommand.h"
+```
+
+2. Add a callback handler function:
+
+```c++
+void callback(CanardRxTransfer* transfer) {
+    RawCommand_t raw_command;
+    int8_t res = dronecan_equipment_esc_raw_command_deserialize(transfer, raw_command);
+    if (res > 0) {
+        // Do something very quickly, or save the command for later use
+    } else {
+        // Handle a real time error
+    }
+}
+```
+
+3. Add the subscription:
+
+```c++
+auto sub_id = uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND, callback);
+if (sub_id < 0) {
+    // Handle an initialization error
+}
+```
+
+## More examples
+
 More examples in [examples](examples) folder:
 - [Ubuntu minimal](examples/ubuntu_minimal/) example
 - [Ubuntu CircuitStatus publisher](examples/ubuntu_publisher_circuit_status/) example

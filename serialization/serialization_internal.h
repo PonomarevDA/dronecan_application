@@ -15,6 +15,8 @@
 extern "C" {
 #endif
 
+#define UAVCAN_EXPAND(data_type) data_type##_SIGNATURE, data_type##_ID
+
 /**
   * @brief For serialization
   */
