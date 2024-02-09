@@ -153,9 +153,9 @@ if (sub_id < 0) {
 ## More examples
 
 More examples in [examples](examples) folder:
-- [Ubuntu minimal](examples/ubuntu_minimal/) example
-- [Ubuntu CircuitStatus publisher](examples/ubuntu_publisher_circuit_status/) example
-- [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu_subscriber_commands/) example
+- [Ubuntu minimal](examples/ubuntu/minimal/) example
+- [Ubuntu CircuitStatus publisher](examples/ubuntu/publisher/circuit_status/) example
+- [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu/subscribers/commands) example
 
 
 ## License

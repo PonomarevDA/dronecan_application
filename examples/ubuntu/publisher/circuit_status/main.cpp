@@ -5,12 +5,23 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+#include <assert.h>
 #include <iostream>
 #include <chrono>
 #include <string.h>
 #include "dronecan.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
+#include "storage.h"
+#include "flash_driver.h"
 
+IntegerDesc_t __attribute__((weak)) integer_desc_pool[] = {
+    {"uavcan.node.id",              0,      100,    50},
+};
+IntegerParamValue_t integer_values_pool[sizeof(integer_desc_pool) / sizeof(IntegerDesc_t)];
+StringDesc_t __attribute__((weak)) string_desc_pool[] = {
+    {"system.name",              "dronecan_application"},
+};
+StringParamValue_t string_values_pool[sizeof(string_desc_pool) / sizeof(StringDesc_t)];
 
 uint32_t uavcanGetTimeMs() {
     static auto start_time = std::chrono::high_resolution_clock::now();
