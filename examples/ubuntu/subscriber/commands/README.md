@@ -6,7 +6,7 @@ Running the example is as simple as possible:
 
 ```bash
 ./scripts/vcan.sh slcan0
-make ubuntu_subscriber
+make ubuntu_subscriber_commands
 ```
 
 The first command will create virtual CAN interface. If you type `ifconfig`,
