@@ -15,6 +15,8 @@
 #define LIGHT_ID_STROBE                         248
 #define LIGHT_ID_LANDING                        254
 
+#define UAVCAN_EQUIPMENT_INDICATION_SINGLE_LIGHT_COMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_INDICATION_SINGLE_LIGHT_COMMAND)
+
 /**
  * @brief Nested type.
  * Controls single light source, color or monochrome.
@@ -22,7 +24,7 @@
 typedef struct {
     uint8_t light_id;
     RGB565_t color;
-} SingleLightCommand;
-static_assert(sizeof(SingleLightCommand) == 3);
+} SingleLightCommand_t;
+static_assert(sizeof(SingleLightCommand_t) == 4);
 
 #endif  // UAVCAN_EQUIPMENT_INDICATION_SINGLE_LIGHT_COMMAND_H_
