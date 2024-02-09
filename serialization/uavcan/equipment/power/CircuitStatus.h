@@ -8,7 +8,6 @@
 #ifndef UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_H_
 #define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_H_
 
-#include <stdint.h>
 #include <stdbool.h>
 #include "serialization_internal.h"
 

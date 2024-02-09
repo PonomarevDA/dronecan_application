@@ -8,7 +8,6 @@
 #ifndef UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_H_
 #define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_H_
 
-#include <stdint.h>
 #include "dronecan_application_internal.h"
 
 #define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_ID              10

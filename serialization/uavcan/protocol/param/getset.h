@@ -8,7 +8,6 @@
 #ifndef UAVCAN_PROTOCOL_PARAM_GETSET_H_
 #define UAVCAN_PROTOCOL_PARAM_GETSET_H_
 
-#include <stdint.h>
 #include <string.h>
 #include "dronecan_application_internal.h"
 
