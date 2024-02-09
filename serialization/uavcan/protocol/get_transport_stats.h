@@ -8,7 +8,6 @@
 #ifndef UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_H_
 #define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_H_
 
-#include <stdint.h>
 #include "dronecan_application_internal.h"
 
 /**

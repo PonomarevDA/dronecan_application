@@ -8,7 +8,6 @@
 #ifndef UAVCAN_PROTOCOL_GET_NODE_INFO_H_
 #define UAVCAN_PROTOCOL_GET_NODE_INFO_H_
 
-#include <stdint.h>
 #include <string.h>
 #include "dronecan_application_internal.h"
 #include "node_status.h"

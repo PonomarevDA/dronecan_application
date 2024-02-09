@@ -8,7 +8,6 @@
 #ifndef UAVCAN_PROTOCOL_NODE_STATUS_H_
 #define UAVCAN_PROTOCOL_NODE_STATUS_H_
 
-#include <stdint.h>
 #include "dronecan_application_internal.h"
 
 /**
