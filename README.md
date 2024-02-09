@@ -20,6 +20,9 @@ The following auxilliary features should be provided as well:
 - [x] circuit status
 - [x] fuel tank
 - [ ] esc
+- [ ] ice
+- [x] indication
+- [x] power
 - [ ] rangefinder
 - [ ] gnss
 - [ ] mag
@@ -156,6 +159,7 @@ More examples in [examples](examples) folder:
 - [Ubuntu minimal](examples/ubuntu/minimal/) example
 - [Ubuntu CircuitStatus publisher](examples/ubuntu/publisher/circuit_status/) example
 - [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu/subscribers/commands) example
+- [Ubuntu LightsCommand subscriber](examples/ubuntu/subscribers/lights_command) example
 
 
 ## License

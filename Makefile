@@ -21,6 +21,9 @@ ubuntu_publisher_circuit_status: clone_dependencies
 ubuntu_subscriber_commands: clone_dependencies
 	$(call build_and_run_sitl,ubuntu/subscriber/commands)
 
+ubuntu_subscriber_lights_command: clone_dependencies
+	$(call build_and_run_sitl,ubuntu/subscriber/lights_command)
+
 clone_dependencies:
 	mkdir -p build
 	if [ ! -d "build/libparams" ]; then git clone https://github.com/PonomarevDA/libparams.git build/libparams; fi
