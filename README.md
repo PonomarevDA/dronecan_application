@@ -14,7 +14,7 @@ A minimal application includes the following protocol-features:
 
 The following auxilliary features should be provided as well:
 
-- [ ] actuator
+- [x] actuator
 - [ ] airspeed
 - [ ] baro
 - [x] circuit status
@@ -37,7 +37,7 @@ The source code is divided into a few folders:
 
 - `application` has the main source code. It brings up all uavcan/protocol features such as NodeStatus, GetNodeInfo, Params, RestartNode, GetTransportStats.
 - `examples` provides examples with this library on different platforms
-- `serialation` has a set of headers for data serialization from C-structures to DroneCAN and vice versa
+- `serialization` has a set of headers for data serialization from C-structures to DroneCAN and vice versa
 - `Libs` - dependencies
 - `platform_specific` has a platform specific drivers
 - `tests` - unit tests
@@ -155,6 +155,7 @@ if (sub_id < 0) {
 More examples in [examples](examples) folder:
 - [Ubuntu minimal](examples/ubuntu_minimal/) example
 - [Ubuntu CircuitStatus publisher](examples/ubuntu_publisher_circuit_status/) example
+- [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu_subscriber_commands/) example
 
 
 ## License
