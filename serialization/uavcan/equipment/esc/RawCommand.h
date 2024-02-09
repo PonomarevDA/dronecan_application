@@ -8,7 +8,7 @@
 #ifndef UAVCAN_EQUIPMENT_ESC_RAW_COMMAND_H_
 #define UAVCAN_EQUIPMENT_ESC_RAW_COMMAND_H_
 
-#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include "dronecan.h"
 #include "serialization_internal.h"
@@ -23,6 +23,12 @@
 
 #define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND)
 
+/**
+ * @brief uavcan.equipment.esc.RawCommand
+ * @note Raw ESC command normalized into [-8192, 8191]; negative values indicate reverse rotation.
+ * The ESC should normalize the setpoint into its effective input range.
+ * Non-zero setpoint value below minimum should be interpreted as min valid setpoint for the given motor.
+ */
 typedef struct {
     int16_t raw_cmd[NUMBER_OF_RAW_CMD_CHANNELS];
 } RawCommand_t;
@@ -33,6 +39,10 @@ extern "C" {
 
 static inline int8_t dronecan_equipment_esc_raw_command_deserialize(
     const CanardRxTransfer* transfer, RawCommand_t* obj) {
+
+    if ((transfer == NULL) || (obj == NULL)) {
+        return -2;
+    }
 
     int offset = 0;
     int16_t len;
@@ -54,7 +64,7 @@ static inline bool dronecan_equipment_esc_raw_command_channel_deserialize(
                     const CanardRxTransfer* transfer,
                     uint8_t channel_num,
                     RawCommand_t* obj) {
-    if (channel_num > NUMBER_OF_RAW_CMD_CHANNELS) {
+    if ((transfer == NULL) || (obj == NULL) || (channel_num > NUMBER_OF_RAW_CMD_CHANNELS)) {
         return false;
     }
 
