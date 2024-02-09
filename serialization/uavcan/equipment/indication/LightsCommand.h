@@ -16,6 +16,8 @@
 #define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE        0x2031d93c8bdd1ec4
 #define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE     485/8
 
+#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND)
+
 #define MAX_LIGHT_COMMAND_NUMBER 20
 
 typedef struct {
@@ -41,13 +43,14 @@ static inline int8_t dronecan_equipment_indication_lights_command_deserialize(
         canardDecodeScalar(transfer, cmd_idx * 24 + 13, 6, false, &green);
         canardDecodeScalar(transfer, cmd_idx * 24 + 19, 5, false, &blue);
         obj->commands[cmd_idx].light_id = light_id;
-        obj->commands[cmd_idx].red = red;
-        obj->commands[cmd_idx].green = green;
-        obj->commands[cmd_idx].blue = blue;
+        obj->commands[cmd_idx].color.red = red;
+        obj->commands[cmd_idx].color.green = green;
+        obj->commands[cmd_idx].color.blue = blue;
     }
 
     return obj->number_of_commands;
 }
+
 
 #ifdef __cplusplus
 }
