@@ -17,11 +17,13 @@
  * Monocolor lights should interpret this as brightness setpoint: from zero (0, 0, 0) to
  * full brightness (31, 63, 31).
  */
+#pragma pack(1)
 typedef struct {
     uint8_t red         : 5;
     uint8_t green       : 6;
     uint8_t blue        : 5;
 } RGB565_t;
-static_assert(sizeof(RGB565_t) == 3);
+#pragma pack()
+static_assert(sizeof(RGB565_t) == 2);
 
 #endif  // UAVCAN_EQUIPMENT_INDICATION_RGB565_H_
