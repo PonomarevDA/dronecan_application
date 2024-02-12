@@ -21,10 +21,12 @@
  * @brief Nested type.
  * Controls single light source, color or monochrome.
  */
+#pragma pack(1)
 typedef struct {
     uint8_t light_id;
     RGB565_t color;
 } SingleLightCommand_t;
+#pragma pack()
 static_assert(sizeof(SingleLightCommand_t) == 3);
 
 #endif  // UAVCAN_EQUIPMENT_INDICATION_SINGLE_LIGHT_COMMAND_H_
