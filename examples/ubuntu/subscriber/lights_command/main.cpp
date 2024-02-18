@@ -70,7 +70,7 @@ LightsCommand_t LightsCommandSubscriber::lights_command = {};
  * @brief Main application entry point
  */
 int main (int argc, char *argv[]) {
-    paramsInit(1, 1);
+    paramsInit(1, 1, -1, 1);
     auto init_res = uavcanInitApplication(paramsGetIntegerValue(0));
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
