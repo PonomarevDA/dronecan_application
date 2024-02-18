@@ -26,7 +26,7 @@ ubuntu_subscriber_lights_command: clone_dependencies
 
 clone_dependencies:
 	mkdir -p build
-	if [ ! -d "build/libparams" ]; then git clone https://github.com/PonomarevDA/libparams.git build/libparams; fi
+	if [ ! -d "build/libparams" ]; then git clone --depth 1 --branch v0.7.2 https://github.com/PonomarevDA/libparams.git build/libparams; fi
 
 clean:
 	rm -rf build/examples/
