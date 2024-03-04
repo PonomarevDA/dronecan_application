@@ -30,7 +30,7 @@ static inline int8_t dronecan_equipment_hardpoint_command_deserialize(
     }
 
     canardDecodeScalar(transfer, 0,     8,  false, &obj->hardpoint_id);
-    canardDecodeScalar(transfer, 8,     24, false, &obj->command);
+    canardDecodeScalar(transfer, 8,     16, false, &obj->command);
 
     return 0;
 }
