@@ -22,7 +22,7 @@ typedef struct
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_hardpoint_command_deserialize(
+static inline int8_t dronecan_equipment_hardpoint_status_deserialize(
     const CanardRxTransfer* transfer, HardpointStatus_t* obj) {
     
     if ((transfer == NULL) || (obj == NULL)) {
