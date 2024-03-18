@@ -3,7 +3,7 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-project(ubuntu.minimal)
+project(ubuntu.minimal CXX C ASM)
 
 cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH UBUNTU_DIR)
 cmake_path(GET UBUNTU_DIR PARENT_PATH EXAMPLES_DIR)
