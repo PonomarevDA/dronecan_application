@@ -153,7 +153,7 @@ int16_t uavcanPublish(uint64_t data_type_signature,
 void uavcanRespond(CanardRxTransfer* transfer,
                    uint64_t data_type_signature,
                    uint16_t data_type_id,
-                   uint8_t* payload,
+                   const uint8_t* payload,
                    uint16_t len) {
     if (!transfer || !payload || len == 0) {
         return;
@@ -234,7 +234,7 @@ const NodeStatus_t* uavcanGetNodeStatus() {
   * @brief Call this function once during initialization.
   * It will automatically configure STM32 CAN settings.
   */
-int16_t uavcanInit(uint8_t node_id) {
+static int16_t uavcanInit(uint8_t node_id) {
     int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST);
     if (res < 0) {
         return res;
@@ -399,7 +399,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
             paramsSetStringValue(param_idx, str_len, val_string);
         }
-        uint8_t* str_value = (uint8_t*)paramsGetStringValue(param_idx);
+        char* str_value = (char*)paramsGetStringValue(param_idx);
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);

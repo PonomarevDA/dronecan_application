@@ -56,7 +56,7 @@ int16_t uavcanPublish(uint64_t data_type_signature,
 void uavcanRespond(CanardRxTransfer* transfer,
                    uint64_t data_type_signature,
                    uint16_t data_type_id,
-                   uint8_t* payload,
+                   const uint8_t* payload,
                    uint16_t len);
 
 
