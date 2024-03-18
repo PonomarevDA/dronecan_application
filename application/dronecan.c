@@ -378,7 +378,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
     // uint13 index
     uint16_t param_idx;
     if (param_name_length) {
-        param_idx = paramsGetIndexByName(recv_name, param_name_length);
+        param_idx = paramsFind(recv_name, param_name_length);
     } else {
         param_idx = uavcanParamGetSetDecodeIndex(transfer);
     }
@@ -387,7 +387,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
     uint8_t resp[96] = "";
     uint16_t len;
 
-    const char* name = paramsGetParamName(param_idx);
+    const char* name = paramsGetName(param_idx);
     if (paramsGetType(param_idx) == PARAM_TYPE_INTEGER) {
         if (set_value_type_tag == PARAM_VALUE_INTEGER) {
             paramsSetIntegerValue(param_idx, val_int64);
@@ -412,7 +412,7 @@ static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer) {
     uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
     uint8_t buffer[7];
-    int8_t ok = (paramsLoadToFlash() == -1) ? 0 : 1;
+    int8_t ok = (paramsLoad() == -1) ? 0 : 1;
     uavcanProtocolParamExecuteOpcodeEncode(buffer, ok);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, buffer, 7);
 }
