@@ -10,8 +10,10 @@ if(CAN_PLATFORM STREQUAL "bxcan")
         ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/can_driver.c
         ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/canard_stm32.c
     )
-elseif(CAN_PLATFORM STREQUAL "CAN_PLATFORM=fdcan is not supported yet!")
-	message(SEND_ERROR "not yet!")
+elseif(CAN_PLATFORM STREQUAL "fdcan")
+    set(DRONECAN_PLATFORM_SOURCES
+        ${DRONECAN_LIB_DIR}/platform_specific/stm32_fdcan/can_driver.c
+    )
 elseif(CAN_PLATFORM STREQUAL "socketcan")
     set(DRONECAN_PLATFORM_SOURCES
         ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/can_driver.c
