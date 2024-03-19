@@ -26,8 +26,8 @@ The following auxilliary features should be provided as well:
 
 The library should support the following platforms:
 - [x] Ubuntu: socketcan
-- [ ] stm32f103: BXCAN based on platform specific
-- [ ] stm32g0: FDCAN based on STM32 HAL
+- [x] stm32f103: BXCAN based on platform specific
+- [x] stm32g0: FDCAN based on STM32 HAL
 - [ ] stm32f103: DroneCAN/Serial based on STM32 HAL
 
 ## Design
