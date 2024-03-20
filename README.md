@@ -1,4 +1,6 @@
-# DroneCAN application [![build](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml)  [![check_crlf](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=PonomarevDA_dronecan_application&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=PonomarevDA_dronecan_application) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=PonomarevDA_dronecan_application&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=PonomarevDA_dronecan_application) [![build](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml)  [![check_crlf](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml)
+
+# DroneCAN application
 
 This is C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform specific drivers and serialization together to build a minimal DroneCAN application.
 
@@ -19,7 +21,7 @@ The following auxilliary features should be provided as well:
 - [ ] baro
 - [x] circuit status
 - [x] fuel tank
-- [ ] esc
+- [x] esc
 - [ ] ice
 - [x] indication
 - [x] power
@@ -47,7 +49,7 @@ The source code is divided into a few folders:
 
 
 Notes:
-- It depends on libparams library.
+- It depends on libparams v0.8.4 library.
 - It is not thread safe.
 
 ## How to integrate the library into a project
@@ -56,7 +58,7 @@ Add the following lines into CMakeLists.txt of your project:
 
 ```cmake
 # 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan.
-set(CAN_PLATFORM ubuntu)
+set(CAN_PLATFORM socketcan)
 
 # 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu.
 set(LIBPARAMS_PATH        ../../build/libparams)
@@ -78,9 +80,13 @@ target_include_directories(${EXECUTABLE} PRIVATE
 )
 ```
 
-The minimal required application looks is shown below:
+
+## Minimal application example
+
+The example is avaliable in [examples/ubuntu/minimal](examples/ubuntu/minimal/) folder.
 
 ```c++
+// Include dronecan.h header file
 #include "dronecan.h"
 
 // Initialize the library somewhere
@@ -98,41 +104,46 @@ while (true) {
 }
 ```
 
-## Custom publisher example
+A usage example is shown below:
 
-1. Include a header file, for example:
+<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_minimal.gif" alt="drawing">
+
+## Publisher example
+
+A CircuitStatus publisher example is avaliable in [examples/publisher/circuit_status](examples/publisher/circuit_status/) folder.
+
+A BatteryInfo publisher example is shown below:
 
 ```c++
+// Include necessary header files
+#include "dronecan.h"
 #include "uavcan/equipment/power/BatteryInfo.h"
-```
 
-2. Create a message and trasnfer id, for example:
-
-```c++
+// Create a message and trasnfer id
 BatteryInfo_t battery_info{};
 static uint8_t transfer_id = 0;
-```
 
-3. Publish a message and increase the `transfer_id`, for example:
-
-```c++
+// Publish a message and increase the transfer_id:
 dronecan_equipment_battery_info_publish(&battery_info, &transfer_id);
 transfer_id++;
 ```
 
-## Custom subscriber example
+A CircuitStatus usage example is shown below:
 
-Let's consider a RawCommand example.
+<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_publisher.gif" alt="drawing">
 
-1. Include a header file:
+## Subscriber example
+
+There are [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu/subscribers/commands) and [Ubuntu LightsCommand subscriber](examples/ubuntu/subscribers/lights_command) examples.
+
+Let's consider a RawCommand subscriber example.
 
 ```c++
+// Include necessary header files
+#include "dronecan.h"
 #include "uavcan/equipment/esc/RawCommand.h"
-```
 
-2. Add a callback handler function:
-
-```c++
+// Add a callback handler function
 void callback(CanardRxTransfer* transfer) {
     RawCommand_t raw_command;
     int8_t res = dronecan_equipment_esc_raw_command_deserialize(transfer, &raw_command);
@@ -142,25 +153,13 @@ void callback(CanardRxTransfer* transfer) {
         // Handle a real time error
     }
 }
-```
 
-3. Add the subscription:
-
-```c++
+// Add the subscription:
 auto sub_id = uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND, callback);
 if (sub_id < 0) {
     // Handle an initialization error
 }
 ```
-
-## More examples
-
-More examples in [examples](examples) folder:
-- [Ubuntu minimal](examples/ubuntu/minimal/) example
-- [Ubuntu CircuitStatus publisher](examples/ubuntu/publisher/circuit_status/) example
-- [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu/subscribers/commands) example
-- [Ubuntu LightsCommand subscriber](examples/ubuntu/subscribers/lights_command) example
-
 
 ## License
 

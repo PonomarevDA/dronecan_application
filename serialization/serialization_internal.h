@@ -35,6 +35,15 @@ static inline void canardEncodeFloat32(void* buffer, uint32_t bit_offset, float 
     canardEncodeScalar(buffer, bit_offset,  32, &value);
 }
 
+static inline size_t strlenSafely(const char *str, size_t max_size) {
+    size_t length = 0;
+    while (length < max_size && str[length] != '\0') {
+        length++;
+    }
+    
+    return length;
+}
+
 #ifdef __cplusplus
 }
 #endif

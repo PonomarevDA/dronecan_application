@@ -3,7 +3,7 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-project(ubuntu.subscriber.commands)
+project(ubuntu.subscriber.subscriber CXX C ASM)
 
 cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH SUBSCRIBER_DIR)
 cmake_path(GET SUBSCRIBER_DIR PARENT_PATH UBUNTU_DIR)

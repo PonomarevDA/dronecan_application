@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include "dronecan_application_internal.h"
+#include "serialization_internal.h"
 
 #define STRING_MAX_SIZE 56
 
@@ -62,37 +63,50 @@ uint16_t uavcanParamGetSetMakeIntResponse(uint8_t* buffer,
     uavcanEncodeParamNumericValueInt32(buffer,  150, max);
     buffer[216 / 8] = 0;
     uavcanEncodeParamNumericValueInt32(buffer,  222, min);
-    memcpy(&buffer[288 / 8], param_name, strlen(param_name));
-    return 288/8 + strlen(param_name);
+
+    // uint8[<=92] name
+    size_t param_name_length = strlenSafely(param_name, 92);
+    memcpy(&buffer[288 / 8], param_name, param_name_length);
+
+    return 288/8 + param_name_length;
 }
 
 uint16_t uavcanParamGetSetMakeStringResponse(uint8_t* buffer,
-                                             const uint8_t* str_val,
+                                             const char* str_val,
                                              const char* param_name) {
+    if (buffer == NULL || str_val == NULL || param_name == NULL) {
+        return 0;
+    }
+
     const uint8_t tag_empty = PARAM_VALUE_UNDEFINED;
     const uint8_t tag_string = PARAM_VALUE_STRING;
 
     uint8_t dummy_zero_byte = 0;
     canardEncodeScalar(buffer, 0, 5, &dummy_zero_byte);
 
+    // Value value (uint8[<=128] string_value)
     canardEncodeScalar(buffer, 5, 3, &tag_string);
-    uint8_t string_size = (str_val != NULL) ? strlen((char const*)str_val) : 0;
+    uint8_t string_size = strlenSafely(str_val, 128);
     uint16_t string_bit_offset = string_size * 8;
     canardEncodeScalar(buffer, 8, 8, &string_size);
     memcpy(&buffer[2], str_val, string_size);
 
+    // void6, NumericValue default_value is Optional
     canardEncodeScalar(buffer, string_bit_offset + 16, 5, &dummy_zero_byte);
     canardEncodeScalar(buffer, string_bit_offset + 29, 3, &tag_empty);
 
+    // void6, NumericValue max_value not applicable for bool/string
     canardEncodeScalar(buffer, string_bit_offset + 32, 6, &dummy_zero_byte);
     canardEncodeScalar(buffer, string_bit_offset + 38, 2, &tag_empty);
 
+    // void6, NumericValue min_value not applicable for bool/string
     canardEncodeScalar(buffer, string_bit_offset + 40, 6, &dummy_zero_byte);
     canardEncodeScalar(buffer, string_bit_offset + 46, 2, &tag_empty);
 
-    uint8_t param_name_len = strlen(param_name);
-    memcpy(&buffer[5 + string_size], param_name, param_name_len);
-    return 5 + string_size + param_name_len;
+    // uint8[<=92] name
+    uint8_t param_name_length = strlenSafely(param_name, 92);
+    memcpy(&buffer[5 + string_size], param_name, param_name_length);
+    return 5 + string_size + param_name_length;
 }
 
 uint16_t uavcanParamGetSetMakeEmptyResponse(uint8_t* buffer) {

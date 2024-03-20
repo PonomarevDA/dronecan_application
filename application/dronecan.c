@@ -153,7 +153,7 @@ int16_t uavcanPublish(uint64_t data_type_signature,
 void uavcanRespond(CanardRxTransfer* transfer,
                    uint64_t data_type_signature,
                    uint16_t data_type_id,
-                   uint8_t* payload,
+                   const uint8_t* payload,
                    uint16_t len) {
     if (!transfer || !payload || len == 0) {
         return;
@@ -234,7 +234,7 @@ const NodeStatus_t* uavcanGetNodeStatus() {
   * @brief Call this function once during initialization.
   * It will automatically configure STM32 CAN settings.
   */
-int16_t uavcanInit(uint8_t node_id) {
+static int16_t uavcanInit(uint8_t node_id) {
     int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST);
     if (res < 0) {
         return res;
@@ -378,7 +378,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
     // uint13 index
     uint16_t param_idx;
     if (param_name_length) {
-        param_idx = paramsGetIndexByName(recv_name, param_name_length);
+        param_idx = paramsFind(recv_name, param_name_length);
     } else {
         param_idx = uavcanParamGetSetDecodeIndex(transfer);
     }
@@ -387,7 +387,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
     uint8_t resp[96] = "";
     uint16_t len;
 
-    const char* name = paramsGetParamName(param_idx);
+    const char* name = paramsGetName(param_idx);
     if (paramsGetType(param_idx) == PARAM_TYPE_INTEGER) {
         if (set_value_type_tag == PARAM_VALUE_INTEGER) {
             paramsSetIntegerValue(param_idx, val_int64);
@@ -399,7 +399,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
             paramsSetStringValue(param_idx, str_len, val_string);
         }
-        uint8_t* str_value = (uint8_t*)paramsGetStringValue(param_idx);
+        char* str_value = (char*)paramsGetStringValue(param_idx);
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);
@@ -412,7 +412,7 @@ static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer) {
     uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
     uint8_t buffer[7];
-    int8_t ok = (paramsLoadToFlash() == -1) ? 0 : 1;
+    int8_t ok = (paramsLoad() == -1) ? 0 : 1;
     uavcanProtocolParamExecuteOpcodeEncode(buffer, ok);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, buffer, 7);
 }
