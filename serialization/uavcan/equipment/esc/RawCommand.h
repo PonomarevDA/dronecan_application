@@ -87,10 +87,8 @@ static inline int8_t dronecan_equipment_esc_raw_command_serialize(
         return -3;
     }
 
-    int offset = 0;
-    for (uint8_t ch_num = 0; ch_num < NUMBER_OF_RAW_CMD_CHANNELS; ch_num++) {
-        canardEncodeScalar(buffer, offset, RAWCOMMAND_BIT_LENGTH, &obj->raw_cmd[ch_num]);
-        offset += RAWCOMMAND_BIT_LENGTH;
+    for (uint8_t channel_num = 0; channel_num < NUMBER_OF_RAW_CMD_CHANNELS; channel_num++) {
+        canardEncodeScalar(buffer, channel_num * RAWCOMMAND_BIT_LENGTH, RAWCOMMAND_BIT_LENGTH, &obj->raw_cmd[channel_num]);
     }
 
     *inout_buffer_size_bytes = (NUMBER_OF_RAW_CMD_CHANNELS * RAWCOMMAND_BIT_LENGTH) / 8;
