@@ -83,13 +83,13 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_serialize(
 
     uint32_t offset = 0;
     for (uint8_t ch_num = 0; ch_num < 16; ch_num++) {
-        canardEncodeScalar(buffer, offset, 8, &obj->commads[ch_num].actuator_id);
+        canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].actuator_id);
         offset += 8;
 
-        canardEncodeScalar(buffer, offset, 8, &obj->commads[ch_num].command_type);
+        canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].command_type);
         offset += 8;
 
-        uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commads[ch_num].command_value);
+        uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[ch_num].command_value);
         canardEncodeScalar(buffer, offset, 16, &f16_value);
         offset += 16;
     }
