@@ -412,7 +412,7 @@ static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer) {
     uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
     uint8_t buffer[7];
-    int8_t ok = (paramsLoad() == -1) ? 0 : 1;
+    int8_t ok = (paramsSave() == -1) ? 0 : 1;
     uavcanProtocolParamExecuteOpcodeEncode(buffer, ok);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, buffer, 7);
 }
