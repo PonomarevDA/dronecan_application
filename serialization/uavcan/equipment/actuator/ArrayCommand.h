@@ -81,20 +81,13 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_serialize(
         return -3;
     }
 
-    uint32_t offset = 0;
-    for (uint8_t ch_num = 0; ch_num < 16; ch_num++) {
-        canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].actuator_id);
-        offset += 8;
+    canardEncodeScalar(buffer, 0, 8, &obj->commands[0].actuator_id);
 
-        canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].command_type);
-        offset += 8;
+    canardEncodeScalar(buffer, 8, 8, &obj->commands[0].command_type);
 
-        uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[ch_num].command_value);
-        canardEncodeScalar(buffer, offset, 16, &f16_value);
-        offset += 16;
-    }
+    uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[0].command_value);
+    canardEncodeScalar(buffer, 16, 16, &f16_value);
 
-    *inout_buffer_size_bytes = UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE;
     return 0;
 }
 
