@@ -10,13 +10,12 @@
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_SIGNATURE                 0x624a519d42553d82
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_MESSAGE_SIZE              7  // 56/8
 
-typedef struct 
-{
+typedef struct {
     uint8_t hardpoint_id;
     float payload_weight;
     float payload_weight_variance;
     uint16_t status;
-}HardpointStatus_t;
+} HardpointStatus_t;
 
 #ifdef __cplusplus
 extern "C" {

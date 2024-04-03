@@ -80,17 +80,19 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_serialize(
     if (capacity_bytes < UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE) {
         return -3;
     }
+    
+    uint8_t actuator_id = obj->commands[0].actuator_id;
+    uint8_t command_type = obj->commands[0].command_type;
 
-    canardEncodeScalar(buffer, 0, 8, &obj->commands[0].actuator_id);
+    canardEncodeScalar(buffer, 0, 8, &actuator_id);
 
-    canardEncodeScalar(buffer, 8, 8, &obj->commands[0].command_type);
+    canardEncodeScalar(buffer, 8, 8, &command_type);
 
     uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[0].command_value);
     canardEncodeScalar(buffer, 16, 16, &f16_value);
 
     return 0;
 }
-
 
 static inline int8_t dronecan_equipment_actuator_arraycommand_publish(const ArrayCommand_t* const obj,
                                                            uint8_t* inout_transfer_id) {
