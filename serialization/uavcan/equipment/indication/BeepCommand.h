@@ -33,9 +33,14 @@ static inline int8_t dronecan_equipment_indication_beep_command_deserialize(
     if ((transfer == NULL) || (obj == NULL)) {
         return -2;
     }
-
-    canardDecodeScalar(transfer, 0,     16, true, &obj->frequency);
-    canardDecodeScalar(transfer, 16,    16, true, &obj->duration);
+    
+    uint16_t f16_frequency_dummy;
+    uint16_t f16_duration_dummy;
+    
+    canardDecodeScalar(transfer, 0,     16, true, &f16_frequency_dummy);
+    canardDecodeScalar(transfer, 16,    16, true, &f16_duration_dummy);
+    obj->duration = canardConvertFloat16ToNativeFloat(f16_duration_dummy);
+    obj->frequency = canardConvertFloat16ToNativeFloat(f16_frequency_dummy);
     
     return 0;
 }
