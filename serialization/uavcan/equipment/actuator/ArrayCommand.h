@@ -45,8 +45,10 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_actuator_arraycommand_deserialize(const CanardRxTransfer* transfer,
-                                                                          ArrayCommand_t* obj) {
+static inline int8_t dronecan_equipment_actuator_arraycommand_deserialize(
+    const CanardRxTransfer* transfer,
+    ArrayCommand_t* obj)
+{
     if ((transfer == NULL) || (obj == NULL)) {
         return -2;
     }

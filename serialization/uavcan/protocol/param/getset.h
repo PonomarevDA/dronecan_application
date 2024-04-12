@@ -31,30 +31,35 @@ typedef enum {
 extern "C" {
 #endif
 
-void canardEncodeI64(uint8_t* buf, uint32_t offset, int64_t* val) {
+void canardEncodeI64(uint8_t* buf, uint32_t offset, int64_t* val)
+{
     canardEncodeScalar(buf, offset, 64, val);
 }
 
-void uavcanEncodeParamValueInt32(uint8_t* buffer, uint16_t offset, int32_t value) {
+void uavcanEncodeParamValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
+{
     const uint8_t tag_integer = PARAM_VALUE_INTEGER;
     int64_t value_i64 = value;
     canardEncodeScalar(buffer,  offset, 3, &tag_integer);
     canardEncodeI64(buffer, offset + 3, &value_i64);
 }
 
-void uavcanEncodeParamNumericValueInt32(uint8_t* buffer, uint16_t offset, int32_t value) {
+void uavcanEncodeParamNumericValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
+{
     const uint8_t tag_integer = PARAM_VALUE_INTEGER;
     int64_t value_i64 = value;
     canardEncodeScalar(buffer,  offset, 2, &tag_integer);
     canardEncodeI64(buffer, offset + 2, &value_i64);
 }
 
-uint16_t uavcanParamGetSetMakeIntResponse(uint8_t* buffer,
-                                          int64_t val,
-                                          int64_t def,
-                                          int64_t min,
-                                          int64_t max,
-                                          const char* param_name) {
+uint16_t uavcanParamGetSetMakeIntResponse(
+    uint8_t* buffer,
+    int64_t val,
+    int64_t def,
+    int64_t min,
+    int64_t max,
+    const char* param_name)
+{
     buffer[0 / 8] = 0;
     uavcanEncodeParamValueInt32(buffer,  5, val);
     buffer[72 / 8] = 0;
@@ -71,9 +76,11 @@ uint16_t uavcanParamGetSetMakeIntResponse(uint8_t* buffer,
     return 288/8 + param_name_length;
 }
 
-uint16_t uavcanParamGetSetMakeStringResponse(uint8_t* buffer,
-                                             const char* str_val,
-                                             const char* param_name) {
+uint16_t uavcanParamGetSetMakeStringResponse(
+    uint8_t* buffer,
+    const char* str_val,
+    const char* param_name)
+{
     if (buffer == NULL || str_val == NULL || param_name == NULL) {
         return 0;
     }
@@ -109,31 +116,37 @@ uint16_t uavcanParamGetSetMakeStringResponse(uint8_t* buffer,
     return 5 + string_size + param_name_length;
 }
 
-uint16_t uavcanParamGetSetMakeEmptyResponse(uint8_t* buffer) {
+uint16_t uavcanParamGetSetMakeEmptyResponse(uint8_t* buffer)
+{
     memset(buffer, 0x00, 4);
     return 4;
 }
 
-uint16_t uavcanParamGetSetDecodeIndex(const CanardRxTransfer* transfer) {
+uint16_t uavcanParamGetSetDecodeIndex(const CanardRxTransfer* transfer)
+{
     uint16_t param_idx = 0xFFFF;
     canardDecodeScalar(transfer, 0,  13, false, &param_idx);
     return param_idx;
 }
 
-uint8_t uavcanParamGetSetDecodeValueTag(const CanardRxTransfer* transfer) {
+uint8_t uavcanParamGetSetDecodeValueTag(const CanardRxTransfer* transfer)
+{
     uint8_t value_type_tag = PARAM_VALUE_UNDEFINED;
     canardDecodeScalar(transfer, 13, 3, false, &value_type_tag);
     return value_type_tag;
 }
 
-uint64_t uavcanParamGetSetDecodeInteger(const CanardRxTransfer* transfer) {
+uint64_t uavcanParamGetSetDecodeInteger(const CanardRxTransfer* transfer)
+{
     uint64_t val_int64 = PARAM_VALUE_UNDEFINED;
     canardDecodeScalar(transfer, 16, 64, false, &val_int64);
     return val_int64;
 }
 
-uint8_t uavcanParamGetSetDecodeString(const CanardRxTransfer* transfer,
-                                      uint8_t* val_string) {
+uint8_t uavcanParamGetSetDecodeString(
+    const CanardRxTransfer* transfer,
+    uint8_t* val_string)
+{
     uint8_t str_len = 0;
     canardDecodeScalar(transfer, 16, 8, false, &str_len);
 
@@ -147,7 +160,11 @@ uint8_t uavcanParamGetSetDecodeString(const CanardRxTransfer* transfer,
     return str_len;
 }
 
-uint8_t uavcanParamGetSetDecodeName(const CanardRxTransfer* transfer, int offset, uint8_t* name) {
+uint8_t uavcanParamGetSetDecodeName(
+    const CanardRxTransfer* transfer,
+    int offset,
+    uint8_t* name)
+{
     uint16_t param_name_length = transfer->payload_len - offset / 8;
     for (int idx = 0; idx < param_name_length; idx++) {
         canardDecodeScalar(transfer, offset, 8, false, &name[idx]);

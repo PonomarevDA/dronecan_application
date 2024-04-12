@@ -20,27 +20,31 @@ extern "C" {
 /**
   * @brief For serialization
   */
-static inline float uavcanDecodeF16(const CanardRxTransfer* transfer, uint32_t bit_offset) {
+static inline float uavcanDecodeF16(const CanardRxTransfer* transfer, uint32_t bit_offset)
+{
     uint16_t f16_dummy;
     canardDecodeScalar(transfer, bit_offset, 16, true, &f16_dummy);
     return canardConvertFloat16ToNativeFloat(f16_dummy);
 }
 
-static inline void canardEncodeFloat16(void* buffer, uint32_t bit_offset, float value) {
+static inline void canardEncodeFloat16(void* buffer, uint32_t bit_offset, float value)
+{
     uint16_t f16_dummy = canardConvertNativeFloatToFloat16(value);
     canardEncodeScalar(buffer, bit_offset, 16, &f16_dummy);
 }
 
-static inline void canardEncodeFloat32(void* buffer, uint32_t bit_offset, float value) {
+static inline void canardEncodeFloat32(void* buffer, uint32_t bit_offset, float value)
+{
     canardEncodeScalar(buffer, bit_offset,  32, &value);
 }
 
-static inline size_t strlenSafely(const char *str, size_t max_size) {
+static inline size_t strlenSafely(const char *str, size_t max_size)
+{
     size_t length = 0;
     while (length < max_size && str[length] != '\0') {
         length++;
     }
-    
+
     return length;
 }
 

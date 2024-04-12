@@ -34,14 +34,16 @@ typedef struct {
 #define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_ID          4
 #define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_SIGNATURE   0xbe6f76a7ec312b04
 #define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE    72  // (6 + 6 + 6) * 4
-#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS             UAVCAN_EXPAND(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS)
+#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS     UAVCAN_EXPAND(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static inline void uavcanEncodeTransportStats(uint8_t buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE],
-                                const GetTransportStats_t* iface_stats) {
+static inline void uavcanEncodeTransportStats(
+    uint8_t buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE],
+    const GetTransportStats_t* iface_stats)
+{
     canardEncodeScalar(buffer, 48 * 0,  48, &iface_stats->transfers_tx);
     canardEncodeScalar(buffer, 48 * 1,  48, &iface_stats->transfers_rx);
     canardEncodeScalar(buffer, 48 * 2,  48, &iface_stats->transfer_errors);

@@ -28,25 +28,28 @@ extern "C" {
 #endif
 
 static inline int8_t dronecan_equipment_indication_beep_command_deserialize(
-    const CanardRxTransfer* transfer, BeepCommand_t* obj) {
-
+    const CanardRxTransfer* transfer, BeepCommand_t* obj)
+{
     if ((transfer == NULL) || (obj == NULL)) {
         return -2;
     }
-    
+
     uint16_t f16_frequency_dummy;
     uint16_t f16_duration_dummy;
-    
+
     canardDecodeScalar(transfer, 0,     16, true, &f16_frequency_dummy);
     canardDecodeScalar(transfer, 16,    16, true, &f16_duration_dummy);
     obj->duration = canardConvertFloat16ToNativeFloat(f16_duration_dummy);
     obj->frequency = canardConvertFloat16ToNativeFloat(f16_frequency_dummy);
-    
+
     return 0;
 }
 
 static inline int8_t dronecan_equipment_indication_beep_command_serialize(
-    const BeepCommand_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes) {
+    const BeepCommand_t* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
         return -2;
     }
@@ -64,14 +67,16 @@ static inline int8_t dronecan_equipment_indication_beep_command_serialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_indication_beep_command_publish(const BeepCommand_t* const obj,
-                                                                          uint8_t* inout_transfer_id) {
+static inline int8_t dronecan_equipment_indication_beep_command_publish(
+    const BeepCommand_t* const obj,
+    uint8_t* inout_transfer_id)
+{
     uint8_t buffer[UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE;
-    int8_t res = dronecan_equipment_indication_beep_command_serialize(obj, buffer, &inout_buffer_size);
+    size_t inout_buf_size = UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE;
+    auto res = dronecan_equipment_indication_beep_command_serialize(obj, buffer, &inout_buf_size);
     if (res < 0) {
         return res;
-    };
+    }
 
     uavcanPublish(UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_SIGNATURE,
                   UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_ID,
