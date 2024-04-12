@@ -5,8 +5,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "dronecan_application_internal.h"
 #include <string.h>
+#include "dronecan_application_internal.h"
 
 __attribute__((weak)) void uavcanRestartNode() {
     asm("NOP");

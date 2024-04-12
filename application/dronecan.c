@@ -89,11 +89,11 @@ static uint8_t uavcanProcessSending();
 static bool uavcanProcessReceiving();
 static void uavcanSpinNodeStatus();
 
-static void uavcanProtocolGetNodeInfoHandleRequest(CanardRxTransfer* transfer);
-static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer);
-static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer);
-static void uavcanProtocolRestartNodeHandleRequest(CanardRxTransfer* transfer);
-static void uavcanProtocolGetTransportStatHandleRequest(CanardRxTransfer* transfer);
+static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer);
+static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer);
+static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer);
+static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
+static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 
 
 int16_t uavcanInitApplication(uint8_t node_id) {
@@ -110,11 +110,11 @@ int16_t uavcanInitApplication(uint8_t node_id) {
 
     uavcanReadUniqueID(hw_version.unique_id);
 
-    uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandleRequest);
-    uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandleRequest);
+    uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandle);
 
     return 0;
 }
@@ -342,14 +342,14 @@ static void uavcanSpinNodeStatus() {
                   UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
 }
 
-static void uavcanProtocolGetNodeInfoHandleRequest(CanardRxTransfer* transfer) {
+static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer) {
     uint8_t buf[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE];
     const NodeStatus_t* status = uavcanGetNodeStatus();
     uint16_t len = uavcanEncodeParamGetNodeInfo(buf, status, &sw_version, &hw_version, node_name);
     uavcanRespond(transfer, UAVCAN_GET_NODE_INFO_DATA_TYPE, buf, len);
 }
 
-static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
+static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     // Value value
     uint8_t set_value_type_tag = uavcanParamGetSetDecodeValueTag(transfer);
     int64_t val_int64 = 0;
@@ -408,7 +408,7 @@ static void uavcanProtocolParamGetSetHandleRequest(CanardRxTransfer* transfer) {
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_GETSET, resp, len);
 }
 
-static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer) {
+static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
     uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
     uint8_t buffer[7];
@@ -417,11 +417,11 @@ static void uavcanParamExecuteOpcodeHandleRequest(CanardRxTransfer* transfer) {
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, buffer, 7);
 }
 
-static void uavcanProtocolRestartNodeHandleRequest(__attribute__((unused)) CanardRxTransfer* transfer) {
+static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
     uavcanRestartNode();
 }
 
-static void uavcanProtocolGetTransportStatHandleRequest(CanardRxTransfer* transfer) {
+static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
     static uint8_t buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE];
     iface_stats.transfer_errors = canDriverGetErrorCount();
 

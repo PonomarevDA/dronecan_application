@@ -40,11 +40,12 @@ extern "C" {
 #endif
 
 static inline uint16_t uavcanEncodeParamGetNodeInfo(
-                        uint8_t buffer[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE],
-                        const NodeStatus_t* status,
-                        const SoftwareVersion* software,
-                        const HardwareVersion* hardware,
-                        const char* name) {
+    uint8_t buffer[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE],
+    const NodeStatus_t* status,
+    const SoftwareVersion* software,
+    const HardwareVersion* hardware,
+    const char* name)
+{
     if (buffer == NULL || status == NULL || software == NULL || hardware == NULL || name == NULL) {
         return 0;
     }

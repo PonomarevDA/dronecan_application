@@ -30,8 +30,8 @@ extern "C" {
 #endif
 
 static inline int8_t dronecan_equipment_indication_lights_command_deserialize(
-    const CanardRxTransfer* transfer, LightsCommand_t* obj) {
-
+    const CanardRxTransfer* transfer, LightsCommand_t* obj)
+{
     uint8_t light_id, red, green, blue;
     obj->number_of_commands = transfer->payload_len / 3;
     if (obj->number_of_commands > MAX_LIGHT_COMMAND_NUMBER) {
@@ -52,7 +52,10 @@ static inline int8_t dronecan_equipment_indication_lights_command_deserialize(
 }
 
 static inline int8_t dronecan_equipment_indication_lights_command_serialize(
-    const LightsCommand_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes) {
+    const LightsCommand_t* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
         return -2;
     }
@@ -78,14 +81,16 @@ static inline int8_t dronecan_equipment_indication_lights_command_serialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_indication_lights_command_publish(const LightsCommand_t* const obj,
-                                                                          uint8_t* inout_transfer_id) {
+static inline int8_t dronecan_equipment_indication_lights_command_publish(
+    const LightsCommand_t* const obj,
+    uint8_t* inout_transfer_id)
+{
     uint8_t buffer[UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE;
-    int8_t res = dronecan_equipment_indication_lights_command_serialize(obj, buffer, &inout_buffer_size);
+    size_t inout_size = UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE;
+    int8_t res = dronecan_equipment_indication_lights_command_serialize(obj, buffer, &inout_size);
     if (res < 0) {
         return res;
-    };
+    }
 
     uavcanPublish(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE,
                   UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_ID,

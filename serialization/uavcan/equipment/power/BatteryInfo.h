@@ -41,7 +41,10 @@ extern "C" {
 #endif
 
 static inline int8_t dronecan_equipment_power_battery_info_serialize(
-    const BatteryInfo_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes) {
+    const BatteryInfo_t* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
         return -2;
     }
@@ -69,8 +72,10 @@ static inline int8_t dronecan_equipment_power_battery_info_serialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_battery_info_publish(const BatteryInfo_t* const obj,
-                                                               uint8_t* inout_transfer_id) {
+static inline int8_t dronecan_equipment_battery_info_publish(
+    const BatteryInfo_t* const obj,
+    uint8_t* inout_transfer_id)
+{
     uint8_t buffer[UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE];
     size_t inout_buffer_size = UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE;
     dronecan_equipment_power_battery_info_serialize(obj, buffer, &inout_buffer_size);

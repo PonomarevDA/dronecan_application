@@ -48,7 +48,10 @@ extern "C" {
 #endif
 
 static inline int8_t dronecan_protocol_debug_log_message_serialize(
-    const DebugLogMessage_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes) {
+    const DebugLogMessage_t* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
         return -2;
     }
@@ -70,8 +73,10 @@ static inline int8_t dronecan_protocol_debug_log_message_serialize(
     return 0;
 }
 
-static inline int8_t dronecan_protocol_debug_log_message_publish(const DebugLogMessage_t* const obj,
-                                                                 uint8_t* inout_transfer_id) {
+static inline int8_t dronecan_protocol_debug_log_message_publish(
+    const DebugLogMessage_t* const obj,
+    uint8_t* inout_transfer_id)
+{
     uint8_t buffer[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE];
     size_t inout_buffer_size = UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE;
     int8_t res = dronecan_protocol_debug_log_message_serialize(obj, buffer, &inout_buffer_size);

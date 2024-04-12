@@ -51,8 +51,10 @@ extern "C" {
 #endif
 
 
-static inline void uavcanEncodeNodeStatus(uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE],
-                                          const NodeStatus_t* node_status) {
+static inline void uavcanEncodeNodeStatus(
+    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE],
+    const NodeStatus_t* node_status)
+{
     canardEncodeScalar(buffer,  0,  32, &node_status->uptime_sec);
     canardEncodeScalar(buffer,  32, 2,  (uint8_t*)&node_status->health);
     canardEncodeScalar(buffer,  34, 3,  (uint8_t*)&node_status->mode);

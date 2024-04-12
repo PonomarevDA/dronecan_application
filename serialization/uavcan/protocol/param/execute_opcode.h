@@ -14,19 +14,21 @@
 #define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_SIGNATURE       0xa7b622f939d1a466
 #define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_REQUEST_SIZE    7
 #define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE_RESPONSE_SIZE   7
-#define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE                 UAVCAN_EXPAND(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE)
+#define UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE      UAVCAN_EXPAND(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static inline uint8_t uavcanProtocolParamExecuteOpcodeDecode(CanardRxTransfer* transfer) {
+static inline uint8_t uavcanProtocolParamExecuteOpcodeDecode(CanardRxTransfer* transfer)
+{
     uint8_t opcode;
     canardDecodeScalar(transfer, 0,  8, false, &opcode);
     return opcode;
 }
 
-static inline void uavcanProtocolParamExecuteOpcodeEncode(uint8_t* buffer, int8_t ok) {
+static inline void uavcanProtocolParamExecuteOpcodeEncode(uint8_t* buffer, int8_t ok)
+{
     int64_t val = 0;
     canardEncodeScalar(buffer, 0, 48, &val);
     canardEncodeScalar(buffer, 48, 1, &ok);

@@ -31,7 +31,10 @@ extern "C" {
 #endif
 
 static inline int8_t dronecan_equipment_ice_fuel_tank_status_serialize(
-    const FuelTankStatus_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes) {
+    const FuelTankStatus_t* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
         return -2;
     }
@@ -54,8 +57,10 @@ static inline int8_t dronecan_equipment_ice_fuel_tank_status_serialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_ice_fuel_tank_status_publish(const FuelTankStatus_t* const obj,
-                                                                     uint8_t* inout_transfer_id) {
+static inline int8_t dronecan_equipment_ice_fuel_tank_status_publish(
+    const FuelTankStatus_t* const obj,
+    uint8_t* inout_transfer_id)
+{
     uint8_t buffer[UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE];
     size_t inout_buffer_size = UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE;
     dronecan_equipment_ice_fuel_tank_status_serialize(obj, buffer, &inout_buffer_size);
