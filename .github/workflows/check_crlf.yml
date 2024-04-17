@@ -3,10 +3,10 @@ name: check_crlf
 on:
   push:
     branches:
-    - '*'
+    - main
   pull_request:
     branches:
-    - '*'
+    - main
 
 jobs:
   build:
