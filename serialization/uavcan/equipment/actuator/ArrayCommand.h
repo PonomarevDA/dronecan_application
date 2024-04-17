@@ -60,13 +60,16 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_deserialize(
     uint16_t f16_dummy;
     for (ch_num = 0; ch_num < num_of_cmds; ch_num++) {
         canardDecodeScalar(transfer, offset, 8, true, &obj->commands[ch_num].actuator_id);
+        canardDecodeScalar(transfer, offset, 8, true, &obj->commands[ch_num].actuator_id);
         offset += 8;
 
+        canardDecodeScalar(transfer, offset, 8, true, &obj->commands[ch_num].command_type);
         canardDecodeScalar(transfer, offset, 8, true, &obj->commands[ch_num].command_type);
         offset += 8;
 
         canardDecodeScalar(transfer, offset, 16, true, &f16_dummy);
         offset += 16;
+        obj->commands[ch_num].command_value = canardConvertFloat16ToNativeFloat(f16_dummy);
         obj->commands[ch_num].command_value = canardConvertFloat16ToNativeFloat(f16_dummy);
     }
     return ch_num;
@@ -89,8 +92,10 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_serialize(
         offset += 8;
 
         canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].command_type);
+        canardEncodeScalar(buffer, offset, 8, &obj->commands[ch_num].command_type);
         offset += 8;
 
+        uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[ch_num].command_value);
         uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commands[ch_num].command_value);
         canardEncodeScalar(buffer, offset, 16, &f16_value);
         offset += 16;
