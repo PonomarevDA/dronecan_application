@@ -101,7 +101,7 @@ static inline int8_t dronecan_equipment_esc_raw_command_serialize(
 static inline int8_t dronecan_equipment_esc_raw_command_publish(const RawCommand_t* const obj, uint8_t num_cmds,
                                                            uint8_t* inout_transfer_id) {
     if (num_cmds > NUMBER_OF_RAW_CMD_CHANNELS) return -1;
-    
+
     uint8_t buffer[(num_cmds * RAWCOMMAND_BIT_LEN + 7) / 8];
     size_t inout_buffer_size = (num_cmds * RAWCOMMAND_BIT_LEN + 7) / 8;
     dronecan_equipment_esc_raw_command_serialize(obj, buffer, &inout_buffer_size, num_cmds);
