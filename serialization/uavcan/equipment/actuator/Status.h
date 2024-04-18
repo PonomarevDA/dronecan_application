@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dmitry Ponomarev <ponomarevda96@gmail.com>
+ * Copyright (C) 2024 Anastasiia Stepanova <asiiapine@gmail.com>
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -43,7 +43,7 @@ static inline int8_t dronecan_equipment_actuator_status_serialize(
     uint16_t position = canardConvertNativeFloatToFloat16(obj->position);
     uint16_t force = canardConvertNativeFloatToFloat16(obj->force);
     uint16_t speed = canardConvertNativeFloatToFloat16(obj->speed);
-    
+
     uint8_t power_rating_pct = obj->power_rating_pct;
     uint8_t reserved = obj->reserved;
     canardEncodeScalar(buffer, 0,   8,  &obj->actuator_id);
