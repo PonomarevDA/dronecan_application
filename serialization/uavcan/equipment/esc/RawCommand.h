@@ -77,6 +77,43 @@ static inline bool dronecan_equipment_esc_raw_command_channel_deserialize(
     return true;
 }
 
+static inline int8_t dronecan_equipment_esc_raw_command_serialize(
+    const RawCommand_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes,  uint8_t num_cmds) {
+    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
+        return -2;
+    }
+
+    const size_t capacity_bytes = *inout_buffer_size_bytes;
+    if (capacity_bytes < (num_cmds * RAWCOMMAND_BIT_LEN) / 8) {
+        return -3;
+    }
+
+    int offset = 0;
+    for (uint8_t ch_num = 0; ch_num < num_cmds; ch_num++) {
+        canardEncodeScalar(buffer, offset, RAWCOMMAND_BIT_LEN, &obj->raw_cmd[ch_num]);
+        offset += RAWCOMMAND_BIT_LEN;
+    }
+
+    *inout_buffer_size_bytes = (num_cmds * RAWCOMMAND_BIT_LEN) / 8;
+    return 0;
+}
+
+static inline int8_t dronecan_equipment_esc_raw_command_publish(const RawCommand_t* const obj, uint8_t num_cmds,
+                                                           uint8_t* inout_transfer_id) {
+    if (num_cmds > NUMBER_OF_RAW_CMD_CHANNELS) return -1;
+
+    uint8_t buffer[(num_cmds * RAWCOMMAND_BIT_LEN + 7) / 8];
+    size_t inout_buffer_size = (num_cmds * RAWCOMMAND_BIT_LEN + 7) / 8;
+    dronecan_equipment_esc_raw_command_serialize(obj, buffer, &inout_buffer_size, num_cmds);
+    uavcanPublish(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_SIGNATURE,
+                  UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_ID,
+                  inout_transfer_id,
+                  CANARD_TRANSFER_PRIORITY_MEDIUM,
+                  buffer,
+                  sizeof(buffer));
+
+    return 0;
+}
 #ifdef __cplusplus
 }
 #endif

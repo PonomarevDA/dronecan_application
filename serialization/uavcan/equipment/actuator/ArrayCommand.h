@@ -17,11 +17,11 @@
 #define UAVCAN_EQUIPMENT_ACTUATOR_STATUS_SIGNATURE                  0x5e9bba44faf1ea04
 #define UAVCAN_EQUIPMENT_ACTUATOR_STATUS_MESSAGE_SIZE               8
 
+#define NUMBER_OF_ACTUATOR_ARRAY_COMMANDS                           16
 #define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_ID                  1010
 #define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_SIGNATURE           0xd8a7486238ec3af3
-#define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE        484/8 + 1
+#define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE        4*NUMBER_OF_ACTUATOR_ARRAY_COMMANDS
 #define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND)
-
 /**
  * @brief uavcan.equipment.actuator.Command
  * @note Nested type. Single actuator command.
@@ -38,7 +38,7 @@ typedef struct {
  * up to 15 of them can be commanded with one message.
  */
 typedef struct {
-    Command_t commads[16];
+    Command_t commads[NUMBER_OF_ACTUATOR_ARRAY_COMMANDS];
 } ArrayCommand_t;
 
 #ifdef __cplusplus
@@ -70,6 +70,51 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_deserialize(
         obj->commads[ch_num].command_value = canardConvertFloat16ToNativeFloat(f16_dummy);
     }
     return ch_num;
+}
+
+static inline int8_t dronecan_equipment_actuator_arraycommand_serialize(
+    const ArrayCommand_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes, uint8_t num_cmds) {
+    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
+        return -2;
+    }
+
+    const size_t capacity_bytes = *inout_buffer_size_bytes;
+    if (capacity_bytes < UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE) {
+        return -3;
+    }
+
+    uint32_t offset = 0;
+    for (uint8_t ch_num = 0; ch_num < num_cmds; ch_num++) {
+        canardEncodeScalar(buffer, offset, 8, &obj->commads[ch_num].actuator_id);
+        offset += 8;
+
+        canardEncodeScalar(buffer, offset, 8, &obj->commads[ch_num].command_type);
+        offset += 8;
+
+        uint16_t f16_value = canardConvertNativeFloatToFloat16(obj->commads[ch_num].command_value);
+        canardEncodeScalar(buffer, offset, 16, &f16_value);
+        offset += 16;
+    }
+
+    *inout_buffer_size_bytes = UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_MESSAGE_SIZE;
+    return 0;
+}
+
+
+static inline int8_t dronecan_equipment_actuator_arraycommand_publish(const ArrayCommand_t* const obj, uint8_t num_cmds,
+                                                           uint8_t* inout_transfer_id) {
+    if (num_cmds > NUMBER_OF_ACTUATOR_ARRAY_COMMANDS) return -1;
+    uint8_t buffer[num_cmds * UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE];
+    size_t inout_buffer_size = num_cmds * UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE;
+    dronecan_equipment_actuator_arraycommand_serialize(obj, buffer, &inout_buffer_size, num_cmds);
+    uavcanPublish(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_SIGNATURE,
+                  UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_ID,
+                  inout_transfer_id,
+                  CANARD_TRANSFER_PRIORITY_MEDIUM,
+                  buffer,
+                  num_cmds * UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE);
+
+    return 0;
 }
 
 #ifdef __cplusplus
