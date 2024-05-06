@@ -63,14 +63,14 @@ static inline int8_t dronecan_equipment_esc_raw_command_deserialize(
 static inline bool dronecan_equipment_esc_raw_command_channel_deserialize(
     const CanardRxTransfer* transfer,
     uint8_t channel_num,
-    RawCommand_t* obj)
+    int16_t* obj)
 {
     if ((transfer == NULL) || (obj == NULL) || (channel_num > NUMBER_OF_RAW_CMD_CHANNELS)) {
         return false;
     }
 
     const uint32_t FIRST_BIT = channel_num * RAWCOMMAND_BIT_LEN;
-    int16_t len = canardDecodeScalar(transfer, FIRST_BIT, RAWCOMMAND_BIT_LEN, true, obj->raw_cmd);
+    int16_t len = canardDecodeScalar(transfer, FIRST_BIT, RAWCOMMAND_BIT_LEN, true, obj);
     if (len < RAWCOMMAND_BIT_LEN) {
         return false;
     }
