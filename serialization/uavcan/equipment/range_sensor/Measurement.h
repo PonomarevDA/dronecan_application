@@ -65,7 +65,7 @@ static inline int8_t dronecan_equipment_range_sensor_measurement_serialize(
 
     offset = dronecan_coarse_orientation_serialize(&obj->beam_orientation_in_body_frame, buffer,
                                                         inout_buffer_size_bytes, offset);
-    canardEncodeScalar(buffer, offset, 16, &obj->field_of_view);
+    canardEncodeScalar(buffer, offset, 16, &field_of_view);
     offset += 16;
     canardEncodeScalar(buffer, offset, 5, &sensor_type);
     offset += 5;
