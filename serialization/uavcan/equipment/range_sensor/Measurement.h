@@ -25,13 +25,13 @@ enum class RangeFinderSensorType: uint8_t {
  * @brief uavcan.equipment.range_sensor.Measurement
  */
 typedef struct {
-    uint64_t timestamp;  // 7
-    uint8_t sensor_id;  // 1
-    CoarseOrientation_t beam_orientation_in_body_frame;  // 2
-    float field_of_view;  // 2
+    uint64_t timestamp;
+    uint8_t sensor_id;
+    CoarseOrientation_t beam_orientation_in_body_frame;
+    float field_of_view;
     RangeFinderSensorType sensor_type;
-    uint8_t reading_type;  // 1
-    float range;  // 2
+    uint8_t reading_type;
+    float range;
 } RangeSensorMeasurement_t;
 
 #ifdef __cplusplus
@@ -57,8 +57,8 @@ static inline int8_t dronecan_equipment_range_sensor_measurement_serialize(
     uint8_t sensor_type = (uint8_t)(obj->sensor_type);
     uint8_t reading_type = obj->reading_type;
     uint8_t offset = 0;
-    auto timestamp = obj->timestamp;
-    canardEncodeScalar(buffer, 56, offset, &timestamp);
+    uint64_t timestamp = obj->timestamp;
+    canardEncodeScalar(buffer, offset, 56, &timestamp);
     offset += 56;
     canardEncodeScalar(buffer, offset, 8, &obj->sensor_id);
     offset += 8;
