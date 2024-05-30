@@ -31,6 +31,19 @@ target_include_directories(application PRIVATE
   ${DRONECAN_HEADERS}
   ${libparamsHeaders}
 )
+target_compile_options(application PRIVATE
+  -Wall
+  -Wextra
+  -Wfloat-equal
+  -Werror
+  -Wundef
+  -Wshadow
+  -Wpointer-arith
+  -Wunreachable-code
+  -Wstrict-overflow=5
+  -Wwrite-strings
+  -Wswitch-default
+)
 
 # 5. (Recommended) Add GIT_HASH based on git repository
 execute_process(
@@ -41,6 +54,10 @@ execute_process(
 )
 set(GIT_HASH "0x${GIT_HASH_SHORT}")
 add_definitions(-DGIT_HASH=${GIT_HASH})
+add_definitions(-DAPP_VERSION_MAJOR=0)
+add_definitions(-DAPP_VERSION_MINOR=1)
+add_definitions(-DHW_VERSION_MAJOR=0)
+add_definitions(-DHW_VERSION_MINOR=0)
 
 # 6. (Recommended) Set node name
 add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")

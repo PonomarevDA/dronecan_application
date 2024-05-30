@@ -11,7 +11,7 @@
 #include "serialization_internal.h"
 
 #define UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_SIGNATURE                 0x8d9a6a920c1d616c
-#define UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE              32/8
+#define UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE              (32/8)
 
 #define UAVCAN_EQUIPMENT_ACTUATOR_STATUS_ID                         1011
 #define UAVCAN_EQUIPMENT_ACTUATOR_STATUS_SIGNATURE                  0x5e9bba44faf1ea04

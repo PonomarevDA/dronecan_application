@@ -14,11 +14,11 @@
 #include "flash_driver.h"
 
 IntegerDesc_t __attribute__((weak)) integer_desc_pool[] = {
-    {"uavcan.node.id",              0,      100,    50},
+    {"uavcan.node.id", 0, 100, 50, true, false},
 };
 IntegerParamValue_t integer_values_pool[sizeof(integer_desc_pool) / sizeof(IntegerDesc_t)];
 StringDesc_t __attribute__((weak)) string_desc_pool[] = {
-    {"system.name",              "dronecan_application"},
+    {"system.name", "dronecan_application", true},
 };
 StringParamValue_t string_values_pool[sizeof(string_desc_pool) / sizeof(StringDesc_t)];
 
@@ -29,7 +29,7 @@ uint32_t uavcanGetTimeMs() {
     return std::chrono::duration_cast<std::chrono::milliseconds>(crnt_time - start_time).count();
 }
 
-int main (int argc, char *argv[]) {
+int main() {
     const uint8_t node_id = 42;
     auto init_res = uavcanInitApplication(node_id);
     if (init_res < 0) {

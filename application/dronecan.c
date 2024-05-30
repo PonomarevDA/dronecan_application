@@ -265,10 +265,10 @@ static int16_t uavcanInit(uint8_t node_id) {
   * @return true if data type is supported and fill signature, otherwise return false
   */
 static bool shouldAcceptTransfer(__attribute__((unused)) const CanardInstance* ins,
-                          uint64_t* out_data_type_signature,
-                          uint16_t data_type_id,
-                          CanardTransferType transfer_type,
-                          __attribute__((unused)) uint8_t source_node_id) {
+                                 uint64_t* out_data_type_signature,
+                                 uint16_t data_type_id,
+                                 __attribute__((unused)) CanardTransferType transfer_type,
+                                 __attribute__((unused)) uint8_t source_node_id) {
     for (uint8_t sub_idx = 0; sub_idx < subs_amount; sub_idx++) {
         if (data_type_id == subscribers[sub_idx].id) {
             *out_data_type_signature = subscribers[sub_idx].signature;
@@ -331,14 +331,14 @@ static void uavcanSpinNodeStatus() {
     }
     last_spin_time_ms = crnt_time_ms;
 
-    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
+    uint8_t node_status_buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
     node_status.uptime_sec = (crnt_time_ms / 1000);
-    uavcanEncodeNodeStatus(buffer, &node_status);
+    uavcanEncodeNodeStatus(node_status_buffer, &node_status);
     uavcanPublish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
                   UAVCAN_PROTOCOL_NODE_STATUS_ID,
                   &transfer_id,
                   CANARD_TRANSFER_PRIORITY_LOW,
-                  buffer,
+                  node_status_buffer,
                   UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
 }
 
@@ -411,10 +411,10 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
     uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
-    uint8_t buffer[7];
+    uint8_t opcode_buffer[7];
     int8_t ok = (paramsSave() == -1) ? 0 : 1;
-    uavcanProtocolParamExecuteOpcodeEncode(buffer, ok);
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, buffer, 7);
+    uavcanProtocolParamExecuteOpcodeEncode(opcode_buffer, ok);
+    uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, opcode_buffer, 7);
 }
 
 static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
@@ -422,9 +422,9 @@ static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTran
 }
 
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
-    static uint8_t buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE];
+    static uint8_t transport_stats_buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE];
     iface_stats.transfer_errors = canDriverGetErrorCount();
 
-    uavcanEncodeTransportStats(buffer, &iface_stats);
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, buffer, 72);
+    uavcanEncodeTransportStats(transport_stats_buffer, &iface_stats);
+    uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);
 }

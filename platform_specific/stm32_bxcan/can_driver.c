@@ -10,6 +10,7 @@
 #include "main.h"
 
 int16_t canDriverInit(uint32_t can_speed, uint8_t can_driver_idx) {
+    (void)can_driver_idx;
     CanardSTM32CANTimings timings;
     int16_t res;
 
@@ -27,10 +28,12 @@ int16_t canDriverInit(uint32_t can_speed, uint8_t can_driver_idx) {
 }
 
 int16_t canDriverReceive(CanardCANFrame* const rx_frame, uint8_t can_driver_idx) {
+    (void)can_driver_idx;
     return canardSTM32Receive(rx_frame);
 }
 
 int16_t canDriverTransmit(const CanardCANFrame* const tx_frame, uint8_t can_driver_idx) {
+    (void)can_driver_idx;
     return canardSTM32Transmit(tx_frame);
 }
 
