@@ -51,7 +51,7 @@ int main() {
 
     while (uavcanGetTimeMs() < 5000) {
         circuit_status.spinOnce(uavcanGetTimeMs());
-        uavcanSpinOnce(uavcanGetTimeMs());
+        uavcanSpinOnce();
     }
 
     std::cout << "Good. Enough." << std::endl;
