@@ -1,14 +1,13 @@
-# Copyright (c) 2024 Dmitry Ponomarev
+# Copyright (c) 2023-2024 Dmitry Ponomarev
 # Distributed under the MPL v2.0 License, available in the file LICENSE.
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-project(ubuntu.subscriber.lights_command CXX C ASM)
+project(ubuntu CXX C ASM)
 
-cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH SUBSCRIBER_DIR)
-cmake_path(GET SUBSCRIBER_DIR PARENT_PATH UBUNTU_DIR)
-cmake_path(GET UBUNTU_DIR PARENT_PATH EXAMPLES_DIR)
+cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH EXAMPLES_DIR)
 cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
+
 
 # 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan
 set(CAN_PLATFORM socketcan)
@@ -23,6 +22,7 @@ include(${ROOT_DIR}/CMakeLists.txt)
 # 4. Add DroneCAN related source files and headers to you target
 add_executable(application
   main.cpp
+  params.cpp
   ${DRONECAN_SOURCES}
   ${libparamsSrc}
 )
@@ -41,6 +41,10 @@ execute_process(
 )
 set(GIT_HASH "0x${GIT_HASH_SHORT}")
 add_definitions(-DGIT_HASH=${GIT_HASH})
+add_definitions(-DAPP_VERSION_MAJOR=0)
+add_definitions(-DAPP_VERSION_MINOR=1)
+add_definitions(-DHW_VERSION_MAJOR=0)
+add_definitions(-DHW_VERSION_MINOR=0)
 
 # 6. (Recommended) Set node name
 add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")
