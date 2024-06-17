@@ -1,1 +1,0 @@
-# Ubuntu Minimal example

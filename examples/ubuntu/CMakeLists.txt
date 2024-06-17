@@ -31,6 +31,19 @@ target_include_directories(application PRIVATE
   ${DRONECAN_HEADERS}
   ${libparamsHeaders}
 )
+target_compile_options(application PRIVATE
+  -Wall
+  -Wextra
+  -Wfloat-equal
+  -Werror
+  -Wundef
+  -Wshadow
+  -Wpointer-arith
+  -Wunreachable-code
+  -Wstrict-overflow=5
+  -Wwrite-strings
+  -Wswitch-default
+)
 
 # 5. (Recommended) Add GIT_HASH based on git repository
 execute_process(

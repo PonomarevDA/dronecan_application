@@ -15,9 +15,6 @@ endef
 ubuntu: clone_dependencies
 	$(call build_and_run_sitl,ubuntu)
 
-ubuntu_minimal: clone_dependencies
-	$(call build_and_run_sitl,ubuntu/minimal)
-
 ubuntu_publisher_circuit_status: clone_dependencies
 	$(call build_and_run_sitl,ubuntu/publisher/circuit_status)
 

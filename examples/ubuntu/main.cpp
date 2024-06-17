@@ -29,7 +29,7 @@ uint32_t uavcanGetTimeMs() {
 /**
  * @brief Main application entry point
  */
-int main (int argc, char *argv[]) {
+int main() {
     paramsInit(1, 1, -1, 1);
     auto init_res = uavcanInitApplication(paramsGetIntegerValue(0));
     if (init_res < 0) {
