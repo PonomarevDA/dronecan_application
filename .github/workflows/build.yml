@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        target: [ubuntu_minimal, ubuntu_publisher_circuit_status, ubuntu]
+        target: [ubuntu_publisher_circuit_status, ubuntu]
     steps:
       - name: Install GIT
         run: sudo apt-get update && sudo apt-get install -y git

@@ -21,9 +21,7 @@ public:
     LightsCommandSubscriber() = default;
 
     inline int8_t init() {
-        int8_t sub_id = uavcanSubscribe(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE,
-                                        UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_ID,
-                                        LightsCommandSubscriber::callback);
+        int8_t sub_id = uavcanSubscribe(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND, callback);
         if (sub_id < 0) {
             std::cout << "Something wrong. Sobescriber has not been created. Abort." << sub_id << std::endl;
         }
@@ -40,7 +38,5 @@ private:
     uint32_t next_pub_time_ms = 500;
     uint8_t inout_transfer_id;
 };
-
-
 
 #endif  // EXAMPLES_UBUNTU_SUBSCRIBERS_LIGHTS_HPP_
