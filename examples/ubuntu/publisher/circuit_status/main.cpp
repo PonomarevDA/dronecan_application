@@ -62,7 +62,7 @@ int main (int argc, char *argv[]) {
 
     while (uavcanGetTimeMs() < 3000) {
         circuit_status.spinOnce();
-        uavcanSpinOnce();
+        uavcanSpinOnce(uavcanGetTimeMs());
     }
 
     std::cout << "Good. Enough." << std::endl;

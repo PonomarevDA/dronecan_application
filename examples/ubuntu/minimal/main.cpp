@@ -38,7 +38,7 @@ int main() {
     }
 
     for (int idx = 0; idx < 5000; idx++) {
-        uavcanSpinOnce();
+        uavcanSpinOnce(uavcanGetTimeMs());
     }
 
     std::cout << "Good." << std::endl;
