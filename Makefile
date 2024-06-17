@@ -12,6 +12,9 @@ define build_and_run_sitl
 	$(BUILD_DIR)/$(1)/application
 endef
 
+ubuntu: clone_dependencies
+	$(call build_and_run_sitl,ubuntu)
+
 ubuntu_minimal: clone_dependencies
 	$(call build_and_run_sitl,ubuntu/minimal)
 
@@ -20,9 +23,6 @@ ubuntu_publisher_circuit_status: clone_dependencies
 
 ubuntu_subscriber_commands: clone_dependencies
 	$(call build_and_run_sitl,ubuntu/subscriber/commands)
-
-ubuntu_subscriber_lights_command: clone_dependencies
-	$(call build_and_run_sitl,ubuntu/subscriber/lights_command)
 
 clone_dependencies:
 	mkdir -p build
