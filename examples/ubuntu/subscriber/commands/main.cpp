@@ -112,7 +112,7 @@ int main (int argc, char *argv[]) {
     raw_command_sub.init();
 
     while (uavcanGetTimeMs() < 5000) {
-        uavcanSpinOnce();
+        uavcanSpinOnce(uavcanGetTimeMs());
     }
 
     std::cout << "Good. Enough." << std::endl;

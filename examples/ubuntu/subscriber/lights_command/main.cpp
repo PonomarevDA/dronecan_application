@@ -81,7 +81,7 @@ int main (int argc, char *argv[]) {
     lights_command_sub.init();
 
     while (uavcanGetTimeMs() < 5000) {
-        uavcanSpinOnce();
+        uavcanSpinOnce(uavcanGetTimeMs());
     }
 
     std::cout << "Good. Enough." << std::endl;

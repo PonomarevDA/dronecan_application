@@ -119,10 +119,10 @@ int16_t uavcanInitApplication(uint8_t node_id) {
     return 0;
 }
 
-void uavcanSpinOnce() {
+void uavcanSpinOnce(uint32_t crnt_time_ms) {
     uavcanProcessSending();
-    uavcanProcessReceiving();
-    uavcanSpinNodeStatus();
+    uavcanProcessReceiving(crnt_time_ms);
+    uavcanSpinNodeStatus(crnt_time_ms);
 }
 
 int8_t uavcanSubscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
@@ -312,20 +312,19 @@ static uint8_t uavcanProcessSending() {
     return tx_frames_counter;
 }
 
-static bool uavcanProcessReceiving() {
+static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
     CanardCANFrame rx_frame;
     int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
     if (res) {
-        uint64_t crnt_time_us = uavcanGetTimeMs() * 1000;
+        uint64_t crnt_time_us = crnt_time_ms * 1000;
         canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
         return true;
     }
     return false;
 }
 
-static void uavcanSpinNodeStatus() {
+static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
     static uint32_t last_spin_time_ms = 0;
-    uint32_t crnt_time_ms = uavcanGetTimeMs();
     if (crnt_time_ms < last_spin_time_ms + NODE_STATUS_SPIN_PERIOD_MS) {
         return;
     }
