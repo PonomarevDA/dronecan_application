@@ -12,7 +12,9 @@
 #include "storage.h"
 #include "dronecan.h"
 #include "storage.h"
-#include "lights.hpp"
+#include "subscribers/lights.hpp"
+#include "subscribers/raw_command.hpp"
+#include "subscribers/array_command.hpp"
 
 /**
  * @brief Platform specific functions which should be provided by a user
@@ -37,6 +39,12 @@ int main (int argc, char *argv[]) {
 
     LightsCommandSubscriber lights_command_sub;
     lights_command_sub.init();
+
+    ArrayCommandSubscriber array_command_sub;
+    array_command_sub.init();
+
+    RawCommandSubscriber raw_command_sub;
+    raw_command_sub.init();
 
     while (uavcanGetTimeMs() < 5000) {
         uavcanSpinOnce(uavcanGetTimeMs());

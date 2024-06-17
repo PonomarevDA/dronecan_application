@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2023 Dmitry Ponomarev <ponomarevda96@gmail.com>
+ * Copyright (C) 2023-2024 Dmitry Ponomarev <ponomarevda96@gmail.com>
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef EXAMPLES_UBUNTU_LIGHTS_HPP_
-#define EXAMPLES_UBUNTU_LIGHTS_HPP_
+#ifndef EXAMPLES_UBUNTU_SUBSCRIBERS_LIGHTS_HPP_
+#define EXAMPLES_UBUNTU_SUBSCRIBERS_LIGHTS_HPP_
 
 #include <stdint.h>
 #include <iostream>
@@ -43,4 +43,4 @@ private:
 
 
 
-#endif  // EXAMPLES_UBUNTU_LIGHTS_HPP_
+#endif  // EXAMPLES_UBUNTU_SUBSCRIBERS_LIGHTS_HPP_
