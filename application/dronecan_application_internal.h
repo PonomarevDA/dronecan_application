@@ -29,6 +29,10 @@ typedef struct {
 extern "C" {
 #endif
 
+/**
+  * @brief This function must be provided by a user
+  */
+uint32_t uavcanGetTimeMs();
 
 /**
   * @brief Weak platform specific functions.

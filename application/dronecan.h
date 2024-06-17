@@ -26,7 +26,7 @@ int16_t uavcanInitApplication(uint8_t node_id);
 /**
   * @brief Functions below should be called periodically to handle the application.
   */
-void uavcanSpinOnce(uint32_t crnt_time_ms);
+void uavcanSpinOnce();
 
 
 /**

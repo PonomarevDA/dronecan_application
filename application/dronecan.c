@@ -119,7 +119,8 @@ int16_t uavcanInitApplication(uint8_t node_id) {
     return 0;
 }
 
-void uavcanSpinOnce(uint32_t crnt_time_ms) {
+void uavcanSpinOnce() {
+    uint32_t crnt_time_ms = uavcanGetTimeMs();
     uavcanProcessSending();
     uavcanProcessReceiving(crnt_time_ms);
     uavcanSpinNodeStatus(crnt_time_ms);
