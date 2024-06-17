@@ -1,2 +1,0 @@
-# Ubuntu CircuitStatus publisher example
-

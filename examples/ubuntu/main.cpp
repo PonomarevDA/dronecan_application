@@ -15,6 +15,7 @@
 #include "subscribers/lights.hpp"
 #include "subscribers/raw_command.hpp"
 #include "subscribers/array_command.hpp"
+#include "publishers/circuit_status.hpp"
 
 /**
  * @brief Platform specific functions which should be provided by a user
@@ -46,7 +47,10 @@ int main() {
     RawCommandSubscriber raw_command_sub;
     raw_command_sub.init();
 
+    CircuitStatusPublisher circuit_status;
+
     while (uavcanGetTimeMs() < 5000) {
+        circuit_status.spinOnce(uavcanGetTimeMs());
         uavcanSpinOnce(uavcanGetTimeMs());
     }
 
