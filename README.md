@@ -49,7 +49,7 @@ The source code is divided into a few folders:
 
 
 Notes:
-- It depends on libparams v0.8.4 library.
+- It depends on libparams v0.9.0 library.
 - It is not thread safe.
 
 ## How to integrate the library into a project

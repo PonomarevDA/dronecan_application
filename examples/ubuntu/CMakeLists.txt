@@ -5,8 +5,11 @@
 cmake_minimum_required(VERSION 3.15.3)
 project(ubuntu CXX C ASM)
 
+# Pathes
+set(EXAMPLES_UBUNTU_DIR ${CMAKE_CURRENT_LIST_DIR})
 cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH EXAMPLES_DIR)
 cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
+set(CMAKE_DIR ${ROOT_DIR}/cmake)
 
 
 # 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan
@@ -24,12 +27,15 @@ add_executable(application
   main.cpp
   params.cpp
   ${DRONECAN_SOURCES}
-  ${libparamsSrc}
 )
+
+include(${CMAKE_DIR}/AddLibparams.cmake)
+check_libparams_version(90000) # 0.9.0
+target_link_libraries(application libparams)
+
 target_include_directories(application PRIVATE
-  .
+  ${EXAMPLES_UBUNTU_DIR}
   ${DRONECAN_HEADERS}
-  ${libparamsHeaders}
 )
 target_compile_options(application PRIVATE
   -Wall
