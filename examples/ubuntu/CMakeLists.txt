@@ -13,7 +13,7 @@ cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
 set(CAN_PLATFORM socketcan)
 
 # 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu
-set(LIBPARAMS_PATH        ${ROOT_DIR}/build/libparams)
+set(LIBPARAMS_PATH        ${ROOT_DIR}/build/external/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
 
 # 3. Include the CMakeLists.txt
