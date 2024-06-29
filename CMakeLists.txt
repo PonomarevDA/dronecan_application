@@ -32,14 +32,14 @@ include(${LIBPARAMS_PATH}/CMakeLists.txt)
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
     ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
-    ${DRONECAN_LIB_DIR}/application/dronecan.c
-    ${DRONECAN_LIB_DIR}/application/weak.c
+    ${DRONECAN_LIB_DIR}/src/dronecan.c
+    ${DRONECAN_LIB_DIR}/src/weak.c
     ${libparamsSrc}
 )
 
 set(DRONECAN_HEADERS
     ${DRONECAN_LIB_DIR}/Libs
-    ${DRONECAN_LIB_DIR}/application
-    ${DRONECAN_LIB_DIR}/serialization
+    ${DRONECAN_LIB_DIR}/include/application
+    ${DRONECAN_LIB_DIR}/include/serialization
     ${libparamsHeaders}
 )
