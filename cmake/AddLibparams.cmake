@@ -1,0 +1,8 @@
+function(check_libparams_version MINIMUM_REQUIRED_VERSION)
+    if(TARGET libparams)
+        get_target_property(LIBPARAMS_VERSION libparams VERSION)
+        message(STATUS "libparams version check is not implemented yet")
+    else()
+        message(FATAL_ERROR "libparams not found")
+    endif()
+endfunction()

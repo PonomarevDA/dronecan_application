@@ -22,10 +22,10 @@ The following auxilliary features should be provided as well:
 - [x] circuit status
 - [x] fuel tank
 - [x] esc
-- [ ] ice
+- [x] ice
 - [x] indication
 - [x] power
-- [ ] rangefinder
+- [x] rangefinder
 - [ ] gnss
 - [ ] mag
 - [ ] etc
@@ -49,37 +49,34 @@ The source code is divided into a few folders:
 
 
 Notes:
-- It depends on libparams v0.8.4 library.
+- It depends on libparams v0.9.0 library.
 - It is not thread safe.
 
 ## How to integrate the library into a project
 
-Add the following lines into CMakeLists.txt of your project:
+It is expected to build a static library from source code into your local build directory.
+
+The most important steps are:
 
 ```cmake
-# 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan.
+# 1. Build the only dependency - libparams. Specify a desired LIBPARAMS_PLATFORM.
+set(LIBPARAMS_PLATFORM ubuntu)
+add_subdirectory(${LIBPARAMS_PATH} ${BUILD_UBUNTU_DIR}/libparams)
+
+# 2. Build libDronecanApp itself. Specify a desired plaform with CAN_PLATFORM.
 set(CAN_PLATFORM socketcan)
+add_subdirectory(${ROOT_DIR} ${BUILD_UBUNTU_LIB_DRONECAN_APP_DIR})
 
-# 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu.
-set(LIBPARAMS_PATH        ../../build/libparams)
-set(LIBPARAMS_PLATFORM    ubuntu)
-
-# 3. Include the CMakeLists.txt
-include(../../CMakeLists.txt)
-
-# 4. Add DroneCAN related source files and headers to you target.
-add_executable(${EXECUTABLE}
-    ...
-    ${DRONECAN_SOURCES}
+# 3. Add executable for your application
+add_executable(${APPLICATION}
     ...
 )
-target_include_directories(${EXECUTABLE} PRIVATE
-    ...
-    ${DRONECAN_HEADERS}
-    ...
-)
+
+# 4. Link the library to your application
+target_link_libraries(${APPLICATION} DronecanApp)
 ```
 
+For more details, please check an example: [examples/ubuntu/CMakeLists.txt](examples/ubuntu/CMakeLists.txt).
 
 ## Minimal application example
 
