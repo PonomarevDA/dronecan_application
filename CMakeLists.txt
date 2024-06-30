@@ -5,23 +5,11 @@
 cmake_minimum_required(VERSION 3.15.3)
 set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-if(CAN_PLATFORM STREQUAL "bxcan")
-    set(DRONECAN_PLATFORM_SOURCES
-        ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/can_driver.c
-        ${DRONECAN_LIB_DIR}/platform_specific/stm32_bxcan/canard_stm32.c
-    )
-elseif(CAN_PLATFORM STREQUAL "fdcan")
-    set(DRONECAN_PLATFORM_SOURCES
-        ${DRONECAN_LIB_DIR}/platform_specific/stm32_fdcan/can_driver.c
-    )
-elseif(CAN_PLATFORM STREQUAL "socketcan")
-    set(DRONECAN_PLATFORM_SOURCES
-        ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/can_driver.c
-        ${DRONECAN_LIB_DIR}/platform_specific/socketcan/socketcan/socketcan.c
-    )
-else()
-	message(SEND_ERROR "CAN_PLATFORM is not specified! Options: bxcan, fdcan, socketcan.")
+set(SUPPORTED_PLATFORMS "bxcan;fdcan;socketcan")
+if(NOT CAN_PLATFORM IN_LIST SUPPORTED_PLATFORMS)
+  message(SEND_ERROR "CAN_PLATFORM is not specified or unsupported! Options: bxcan, fdcan, socketcan.")
 endif()
+include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
 
 if(NOT DEFINED LIBPARAMS_PATH)
