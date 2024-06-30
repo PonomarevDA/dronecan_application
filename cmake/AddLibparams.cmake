@@ -1,5 +1,3 @@
-add_subdirectory(${LIBPARAMS_PATH} ${CMAKE_BINARY_DIR}/libparams)
-
 function(check_libparams_version MINIMUM_REQUIRED_VERSION)
     if(TARGET libparams)
         get_target_property(LIBPARAMS_VERSION libparams VERSION)
