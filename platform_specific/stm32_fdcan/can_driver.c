@@ -35,6 +35,7 @@ static CanDriver driver[NUM_OF_CAN_BUSES] = {
 
 
 int16_t canDriverInit(uint32_t can_speed, uint8_t can_driver_idx) {
+    (void)can_speed;
     driver[can_driver_idx].tx_header.IdType = FDCAN_EXTENDED_ID;
     driver[can_driver_idx].tx_header.TxFrameType = FDCAN_DATA_FRAME;
     driver[can_driver_idx].tx_header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
