@@ -19,6 +19,7 @@ extern "C" {
 
 /**
   * @brief Initialize the node and minimal required services
+  * @return 0 on success, otherwise negative error
   */
 int16_t uavcanInitApplication(uint8_t node_id);
 

@@ -98,7 +98,7 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 
 int16_t uavcanInitApplication(uint8_t node_id) {
     int16_t res = uavcanInit(node_id);
-    if (res != 0) {
+    if (res < 0) {
         return res;
     }
 
