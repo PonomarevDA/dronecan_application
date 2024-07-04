@@ -409,10 +409,21 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
 }
 
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
-    uavcanProtocolParamExecuteOpcodeDecode(transfer);
+    uint8_t opcode = uavcanProtocolParamExecuteOpcodeDecode(transfer);
 
     uint8_t opcode_buffer[7];
-    int8_t ok = (paramsSave() == -1) ? 0 : 1;
+    int8_t ok;
+    switch (opcode) {
+    case 0:
+        ok = (paramsSave() == -1) ? 0 : 1;
+        break;
+    case 1:
+        ok = (paramsResetToDefault() < 0) ? 0 : 1;
+        break;
+    default:
+        ok = -1;
+        break;
+    }
     uavcanProtocolParamExecuteOpcodeEncode(opcode_buffer, ok);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, opcode_buffer, 7);
 }
