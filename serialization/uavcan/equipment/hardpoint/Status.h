@@ -8,7 +8,7 @@
 
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_ID                        1071
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_SIGNATURE                 0x624a519d42553d82
-#define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_MESSAGE_SIZE              7  // 56/8
+#define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_MESSAGE_SIZE              8
 
 typedef struct {
     uint8_t hardpoint_id;
