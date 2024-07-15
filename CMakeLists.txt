@@ -3,31 +3,27 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
+project(DronecanApp VERSION 0.9.0)
 
 set(SUPPORTED_PLATFORMS "bxcan;fdcan;socketcan")
 if(NOT CAN_PLATFORM IN_LIST SUPPORTED_PLATFORMS)
   message(SEND_ERROR "CAN_PLATFORM is not specified or unsupported! Options: bxcan, fdcan, socketcan.")
 endif()
-include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
+include(platform_specific/${CAN_PLATFORM}/config.cmake)
+include(cmake/AddLibparams.cmake)
 
-if(NOT DEFINED LIBPARAMS_PATH)
-	message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
-endif()
-include(${LIBPARAMS_PATH}/CMakeLists.txt)
-
-set(DRONECAN_SOURCES
-    ${DRONECAN_PLATFORM_SOURCES}
-    ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
-    ${DRONECAN_LIB_DIR}/src/dronecan.c
-    ${DRONECAN_LIB_DIR}/src/weak.c
-    ${libparamsSrc}
+add_library(${PROJECT_NAME} STATIC
+  ${DRONECAN_PLATFORM_SOURCES}
+  Libs/libcanard_v0/canard.c
+  src/dronecan.c
+  src/weak.c
+)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  Libs
+  include/application
+  include/serialization
 )
 
-set(DRONECAN_HEADERS
-    ${DRONECAN_LIB_DIR}/Libs
-    ${DRONECAN_LIB_DIR}/include/application
-    ${DRONECAN_LIB_DIR}/include/serialization
-    ${libparamsHeaders}
-)
+check_libparams_version(90000) # 0.9.0
+target_link_libraries(${PROJECT_NAME} libparams)

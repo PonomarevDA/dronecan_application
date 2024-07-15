@@ -3,49 +3,19 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-project(ubuntu CXX C ASM)
+project(ubuntu_application CXX C ASM)
 
+# Pathes
+set(EXAMPLES_UBUNTU_DIR ${CMAKE_CURRENT_LIST_DIR})
 cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH EXAMPLES_DIR)
 cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
+set(CMAKE_DIR ${ROOT_DIR}/cmake)
+set(BUILD_DIR ${ROOT_DIR}/build)
+set(BUILD_UBUNTU_DIR ${ROOT_DIR}/build/ubuntu)
+set(LIBPARAMS_PATH ${BUILD_DIR}/external/libparams)
+set(BUILD_UBUNTU_LIB_DRONECAN_APP_DIR ${BUILD_UBUNTU_DIR}/libDronecanApp)
 
-
-# 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan
-set(CAN_PLATFORM socketcan)
-
-# 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu
-set(LIBPARAMS_PATH        ${ROOT_DIR}/build/external/libparams)
-set(LIBPARAMS_PLATFORM    ubuntu)
-
-# 3. Include the CMakeLists.txt
-include(${ROOT_DIR}/CMakeLists.txt)
-
-# 4. Add DroneCAN related source files and headers to you target
-add_executable(application
-  main.cpp
-  params.cpp
-  ${DRONECAN_SOURCES}
-  ${libparamsSrc}
-)
-target_include_directories(application PRIVATE
-  .
-  ${DRONECAN_HEADERS}
-  ${libparamsHeaders}
-)
-target_compile_options(application PRIVATE
-  -Wall
-  -Wextra
-  -Wfloat-equal
-  -Werror
-  -Wundef
-  -Wshadow
-  -Wpointer-arith
-  -Wunreachable-code
-  -Wstrict-overflow=5
-  -Wwrite-strings
-  -Wswitch-default
-)
-
-# 5. (Recommended) Add GIT_HASH based on git repository
+# Pre-build
 execute_process(
   COMMAND git rev-parse --short=16 HEAD
   COMMAND_ERROR_IS_FATAL ANY
@@ -58,6 +28,38 @@ add_definitions(-DAPP_VERSION_MAJOR=0)
 add_definitions(-DAPP_VERSION_MINOR=1)
 add_definitions(-DHW_VERSION_MAJOR=0)
 add_definitions(-DHW_VERSION_MINOR=0)
-
-# 6. (Recommended) Set node name
 add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")
+
+# Build dependencies
+set(LIBPARAMS_PLATFORM ubuntu)
+add_subdirectory(${LIBPARAMS_PATH} ${BUILD_UBUNTU_DIR}/libparams)
+
+# Build libDronecanApp
+set(CAN_PLATFORM socketcan)
+add_subdirectory(${ROOT_DIR} ${BUILD_UBUNTU_LIB_DRONECAN_APP_DIR})
+
+# Build application
+add_executable(${PROJECT_NAME}
+  ${EXAMPLES_UBUNTU_DIR}/main.cpp
+  ${EXAMPLES_UBUNTU_DIR}/params.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} DronecanApp)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${EXAMPLES_UBUNTU_DIR}
+)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+  -Wall
+  -Wextra
+  -Wfloat-equal
+  -Werror
+  -Wundef
+  -Wshadow
+  -Wpointer-arith
+  -Wunreachable-code
+  -Wstrict-overflow=5
+  -Wwrite-strings
+  -Wswitch-default
+)
