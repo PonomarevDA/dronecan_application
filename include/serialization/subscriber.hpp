@@ -20,38 +20,26 @@
 template <typename MessageType>
 struct DronecanSubscriberTraits;
 
-template <>
-struct DronecanSubscriberTraits<RawCommand_t> {
-    static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) {
-        return uavcanSubscribeEscRawCommand(callback);
-    }
-
-    static inline int8_t deserialize(CanardRxTransfer* transfer, RawCommand_t* msg) {
-        return dronecan_equipment_esc_raw_command_deserialize(transfer, msg);
-    }
+#define DEFINE_SUBSCRIBER_TRAITS(MessageType, SubscribeFunction, DeserializeFunction) \
+template <> \
+struct DronecanSubscriberTraits<MessageType> { \
+    static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) { \
+        return SubscribeFunction(callback); \
+    } \
+    static inline int8_t deserialize(CanardRxTransfer* transfer, MessageType* msg) { \
+        return DeserializeFunction(transfer, msg); \
+    } \
 };
 
-template <>
-struct DronecanSubscriberTraits<ArrayCommand_t> {
-    static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) {
-        return uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND, callback);
-    }
-
-    static inline int8_t deserialize(CanardRxTransfer* transfer, ArrayCommand_t* msg) {
-        return dronecan_equipment_actuator_arraycommand_deserialize(transfer, msg);
-    }
-};
-
-template <>
-struct DronecanSubscriberTraits<LightsCommand_t> {
-    static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) {
-        return uavcanSubscribe(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND, callback);
-    }
-
-    static inline int8_t deserialize(CanardRxTransfer* transfer, LightsCommand_t* msg) {
-        return dronecan_equipment_indication_lights_command_deserialize(transfer, msg);
-    }
-};
+DEFINE_SUBSCRIBER_TRAITS(RawCommand_t,
+                         uavcanSubscribeEscRawCommand,
+                         dronecan_equipment_esc_raw_command_deserialize)
+DEFINE_SUBSCRIBER_TRAITS(ArrayCommand_t,
+                         uavcanSubscribeActuatorArrayCommand,
+                         dronecan_equipment_actuator_arraycommand_deserialize)
+DEFINE_SUBSCRIBER_TRAITS(LightsCommand_t,
+                         uavcanSubscribeIndicationLightsCommand,
+                         dronecan_equipment_indication_lights_command_deserialize)
 
 
 template <typename MessageType>

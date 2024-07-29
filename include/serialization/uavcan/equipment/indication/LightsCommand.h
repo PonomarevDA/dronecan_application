@@ -102,6 +102,10 @@ static inline int8_t dronecan_equipment_indication_lights_command_publish(
     return 0;
 }
 
+static inline int8_t uavcanSubscribeIndicationLightsCommand(void (*transfer_callback)(CanardRxTransfer*)) {
+    return uavcanSubscribe(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND, transfer_callback);
+}
+
 #ifdef __cplusplus
 }
 #endif
