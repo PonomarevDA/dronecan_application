@@ -24,5 +24,8 @@ clone_dependencies:
 clean:
 	rm -rf build/examples/
 
+cpplint:
+	cpplint src/*.c include/application/*.h include/serialization/*.h include/serialization/*/*/*.h include/serialization/*/*/*/*.h
+
 distclean:
 	rm -rf build/
