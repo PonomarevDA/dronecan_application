@@ -29,6 +29,7 @@ cpplint:
 	cpplint src/*.c include/application/*.h include/serialization/*.h include/serialization/*/*/*.h include/serialization/*/*/*/*.h
 cppcheck: clone_dependencies
 	./scripts/code_style/cppcheck.sh
-
+crlf:
+	./scripts/code_style/check_crlf.sh
 distclean:
 	rm -rf build/
