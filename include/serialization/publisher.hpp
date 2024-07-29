@@ -21,47 +21,21 @@
 template <typename MessageType>
 struct DronecanPublisherTraits;
 
-template <>
-struct DronecanPublisherTraits<ActuatorStatus_t> {
-    static inline int8_t publish_once(const ActuatorStatus_t& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_actuator_status_publish(&msg, inout_transfer_id);
-    }
+#define DEFINE_PUBLISHER_TRAITS(MessageType, PublishFunction) \
+template <> \
+struct DronecanPublisherTraits<MessageType> { \
+    static inline int8_t publish_once(const MessageType& msg, uint8_t* inout_transfer_id) { \
+        return PublishFunction(&msg, inout_transfer_id); \
+    } \
 };
 
-template <>
-struct DronecanPublisherTraits<CircuitStatus_t> {
-    static inline int8_t publish_once(const CircuitStatus_t& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_circuit_status_publish(&msg, inout_transfer_id);
-    }
-};
+DEFINE_PUBLISHER_TRAITS(ActuatorStatus_t, dronecan_equipment_actuator_status_publish)
+DEFINE_PUBLISHER_TRAITS(CircuitStatus_t, dronecan_equipment_circuit_status_publish)
+DEFINE_PUBLISHER_TRAITS(Temperature_t, dronecan_equipment_temperature_publish)
+DEFINE_PUBLISHER_TRAITS(BatteryInfo_t, dronecan_equipment_battery_info_publish)
+DEFINE_PUBLISHER_TRAITS(EscStatus_t, dronecan_equipment_esc_status_publish)
+DEFINE_PUBLISHER_TRAITS(HardpointStatus, dronecan_equipment_hardpoint_status_publish)
 
-template <>
-struct DronecanPublisherTraits<Temperature_t> {
-    static inline int8_t publish_once(const Temperature_t& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_temperature_publish(&msg, inout_transfer_id);
-    }
-};
-
-template <>
-struct DronecanPublisherTraits<BatteryInfo_t> {
-    static inline int8_t publish_once(const BatteryInfo_t& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_battery_info_publish(&msg, inout_transfer_id);
-    }
-};
-
-template <>
-struct DronecanPublisherTraits<EscStatus_t> {
-    static inline int8_t publish_once(const EscStatus_t& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_esc_status_publish(&msg, inout_transfer_id);
-    }
-};
-
-template <>
-struct DronecanPublisherTraits<HardpointStatus> {
-    static inline int8_t publish_once(const HardpointStatus& msg, uint8_t* inout_transfer_id) {
-        return dronecan_equipment_hardpoint_status_publish(&msg, inout_transfer_id);
-    }
-};
 
 template <typename MessageType>
 class DronecanPublisher {
@@ -84,7 +58,7 @@ class DronecanPeriodicPublisher : public DronecanPublisher<MessageType> {
 public:
     DronecanPeriodicPublisher(float frequency) :
         DronecanPublisher<MessageType>(),
-        PUB_PERIOD_MS(1000.0f / std::clamp(frequency, 0.001f, 100.0f)) {};
+        PUB_PERIOD_MS(static_cast<uint32_t>(1000.0f / std::clamp(frequency, 0.001f, 100.0f))) {};
 
     inline void spinOnce() {
         auto crnt_time_ms = uavcanGetTimeMs();
@@ -97,8 +71,8 @@ public:
     }
 
 private:
-    const uint32_t PUB_PERIOD_MS{1000};
-    uint32_t next_pub_time_ms = PUB_PERIOD_MS;
+    const uint32_t PUB_PERIOD_MS;
+    uint32_t next_pub_time_ms{500};
 };
 
 #endif  // SERIALZIATION_PUBLISHER_HPP_
