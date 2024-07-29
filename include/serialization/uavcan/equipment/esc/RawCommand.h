@@ -31,6 +31,7 @@
  */
 typedef struct {
     int16_t raw_cmd[NUMBER_OF_RAW_CMD_CHANNELS];
+    uint8_t size;
 } RawCommand_t;
 
 #ifdef __cplusplus
@@ -56,6 +57,8 @@ static inline int8_t dronecan_equipment_esc_raw_command_deserialize(
         obj->raw_cmd[ch_num] = temp_raw_cmd;
         offset += RAWCOMMAND_BIT_LEN;
     }
+
+    obj->size = ch_num;
 
     return ch_num;
 }
@@ -114,6 +117,11 @@ static inline int8_t dronecan_equipment_esc_raw_command_publish(const RawCommand
 
     return 0;
 }
+
+static inline int8_t uavcanSubscribeEscRawCommand(void (*transfer_callback)(CanardRxTransfer*)) {
+    return uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND, transfer_callback);
+}
+
 #ifdef __cplusplus
 }
 #endif

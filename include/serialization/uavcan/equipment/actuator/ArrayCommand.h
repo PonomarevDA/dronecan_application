@@ -39,6 +39,7 @@ typedef struct {
  */
 typedef struct {
     Command_t commads[NUMBER_OF_ACTUATOR_ARRAY_COMMANDS];
+    uint8_t size;
 } ArrayCommand_t;
 
 #ifdef __cplusplus
@@ -69,6 +70,9 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_deserialize(
         offset += 16;
         obj->commads[ch_num].command_value = canardConvertFloat16ToNativeFloat(f16_dummy);
     }
+
+    obj->size = ch_num;
+
     return ch_num;
 }
 
