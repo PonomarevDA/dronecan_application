@@ -13,6 +13,7 @@
 #include "dronecan.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
 #include "uavcan/equipment/power/BatteryInfo.h"
+#include "uavcan/equipment/temperature/Temperature.h"
 
 template <typename MessageType>
 struct DronecanPublisherTraits;
@@ -21,6 +22,13 @@ template <>
 struct DronecanPublisherTraits<CircuitStatus_t> {
     static inline int8_t publish_once(const CircuitStatus_t& msg, uint8_t* inout_transfer_id) {
         return dronecan_equipment_circuit_status_publish(&msg, inout_transfer_id);
+    }
+};
+
+template <>
+struct DronecanPublisherTraits<Temperature_t> {
+    static inline int8_t publish_once(const Temperature_t& msg, uint8_t* inout_transfer_id) {
+        return dronecan_equipment_temperature_publish(&msg, inout_transfer_id);
     }
 };
 
