@@ -3,6 +3,9 @@
  *  Distributed under the terms of the GPL v3 license, available in the file LICENSE.
 ***/
 
+#ifndef UAVCAN_EQUIPMENT_HARDPOINT_STATUS_H_
+#define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_H_
+
 #include "dronecan.h"
 #include "serialization_internal.h"
 
@@ -77,3 +80,5 @@ static inline int8_t dronecan_equipment_hardpoint_status_publish(
 #ifdef __cplusplus
 }
 #endif
+
+#endif  // UAVCAN_EQUIPMENT_HARDPOINT_STATUS_H_
