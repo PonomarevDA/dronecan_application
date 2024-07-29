@@ -9,7 +9,6 @@
 #define SERIALZIATION_SUBSCRIBER_HPP_
 
 #include <stdint.h>
-#include <iostream>
 #include <array>
 #include "dronecan.h"
 #include "uavcan/equipment/esc/RawCommand.h"
@@ -55,9 +54,6 @@ struct DronecanSubscriberTraits<LightsCommand_t> {
 };
 
 
-static inline std::array<void*, DRONECAN_MAX_SUBS_AMOUNT> instancies{};
-
-
 template <typename MessageType>
 class DronecanSubscriber {
 public:
@@ -67,7 +63,7 @@ public:
         user_callback = callback;
         filter = filter_;
         auto sub_id = DronecanSubscriberTraits<MessageType>::subscribe(transfer_callback);
-        instancies[sub_id] = this;
+        instances[sub_id] = this;
         return sub_id;
     }
 
@@ -77,7 +73,7 @@ public:
             return;
         }
 
-        auto instance = static_cast<DronecanSubscriber*>(instancies[transfer->sub_id]);
+        auto instance = static_cast<DronecanSubscriber*>(instances[transfer->sub_id]);
         if (instance == nullptr) {
             return;
         }
@@ -89,6 +85,7 @@ public:
         instance->user_callback(msg);
     }
 
+    static inline std::array<void*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
     static inline MessageType msg = {};
     void (*user_callback)(const MessageType&){nullptr};
     bool (*filter)(const MessageType&){nullptr};
