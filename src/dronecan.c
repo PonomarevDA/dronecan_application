@@ -22,7 +22,7 @@
 
 #ifndef GIT_HASH
     #warning "GIT_HASH has been assigned to 0 by default."
-    #define GIT_HASH            0
+    #define GIT_HASH            (uint64_t)0
 #endif
 
 #ifndef APP_VERSION_MAJOR
@@ -370,7 +370,6 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     // uint8[<=92] recv_name
     uint8_t recv_name[MAX_PARAM_NAME_LENGTH] = "";
     uint16_t param_name_length = uavcanParamGetSetDecodeName(transfer, offset, recv_name);
-    offset += 8 * param_name_length;
 
     // uint13 index
     uint16_t param_idx;

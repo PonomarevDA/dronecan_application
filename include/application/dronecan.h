@@ -39,8 +39,8 @@ void uavcanSpinOnce();
   * The application will automatically handle callbacks.
   * Callbacks should end ASAP.
   */
-int8_t uavcanSubscribe(uint64_t data_type_signature,
-                       uint16_t data_type_id,
+int8_t uavcanSubscribe(uint64_t signature,
+                       uint16_t id,
                        void (callback)(CanardRxTransfer* transfer));
 
 
