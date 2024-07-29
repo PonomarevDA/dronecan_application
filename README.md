@@ -2,7 +2,7 @@
 
 # DroneCAN application
 
-This is C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform specific drivers and serialization together to build a minimal DroneCAN application.
+This is a C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform-specific drivers and serialization together to build a minimal DroneCAN application.
 
 A minimal application includes the following protocol-features:
 
@@ -14,7 +14,7 @@ A minimal application includes the following protocol-features:
 | 4 | RPC-service | [uavcan.protocol.RestartNode](https://legacy.uavcan.org/Specification/7._List_of_standard_data_types/#restartnode) |
 | 5 | RPC-service | [uavcan.protocol.GetTransportStats](https://legacy.uavcan.org/Specification/7._List_of_standard_data_types/#gettransportstats) |
 
-The following auxilliary features should be provided as well:
+The following auxiliary features should be provided as well:
 
 - [x] actuator
 - [ ] airspeed
@@ -36,21 +36,10 @@ The library should support the following platforms:
 - [x] stm32g0: FDCAN based on STM32 HAL
 - [ ] stm32f103: DroneCAN/Serial based on STM32 HAL
 
-## Design
+## Dependencies
 
-The source code is divided into a few folders:
-
-- `application` has the main source code. It brings up all uavcan/protocol features such as NodeStatus, GetNodeInfo, Params, RestartNode, GetTransportStats.
-- `examples` provides examples with this library on different platforms
-- `serialization` has a set of headers for data serialization from C-structures to DroneCAN and vice versa
-- `Libs` - dependencies
-- `platform_specific` has a platform specific drivers
-- `tests` - unit tests
-
-
-Notes:
-- It depends on libparams v0.8.4 library.
-- It is not thread safe.
+- [libparams](https://github.com/PonomarevDA/libparams) v0.8.4 library.
+- [dronecan/libcanard](https://github.com/dronecan/libcanard)
 
 ## How to integrate the library into a project
 
@@ -81,9 +70,11 @@ target_include_directories(${EXECUTABLE} PRIVATE
 ```
 
 
-## Minimal application example
+## Usage example
 
-The example is avaliable in [examples/ubuntu/minimal](examples/ubuntu/minimal/) folder.
+**1. Initialize**
+
+Include `dronecan.h` header and call `uavcanInitApplication` in the beginning of the application. Call `uavcanSpinOnce` periodically.
 
 ```c++
 // Include dronecan.h header file
@@ -104,62 +95,97 @@ while (true) {
 }
 ```
 
-A usage example is shown below:
+**2. Add publisher**
 
-<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_minimal.gif" alt="drawing">
-
-## Publisher example
-
-A CircuitStatus publisher example is avaliable in [examples/publisher/circuit_status](examples/publisher/circuit_status/) folder.
-
-A BatteryInfo publisher example is shown below:
+Adding a publisher is very easy. Include `publisher.hpp` header, create an instance of the required publisher and just call `publish` when you need. Here is a BatteryInfo publisher example:
 
 ```c++
-// Include necessary header files
 #include "dronecan.h"
-#include "uavcan/equipment/power/BatteryInfo.h"
+#include "publisher.hpp"
 
-// Create a message and trasnfer id
-BatteryInfo_t battery_info{};
-static uint8_t transfer_id = 0;
+// Create an instance of the publisher
+DronecanPublisher<BatteryInfo_t> battery_info_pub;
 
-// Publish a message and increase the transfer_id:
-dronecan_equipment_battery_info_publish(&battery_info, &transfer_id);
-transfer_id++;
+// Modify the message
+battery_info_pub.msg.voltage = 10.0f;
+
+// Publish the message
+battery_info_pub.publish();
 ```
 
-A CircuitStatus usage example is shown below:
+Alternatively, you can create a periodic publisher:
 
-<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_publisher.gif" alt="drawing">
+```c++
+const auto PUBLISH_RATE_HZ = 1.0f;
+DronecanPeriodicPublisher<BatteryInfo_t> battery_info_pub(PUBLISH_RATE_HZ);
 
-## Subscriber example
+while (true) {
+    ...
+    battery_info_pub.spinOnce();
+    ...
+}
+```
 
-There are [Ubuntu RawCommand and ArrayCommand subscriber](examples/ubuntu/subscribers/commands) and [Ubuntu LightsCommand subscriber](examples/ubuntu/subscribers/lights_command) examples.
+**3. Add subscriber**
 
-Let's consider a RawCommand subscriber example.
+Adding a subscriber is easy as well. Let's consider a RawCommand subscriber example. Include `subscriber.hpp` header, create a callback for your application and instance of the required subscriber, then initilize it.
 
 ```c++
 // Include necessary header files
 #include "dronecan.h"
-#include "uavcan/equipment/esc/RawCommand.h"
+#include "subscriber.hpp"
 
 // Add a callback handler function
-void callback(CanardRxTransfer* transfer) {
-    RawCommand_t raw_command;
-    int8_t res = dronecan_equipment_esc_raw_command_deserialize(transfer, &raw_command);
-    if (res > 0) {
-        // Do something very quickly, or save the command for later use
-    } else {
-        // Handle a real time error
-    }
+void rc_callback(const RawCommand_t& msg) {
+    std::cout << "Get RawCommand with " << (int)msg.size << " commands." << std::endl;
 }
 
 // Add the subscription:
-auto sub_id = uavcanSubscribe(UAVCAN_EQUIPMENT_ESC_RAWCOMMAND, callback);
-if (sub_id < 0) {
-    // Handle an initialization error
+DronecanSubscriber<RawCommand_t> raw_command_sub;
+if (raw_command_sub.init(&rc_callback) < 0) {
+    // handle error
 }
 ```
+
+Sometimes for subscriber you want to specify a filter. For example, you may want to subscribe on a specific command channel or sensor ID. Let's consider an ArrayCommand example with filter that will only pass the messages with actuator ID = 0.
+
+```c++
+static const uint8_t FILTER_ACTUATOR_ID = 0;
+
+void ac_callback(const ArrayCommand_t& msg) {
+    std::cout << "Get ArrayCommand_t with " << msg.size << "commands." << std::endl;
+}
+bool ac_filter(const ArrayCommand_t& msg) {
+    for (size_t idx = 0; idx < msg.size; idx++) {
+        if (msg.commads[idx].actuator_id == FILTER_ACTUATOR_ID) {
+            return true;
+        }
+    }
+    return false;
+}
+
+DronecanSubscriber<ArrayCommand_t> array_command_sub;
+array_command_sub.init(&ac_callback, &ac_filter);
+```
+
+**Run example**
+
+You can run a provided example in SITL mode. Just run:
+
+```bash
+git clone git@github.com:PonomarevDA/dronecan_application.git --recursive
+make ubuntu
+```
+
+In gui_tool you will see:
+
+<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_minimal.gif" alt="drawing">
+
+
+<img src="https://raw.githubusercontent.com/wiki/PonomarevDA/dronecan_application/assets/ubuntu_publisher.gif" alt="drawing">
+
+
+> You can find the provided SITL application in [examples/ubuntu](examples/ubuntu) folder.
 
 ## License
 
