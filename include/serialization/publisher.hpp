@@ -14,9 +14,19 @@
 #include "uavcan/equipment/power/CircuitStatus.h"
 #include "uavcan/equipment/power/BatteryInfo.h"
 #include "uavcan/equipment/temperature/Temperature.h"
+#include "uavcan/equipment/actuator/Status.h"
+#include "uavcan/equipment/esc/Status.h"
+#include "uavcan/equipment/hardpoint/Status.h"
 
 template <typename MessageType>
 struct DronecanPublisherTraits;
+
+template <>
+struct DronecanPublisherTraits<ActuatorStatus_t> {
+    static inline int8_t publish_once(const ActuatorStatus_t& msg, uint8_t* inout_transfer_id) {
+        return dronecan_equipment_actuator_status_publish(&msg, inout_transfer_id);
+    }
+};
 
 template <>
 struct DronecanPublisherTraits<CircuitStatus_t> {
@@ -36,6 +46,20 @@ template <>
 struct DronecanPublisherTraits<BatteryInfo_t> {
     static inline int8_t publish_once(const BatteryInfo_t& msg, uint8_t* inout_transfer_id) {
         return dronecan_equipment_battery_info_publish(&msg, inout_transfer_id);
+    }
+};
+
+template <>
+struct DronecanPublisherTraits<EscStatus_t> {
+    static inline int8_t publish_once(const EscStatus_t& msg, uint8_t* inout_transfer_id) {
+        return dronecan_equipment_esc_status_publish(&msg, inout_transfer_id);
+    }
+};
+
+template <>
+struct DronecanPublisherTraits<HardpointStatus> {
+    static inline int8_t publish_once(const HardpointStatus& msg, uint8_t* inout_transfer_id) {
+        return dronecan_equipment_hardpoint_status_publish(&msg, inout_transfer_id);
     }
 };
 
