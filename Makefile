@@ -24,7 +24,9 @@ clone_dependencies:
 clean:
 	rm -rf build/examples/
 
-code_style: cpplint cppcheck
+code_style: cpplint cppcheck crlf
+astyle:
+	./scripts/code_style/check_astyle.py src include --astylerc scripts/code_style/astylerc
 cpplint:
 	cpplint src/*.c include/application/*.h include/serialization/*.h include/serialization/*/*/*.h include/serialization/*/*/*/*.h
 cppcheck: clone_dependencies

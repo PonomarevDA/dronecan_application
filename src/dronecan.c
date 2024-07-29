@@ -281,7 +281,7 @@ static bool shouldAcceptTransfer(__attribute__((unused)) const CanardInstance* i
   * The library calls this function only when shouldAcceptTransfer returns true
   */
 static void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
-                        CanardRxTransfer* transfer) {
+                               CanardRxTransfer* transfer) {
     for (uint8_t sub_idx = 0; sub_idx < subs_amount; sub_idx++) {
         if (transfer->data_type_id == subscribers[sub_idx].id) {
             transfer->sub_id = sub_idx;
@@ -410,15 +410,15 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
     uint8_t opcode_buffer[7];
     int8_t ok;
     switch (opcode) {
-    case 0:
-        ok = (paramsSave() == -1) ? 0 : 1;
-        break;
-    case 1:
-        ok = (paramsResetToDefault() < 0) ? 0 : 1;
-        break;
-    default:
-        ok = -1;
-        break;
+        case 0:
+            ok = (paramsSave() == -1) ? 0 : 1;
+            break;
+        case 1:
+            ok = (paramsResetToDefault() < 0) ? 0 : 1;
+            break;
+        default:
+            ok = -1;
+            break;
     }
     uavcanProtocolParamExecuteOpcodeEncode(opcode_buffer, ok);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, opcode_buffer, 7);
