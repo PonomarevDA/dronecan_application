@@ -16,6 +16,10 @@
 extern "C" {
 #endif
 
+#ifndef DRONECAN_MAX_SUBS_AMOUNT
+    #define DRONECAN_MAX_SUBS_AMOUNT     10
+#endif
+
 
 /**
   * @brief Initialize the node and minimal required services

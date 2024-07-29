@@ -45,10 +45,6 @@
     #define HW_VERSION_MINOR    0
 #endif
 
-#ifndef MAX_SUBS_AMOUNT
-    #define MAX_SUBS_AMOUNT     10
-#endif
-
 #ifndef CANARD_BUFFER_SIZE
     #define CANARD_BUFFER_SIZE      1024
 #endif
@@ -69,7 +65,7 @@ typedef struct {
 static CanardInstance g_canard;
 static NodeStatus_t node_status;
 static uint8_t buffer[CANARD_BUFFER_SIZE];
-static Subscriber_t subscribers[MAX_SUBS_AMOUNT] = {0x00};
+static Subscriber_t subscribers[DRONECAN_MAX_SUBS_AMOUNT] = {0x00};
 static uint8_t subs_amount = 0;
 static uint8_t transfer_id = 0;
 static GetTransportStats_t iface_stats = {0};
@@ -127,7 +123,7 @@ void uavcanSpinOnce() {
 }
 
 int8_t uavcanSubscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
-    if (subs_amount >= MAX_SUBS_AMOUNT || signature == 0 || id == 0 || callback == NULL) {
+    if (subs_amount >= DRONECAN_MAX_SUBS_AMOUNT || signature == 0 || id == 0 || callback == NULL) {
         return -1;
     }
     subscribers[subs_amount].signature = signature;
@@ -288,6 +284,7 @@ static void onTransferReceived(__attribute__((unused)) CanardInstance* ins,
                         CanardRxTransfer* transfer) {
     for (uint8_t sub_idx = 0; sub_idx < subs_amount; sub_idx++) {
         if (transfer->data_type_id == subscribers[sub_idx].id) {
+            transfer->sub_id = sub_idx;
             subscribers[sub_idx].callback(transfer);
         }
     }

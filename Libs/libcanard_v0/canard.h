@@ -443,6 +443,7 @@ struct CanardRxTransfer
     uint8_t transfer_id;                    ///< 0 to 31
     uint8_t priority;                       ///< 0 to 31
     uint8_t source_node_id;                 ///< 1 to 127, or 0 if the source is anonymous
+    uint8_t sub_id;
 #if CANARD_ENABLE_TAO_OPTION
     bool tao;
 #endif
