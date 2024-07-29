@@ -24,8 +24,11 @@ clone_dependencies:
 clean:
 	rm -rf build/examples/
 
+code_style: cpplint cppcheck
 cpplint:
 	cpplint src/*.c include/application/*.h include/serialization/*.h include/serialization/*/*/*.h include/serialization/*/*/*/*.h
+cppcheck: clone_dependencies
+	./scripts/code_style/cppcheck.sh
 
 distclean:
 	rm -rf build/
