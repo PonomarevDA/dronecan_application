@@ -8,6 +8,7 @@
 #ifndef UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_H_
 #define UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND_H_
 
+#include "dronecan.h"
 #include "serialization_internal.h"
 
 #define UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_SIGNATURE                 0x8d9a6a920c1d616c
@@ -119,6 +120,10 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_publish(const Arra
                   num_cmds * UAVCAN_EQUIPMENT_ACTUATOR_COMMAND_MESSAGE_SIZE);
 
     return 0;
+}
+
+static inline int8_t uavcanSubscribeActuatorArrayCommand(void (*transfer_callback)(CanardRxTransfer*)) {
+    return uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND, transfer_callback);
 }
 
 #ifdef __cplusplus
