@@ -15,7 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip3 install cpplint
-      - name: cpplint cyphal
-        run: |
-          cpplint application/*.c application/*.h
-          cpplint serialization/*.h serialization/*/*/*.h serialization/*/*/*/*.h
+      - run: make cpplint
