@@ -5,17 +5,18 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#ifndef UAVCAN_EQUIPMENT_TEMPERATURE_H_
-#define UAVCAN_EQUIPMENT_TEMPERATURE_H_
+#ifndef UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_H_
+#define UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_H_
 
 #include <stdint.h>
 #include <stdbool.h>
 #include "dronecan.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_TEMPERATURE_ID                    1110
-#define UAVCAN_EQUIPMENT_TEMPERATURE_SIGNATURE             0x70261c28a94144c6
-#define UAVCAN_EQUIPMENT_TEMPERATURE_MESSAGE_SIZE          5  // 40 bits
+#define UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_ID                  1110
+#define UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_SIGNATURE           0x70261c28a94144c6
+#define UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE        5  // 40 bits
+#define UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE                     UAVCAN_EXPAND(UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE)
 
 typedef enum{
     ERROR_FLAG_OVERHEATING = 1,
@@ -43,7 +44,7 @@ static inline int8_t dronecan_equipment_temperature_serialize(
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_EQUIPMENT_TEMPERATURE_MESSAGE_SIZE) {
+    if (capacity_bytes < UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE) {
         return -3;
     }
 
@@ -58,15 +59,15 @@ static inline int8_t dronecan_equipment_temperature_publish(
     const Temperature_t* const obj,
     uint8_t* inout_transfer_id)
 {
-    uint8_t buffer[UAVCAN_EQUIPMENT_TEMPERATURE_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_TEMPERATURE_MESSAGE_SIZE;
+    uint8_t buffer[UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE];
+    size_t inout_buffer_size = UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE;
     dronecan_equipment_temperature_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_TEMPERATURE_SIGNATURE,
-                  UAVCAN_EQUIPMENT_TEMPERATURE_ID,
+    uavcanPublish(UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_SIGNATURE,
+                  UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_ID,
                   inout_transfer_id,
                   CANARD_TRANSFER_PRIORITY_MEDIUM,
                   buffer,
-                  UAVCAN_EQUIPMENT_TEMPERATURE_MESSAGE_SIZE);
+                  UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE);
 
     return 0;
 }
@@ -76,4 +77,4 @@ static inline int8_t dronecan_equipment_temperature_publish(
 #endif
 
 
-#endif  // UAVCAN_EQUIPMENT_TEMPERATURE_H_
+#endif  // UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_H_

@@ -11,9 +11,10 @@
 #include "serialization_internal.h"
 #include "dronecan.h"
 
-#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_ID                   1027
-#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_SIGNATURE            0xc77df38ba122f5da
-#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE         17
+#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_ID               1027
+#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_SIGNATURE        0xc77df38ba122f5da
+#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE     17
+#define UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA                  UAVCAN_EXPAND(UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA)
 
 /**
  * @brief uavcan.equipment.air_data.RawAirData
