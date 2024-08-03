@@ -11,12 +11,18 @@
 #include <stdint.h>
 #include <algorithm>
 #include "dronecan.h"
-#include "uavcan/equipment/power/CircuitStatus.h"
-#include "uavcan/equipment/power/BatteryInfo.h"
-#include "uavcan/equipment/temperature/Temperature.h"
 #include "uavcan/equipment/actuator/Status.h"
+#include "uavcan/equipment/air_data/IndicatedAirspeed.h"
+#include "uavcan/equipment/air_data/RawAirData.h"
+#include "uavcan/equipment/air_data/StaticPressure.h"
+#include "uavcan/equipment/air_data/StaticTemperature.h"
+#include "uavcan/equipment/air_data/TrueAirspeed.h"
 #include "uavcan/equipment/esc/Status.h"
 #include "uavcan/equipment/hardpoint/Status.h"
+#include "uavcan/equipment/power/CircuitStatus.h"
+#include "uavcan/equipment/power/BatteryInfo.h"
+#include "uavcan/equipment/device/Temperature.h"
+#include "dronecan/sensors/hygrometer/Hygrometer.h"
 
 template <typename MessageType>
 struct DronecanPublisherTraits;
@@ -29,12 +35,18 @@ struct DronecanPublisherTraits<MessageType> { \
     } \
 };
 
-DEFINE_PUBLISHER_TRAITS(ActuatorStatus_t, dronecan_equipment_actuator_status_publish)
-DEFINE_PUBLISHER_TRAITS(CircuitStatus_t, dronecan_equipment_circuit_status_publish)
-DEFINE_PUBLISHER_TRAITS(Temperature_t, dronecan_equipment_temperature_publish)
-DEFINE_PUBLISHER_TRAITS(BatteryInfo_t, dronecan_equipment_battery_info_publish)
-DEFINE_PUBLISHER_TRAITS(EscStatus_t, dronecan_equipment_esc_status_publish)
-DEFINE_PUBLISHER_TRAITS(HardpointStatus, dronecan_equipment_hardpoint_status_publish)
+DEFINE_PUBLISHER_TRAITS(ActuatorStatus_t,   dronecan_equipment_actuator_status_publish)
+DEFINE_PUBLISHER_TRAITS(IndicatedAirspeed,  dronecan_equipment_air_data_indicated_airspeed_publish)
+DEFINE_PUBLISHER_TRAITS(RawAirData_t,       dronecan_equipment_air_data_raw_air_data_publish)
+DEFINE_PUBLISHER_TRAITS(StaticPressure,     dronecan_equipment_air_data_static_pressure_publish)
+DEFINE_PUBLISHER_TRAITS(StaticTemperature,  dronecan_equipment_air_data_static_temperature_publish)
+DEFINE_PUBLISHER_TRAITS(TrueAirspeed,       dronecan_equipment_air_data_true_airspeed_publish)
+DEFINE_PUBLISHER_TRAITS(EscStatus_t,        dronecan_equipment_esc_status_publish)
+DEFINE_PUBLISHER_TRAITS(HardpointStatus,    dronecan_equipment_hardpoint_status_publish)
+DEFINE_PUBLISHER_TRAITS(CircuitStatus_t,    dronecan_equipment_circuit_status_publish)
+DEFINE_PUBLISHER_TRAITS(Temperature_t,      dronecan_equipment_temperature_publish)
+DEFINE_PUBLISHER_TRAITS(BatteryInfo_t,      dronecan_equipment_battery_info_publish)
+DEFINE_PUBLISHER_TRAITS(Hygrometer,         dronecan_sensors_hygrometer_hygrometer_publish)
 
 
 template <typename MessageType>
