@@ -17,17 +17,17 @@ A minimal application includes the following protocol-features:
 The following auxiliary features should be provided as well:
 
 - [x] actuator
-- [ ] airspeed
-- [ ] baro
+- [x] airspeed
+- [x] baro
 - [x] circuit status
 - [x] fuel tank
 - [x] esc
-- [ ] ice
+- [x] ice
 - [x] indication
 - [x] power
-- [ ] rangefinder
+- [x] rangefinder
 - [ ] gnss
-- [ ] mag
+- [x] mag
 - [ ] etc
 
 The library should support the following platforms:
