@@ -12,6 +12,7 @@
 #include <algorithm>
 #include "dronecan.h"
 #include "uavcan/equipment/actuator/Status.h"
+#include "uavcan/equipment/ahrs/RawImu.h"
 #include "uavcan/equipment/air_data/IndicatedAirspeed.h"
 #include "uavcan/equipment/air_data/RawAirData.h"
 #include "uavcan/equipment/air_data/StaticPressure.h"
@@ -36,6 +37,7 @@ struct DronecanPublisherTraits<MessageType> { \
 };
 
 DEFINE_PUBLISHER_TRAITS(ActuatorStatus_t,   dronecan_equipment_actuator_status_publish)
+DEFINE_PUBLISHER_TRAITS(AhrsRawImu,         dronecan_equipment_ahrs_raw_imu_publish)
 DEFINE_PUBLISHER_TRAITS(IndicatedAirspeed,  dronecan_equipment_air_data_indicated_airspeed_publish)
 DEFINE_PUBLISHER_TRAITS(RawAirData_t,       dronecan_equipment_air_data_raw_air_data_publish)
 DEFINE_PUBLISHER_TRAITS(StaticPressure,     dronecan_equipment_air_data_static_pressure_publish)
