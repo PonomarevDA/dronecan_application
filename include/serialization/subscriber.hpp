@@ -15,6 +15,7 @@
 #include "uavcan/equipment/actuator/ArrayCommand.h"
 #include "uavcan/equipment/indication/LightsCommand.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
+#include "uavcan/equipment/safety/ArmingStatus.h"
 
 
 template <typename MessageType>
@@ -40,6 +41,9 @@ DEFINE_SUBSCRIBER_TRAITS(ArrayCommand_t,
 DEFINE_SUBSCRIBER_TRAITS(LightsCommand_t,
                          uavcanSubscribeIndicationLightsCommand,
                          dronecan_equipment_indication_lights_command_deserialize)
+DEFINE_SUBSCRIBER_TRAITS(ArmingStatus,
+                         uavcanSubscribeArmingStatus,
+                         dronecan_equipment_safety_arming_status_deserialize)
 
 
 template <typename MessageType>
