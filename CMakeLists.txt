@@ -21,6 +21,7 @@ set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
     ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
     ${DRONECAN_LIB_DIR}/src/dronecan.c
+    ${DRONECAN_LIB_DIR}/src/logger.cpp
     ${DRONECAN_LIB_DIR}/src/weak.c
     ${libparamsSrc}
 )
