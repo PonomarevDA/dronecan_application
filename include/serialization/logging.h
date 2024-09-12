@@ -8,7 +8,7 @@
 
 #include "uavcan/protocol/debug/LogMessage.h"
 
-static inline bool set_source(DebugLogMessage_t msg, const char *str) {
+static inline bool set_source(DebugLogMessage_t &msg, const char *str) {
     if (str == nullptr) {
         return false;
     }
@@ -19,7 +19,7 @@ static inline bool set_source(DebugLogMessage_t msg, const char *str) {
     return true;
 }
 
-static inline bool set_text(DebugLogMessage_t msg, const char *str) {
+static inline bool set_text(DebugLogMessage_t &msg, const char *str) {
     if (str == nullptr) {
         return false;
     }
