@@ -104,7 +104,7 @@ int16_t uavcanInitApplication(uint8_t node_id) {
     hw_version.major = HW_VERSION_MAJOR;
     hw_version.minor = HW_VERSION_MINOR;
 
-    uavcanReadUniqueID(hw_version.unique_id);
+    platformSpecificReadUniqueID(hw_version.unique_id);
 
     uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
@@ -116,7 +116,7 @@ int16_t uavcanInitApplication(uint8_t node_id) {
 }
 
 void uavcanSpinOnce() {
-    uint32_t crnt_time_ms = uavcanGetTimeMs();
+    uint32_t crnt_time_ms = platformSpecificGetTimeMs();
     uavcanProcessSending();
     uavcanProcessReceiving(crnt_time_ms);
     uavcanSpinNodeStatus(crnt_time_ms);
@@ -425,7 +425,8 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
 }
 
 static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
-    uavcanRestartNode();
+    uint8_t response_buffer = platformSpecificRequestRestart() ? 128 : 0;
+    uavcanRespond(transfer, UAVCAN_PROTOCOL_RESTART_NODE, &response_buffer, 1);
 }
 
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {

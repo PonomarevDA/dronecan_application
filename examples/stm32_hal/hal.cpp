@@ -9,7 +9,7 @@
 #include <string.h>
 #include "dronecan.h"
 
-void uavcanReadUniqueID(uint8_t out_uid[4]) {
+void platformSpecificReadUniqueID(uint8_t out_uid[4]) {
     const uint32_t UNIQUE_ID_16_BYTES[4] = {
         HAL_GetUIDw0(),
         HAL_GetUIDw1(),
@@ -19,10 +19,10 @@ void uavcanReadUniqueID(uint8_t out_uid[4]) {
     memset(out_uid, UNIQUE_ID_16_BYTES, 16);
 }
 
-void uavcanRestartNode() {
-    HAL_NVIC_SystemReset();
+bool platformSpecificRequestRestart() {
+    return false;
 }
 
-uint32_t uavcanGetTimeMs() {
+uint32_t platformSpecificGetTimeMs() {
     return HAL_GetTick();
 }

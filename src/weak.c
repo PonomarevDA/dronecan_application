@@ -8,10 +8,10 @@
 #include <string.h>
 #include "dronecan_application_internal.h"
 
-__attribute__((weak)) void uavcanRestartNode() {
-    asm("NOP");
+__attribute__((weak)) bool platformSpecificRequestRestart() {
+    return false;
 }
 
-__attribute__((weak)) void uavcanReadUniqueID(uint8_t out_uid[16]) {
+__attribute__((weak)) void platformSpecificReadUniqueID(uint8_t out_uid[16]) {
     memset(out_uid, 0x00, 16);
 }
