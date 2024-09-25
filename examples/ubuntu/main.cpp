@@ -18,7 +18,7 @@
 /**
  * @brief Platform specific functions which should be provided by a user
  */
-uint32_t uavcanGetTimeMs() {
+uint32_t platformSpecificGetTimeMs() {
     static auto start_time = std::chrono::high_resolution_clock::now();
     auto crnt_time = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::milliseconds>(crnt_time - start_time).count();
@@ -91,7 +91,7 @@ int main() {
     DronecanPeriodicPublisher<CircuitStatus_t> circuit_status(2.0f);
     DronecanPeriodicPublisher<BatteryInfo_t> battery_info(1.0f);
 
-    while (uavcanGetTimeMs() < 50000) {
+    while (platformSpecificGetTimeMs() < 50000) {
         circuit_status.spinOnce();
         battery_info.spinOnce();
         uavcanSpinOnce();

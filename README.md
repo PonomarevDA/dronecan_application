@@ -187,6 +187,38 @@ In gui_tool you will see:
 
 > You can find the provided SITL application in [examples/ubuntu](examples/ubuntu) folder.
 
+## Platform specific notes
+
+There are a few functions that require an implementation. They are declared in [include/application/dronecan_application_internal.h](include/application/dronecan_application_internal.h).
+
+A user must provide the following function implementation:
+
+```c++
+/**
+  * @return the time in milliseconds since the application started.
+  * @note This function must be provided by a user!
+  */
+uint32_t platformSpecificGetTimeMs();
+```
+
+A user may also provide the implementation of the optional functions. These function have a week implementation in [src/weak.c](src/weak.c).
+
+```c++
+/**
+  * @return whether the request will be processed
+  * True  - the application will be restarted soon.
+  * False - the restarted is not supported or can't be handled at the moment.
+  * @note Implementation is recommended, but optional.
+  */
+bool platformSpecificRequestRestart();
+
+/**
+  * @param[out] out_id - hardware Unique ID
+  * @note Implementation is recommended, but optional.
+  */
+void platformSpecificReadUniqueID(uint8_t out_uid[16]);
+```
+
 ## License
 
 The software is distributed under term of MPL v2.0 license.

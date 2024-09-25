@@ -77,7 +77,7 @@ public:
         PUB_PERIOD_MS(static_cast<uint32_t>(1000.0f / std::clamp(frequency, 0.001f, 100.0f))) {};
 
     inline void spinOnce() {
-        auto crnt_time_ms = uavcanGetTimeMs();
+        auto crnt_time_ms = platformSpecificGetTimeMs();
         if (crnt_time_ms < next_pub_time_ms) {
             return;
         }
