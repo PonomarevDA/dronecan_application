@@ -71,6 +71,10 @@ static inline int8_t dronecan_equipment_hardpoint_command_publish(
     return 0;
 }
 
+static inline int8_t uavcanSubscribeHardpointCommand(void (*transfer_callback)(CanardRxTransfer*)) {
+    return uavcanSubscribe(UAVCAN_EQUIPMENT_HARDPOINT_COMMAND, transfer_callback);
+}
+
 #ifdef __cplusplus
 }
 #endif
