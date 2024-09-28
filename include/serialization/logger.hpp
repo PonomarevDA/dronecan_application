@@ -8,21 +8,25 @@
 
 #include <cstdio>
 #include "uavcan/protocol/debug/LogMessage.h"
-#include "logging.h"
 
-class Logger {
+class DronecanLogger {
 public:
-    explicit Logger(const char* source);
     /**
-     * @brief Optionally init source and len fields if the source is provided
-     * It can be a brief task/module name or something that can't be changed later.
+     * @brief Instanciate a LogMessage publisher.
+     * @param[in] source name should be as sort as possible. The maximum length is 31 symbols.
+     * @note If you can't give a source name on the instantiation time, you can call init later.
      */
-
-    int8_t init(const char* source);
+    explicit DronecanLogger(const char* source = "");
 
     /**
-     * @brief Logging with a different severity.
-     * Debug: use only if we compile with DEBUG build type (NDEBUG is not defined) , otherwise ignore.
+     * @brief This function is optional.
+     * Use it only when you can't assign a name in the constructor or want to update the name.
+     */
+    void init(const char* source);
+
+    /**
+     * @brief Use these functions if you know the logging level on compile time:
+     * Debug: is applied only if your build type is Debug. It is not compiled in Release builds.
      * Info/Warn: something that can be ignored or printed by the application severity level.
      * Error: always print.
      */
@@ -30,10 +34,29 @@ public:
     void log_info(const char* text);
     void log_warn(const char* text);
     void log_error(const char* text);
+
+    /**
+     * @brief Alternatively, you this if you want specifying the logging level in real time.
+     * @param[in] severity The severity level of the message.
+     * @param[in] text The message to log.
+     */
+    void log(uint8_t severity, const char* text);
+
+    /**
+     * @brief Global logging function that allows specifying severity, source, and text.
+     * @param[in] severity The severity level of the message.
+     * @param[in] source The source of the message.
+     * @param[in] text The message to log.
+     */
+    static void log_global(uint8_t severity, const char* source, const char* text);
+
 private:
-    uint8_t _transfer_id = 0;
+    static void publish(const DebugLogMessage_t& msg);
+
+    // Transfer ID is the same for all instances
+    static inline uint8_t _transfer_id;
+
     DebugLogMessage_t _msg;
-    void publish();
 };
 
 #endif  // SRC_LOGGER_HPP_
