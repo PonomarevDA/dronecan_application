@@ -31,7 +31,7 @@ extern "C" {
 static inline int8_t dronecan_equipment_safety_arming_status_deserialize(
     const CanardRxTransfer* transfer, ArmingStatus* obj)
 {
-    canardDecodeScalar(transfer, 0,      8, false, &obj);
+    canardDecodeScalar(transfer, 0,      8, false, obj);
 
     return 0;
 }
