@@ -332,7 +332,7 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
 
     uint8_t node_status_buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
     node_status.uptime_sec = (crnt_time_ms / 1000);
-    if (id_duplication_detected) {
+    if (id_duplication_detected && node_status.health < NODE_STATUS_HEALTH_WARNING) {
         if (last_node_status_msg_us + 2000000 < crnt_time_ms * 1000) {
             id_duplication_detected = false;
         } else {
