@@ -23,6 +23,24 @@ int16_t canDriverReceive(CanardCANFrame* const rx_frame, uint8_t can_driver_idx)
 
 int16_t canDriverTransmit(const CanardCANFrame* const tx_frame, uint8_t can_driver_idx);
 
+/*
+* @brief Get protocol of the CAN driver
+* @return 0 if protocol is Dronecan, 1 if Cyphal
+*/
+int8_t canDriverGetProtocol(uint8_t can_driver_idx) {
+    CanardCANFrame rx_frame;
+    while (true) {
+        if (canDriverReceive(&rx_frame, can_driver_idx) == 0) {
+            const uint8_t tail_byte = rx_frame.data[rx_frame.data_len - 1];
+            if (IS_START_OF_TRANSFER(tail_byte)) {
+                if (IS_END_OF_TRANSFER(tail_byte)) {
+                    return TOGGLE_BIT(tail_byte);
+                }
+            }
+        }
+    }
+}
+
 uint64_t canDriverGetRxOverflowCount();
 uint64_t canDriverGetErrorCount();
 
