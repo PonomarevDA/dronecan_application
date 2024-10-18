@@ -82,6 +82,7 @@ void uavcanStatsIncreaseUartErrors();
 void uavcanStatsIncreaseUartTx(uint32_t num);
 void uavcanStatsIncreaseUartRx(uint32_t num);
 uint64_t uavcanGetErrorCount();
+CanardFrameProtocol uavcanCheckProtocol();
 
 
 /**

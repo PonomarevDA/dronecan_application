@@ -89,6 +89,7 @@ void canardInit(CanardInstance* out_ins,
     out_ins->rx_states = NULL;
     out_ins->tx_queue = NULL;
     out_ins->user_reference = user_reference;
+    out_ins->protocol = CANARD_FRAME_UNKNOWN;
 #if CANARD_ENABLE_TAO_OPTION
     out_ins->tao_disabled = false;
 #endif
@@ -105,6 +106,10 @@ void* canardGetUserReference(CanardInstance* ins)
 {
     CANARD_ASSERT(ins != NULL);
     return ins->user_reference;
+}
+
+CanardFrameProtocol canardGetProtocol(CanardInstance* ins) {
+    return ins->protocol;
 }
 
 void canardSetLocalNodeID(CanardInstance* ins, uint8_t self_node_id)
@@ -430,12 +435,13 @@ int16_t canardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, ui
             MAKE_TRANSFER_DESCRIPTOR(data_type_id, transfer_type, source_node_id, destination_node_id);
 
     const uint8_t tail_byte = frame->data[frame->data_len - 1];
-
     uint64_t data_type_signature = 0;
     CanardRxState* rx_state = NULL;
-
     if (IS_START_OF_TRANSFER(tail_byte))
     {
+        if (IS_END_OF_TRANSFER(tail_byte)) {
+            ins->protocol = TOGGLE_BIT(tail_byte);
+        }
 
         if (ins->should_accept(ins, &data_type_signature, data_type_id, transfer_type, source_node_id))
         {
@@ -445,14 +451,10 @@ int16_t canardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, ui
             {
                 return -CANARD_ERROR_OUT_OF_MEMORY;
             }
-        }
-        else
-        {
+        } else {
             return -CANARD_ERROR_RX_NOT_WANTED;
         }
-    }
-    else
-    {
+    } else {
         rx_state = findRxState(ins, transfer_descriptor);
 
         if (rx_state == NULL)

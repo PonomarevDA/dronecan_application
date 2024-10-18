@@ -117,8 +117,11 @@ int16_t uavcanInitApplication(uint8_t node_id) {
 
 void uavcanSpinOnce() {
     uint32_t crnt_time_ms = platformSpecificGetTimeMs();
-    uavcanProcessSending();
     uavcanProcessReceiving(crnt_time_ms);
+    if (uavcanCheckProtocol() != CANARD_FRAME_DRONECAN) {
+        return;
+    }
+    uavcanProcessSending();
     uavcanSpinNodeStatus(crnt_time_ms);
 }
 
@@ -224,6 +227,10 @@ void uavcanSetVendorSpecificStatusCode(uint16_t vssc) {
 
 const NodeStatus_t* uavcanGetNodeStatus() {
     return &node_status;
+}
+
+CanardFrameProtocol uavcanCheckProtocol() {
+    return canardGetProtocol(&g_canard);
 }
 
 /// ********************************* PRIVATE *********************************

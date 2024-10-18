@@ -178,7 +178,6 @@ typedef void* canard_buffer_idx_t;
 #endif
 
 
-    
 /**
  * This data type holds a standard CAN 2.0B data frame with 29-bit ID.
  */
@@ -371,6 +370,12 @@ struct CanardRxState
 CANARD_STATIC_ASSERT(offsetof(CanardRxState, buffer_head) <= 27, "Invalid memory layout");
 CANARD_STATIC_ASSERT(CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE >= 5, "Invalid memory layout");
 
+typedef enum {
+    CANARD_FRAME_DRONECAN = 0,
+    CANARD_FRAME_CYPHAL = 1,
+    CANARD_FRAME_UNKNOWN = 2,
+} CanardFrameProtocol;
+
 /**
  * This is the core structure that keeps all of the states and allocated resources of the library instance.
  * The application should never access any of the fields directly! Instead, API functions should be used.
@@ -392,6 +397,7 @@ struct CanardInstance
 #if CANARD_ENABLE_TAO_OPTION
     bool tao_disabled;                              ///< True if TAO is disabled
 #endif
+    CanardFrameProtocol protocol;                   ///< Define protocol used in network
 };
 
 /**
@@ -473,6 +479,8 @@ void canardInit(CanardInstance* out_ins,                    ///< Uninitialized l
  * It can be used to store references to any user-specific data, or to link the instance object with C++ objects.
  */
 void* canardGetUserReference(CanardInstance* ins);
+
+CanardFrameProtocol canardGetProtocol(CanardInstance* ins);
 
 /**
  * Assigns a new node ID value to the current node.
