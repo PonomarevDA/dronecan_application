@@ -72,7 +72,8 @@ static GetTransportStats_t iface_stats = {0};
 static const char* node_name = APP_NODE_NAME;
 static SoftwareVersion sw_version;
 static HardwareVersion hw_version;
-
+static bool id_duplication_detected = false;
+static uint64_t last_node_status_msg_us = 0;
 
 static int16_t uavcanInit(uint8_t node_id);
 static bool shouldAcceptTransfer(const CanardInstance* ins,
@@ -90,7 +91,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer);
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
-
+static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
 int16_t uavcanInitApplication(uint8_t node_id) {
     int16_t res = uavcanInit(node_id);
@@ -111,6 +112,7 @@ int16_t uavcanInitApplication(uint8_t node_id) {
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_NODE_STATUS,         uavcanProtocolNodeStatusHandle);
 
     return 0;
 }
@@ -330,6 +332,13 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
 
     uint8_t node_status_buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
     node_status.uptime_sec = (crnt_time_ms / 1000);
+    if (id_duplication_detected && node_status.health < NODE_STATUS_HEALTH_WARNING) {
+        if (last_node_status_msg_us + 2000000 < crnt_time_ms * 1000) {
+            id_duplication_detected = false;
+        } else {
+            node_status.health = NODE_STATUS_HEALTH_WARNING;
+        }
+    }
     uavcanEncodeNodeStatus(node_status_buffer, &node_status);
     uavcanPublish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
                   UAVCAN_PROTOCOL_NODE_STATUS_ID,
@@ -435,4 +444,11 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
 
     uavcanEncodeTransportStats(transport_stats_buffer, &iface_stats);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);
+}
+
+static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer) {
+    if (transfer->source_node_id == g_canard.node_id) {
+        id_duplication_detected = true;
+        last_node_status_msg_us = transfer->timestamp_usec;
+    }
 }
