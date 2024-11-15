@@ -48,6 +48,95 @@ typedef struct {
 extern "C" {
 #endif
 
+static inline int8_t dronecan_equipment_gnss_fix2_serialize(
+    const GnssFix2* const obj,
+    uint8_t* const buffer,
+    size_t* const inout_buffer_size_bytes)
+{
+    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
+        return -2;
+    }
+
+    const size_t capacity_bytes = *inout_buffer_size_bytes;
+    if (capacity_bytes < UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE) {
+        return -3;
+    }
+
+    uint32_t offset = 0;
+
+    canardEncodeScalar(buffer, offset,  56, &obj->timestamp);
+    offset += 56;
+    canardEncodeScalar(buffer, offset,  56, &obj->gnss_timestamp);
+    offset += 56;
+    canardEncodeScalar(buffer, offset,  3,  &obj->gnss_time_standard);
+    offset += 3;
+
+    // void13   # Reserved space
+    offset += 13;
+
+    canardEncodeScalar(buffer, offset, 8,  &obj->num_leap_seconds);
+    offset += 8;
+
+    canardEncodeScalar(buffer, offset, 37, &obj->longitude_deg_1e8);
+    offset += 37;
+    canardEncodeScalar(buffer, offset, 37, &obj->latitude_deg_1e8);
+    offset += 37;
+    canardEncodeScalar(buffer, offset, 27, &obj->height_ellipsoid_mm);
+    offset += 27;
+    canardEncodeScalar(buffer, offset, 27, &obj->height_msl_mm);
+    offset += 27;
+
+    canardEncodeFloat32(buffer, offset, obj->ned_velocity[0]);
+    offset += 32;
+    canardEncodeFloat32(buffer, offset, obj->ned_velocity[1]);
+    offset += 32;
+    canardEncodeFloat32(buffer, offset, obj->ned_velocity[2]);
+    offset += 32;
+
+    canardEncodeScalar(buffer, offset, 6,  &obj->sats_used);
+    offset += 6;
+    canardEncodeScalar(buffer, offset, 2,  &obj->status);
+    offset += 2;
+    canardEncodeScalar(buffer, offset, 4,  &obj->mode);
+    offset += 4;
+    canardEncodeScalar(buffer, offset, 6,  &obj->sub_mode);
+    offset += 6;
+
+    uint8_t covariance_len = 6;
+    canardEncodeScalar(buffer, offset, 6,  &covariance_len);
+    offset += 6;
+    for (uint_fast8_t idx = 0; idx < 6; idx++) {
+        canardEncodeFloat16(buffer, offset, obj->covariance[idx]);
+        offset += 16;
+    }
+
+    canardEncodeFloat16(buffer, offset, obj->pdop);
+    offset += 16;
+
+    uint8_t ecef_len = 0;
+    canardEncodeScalar(buffer, offset, 1,  &ecef_len);
+    offset += 1;
+    // fill ecef here
+
+    return 0;
+}
+
+static inline int8_t dronecan_equipment_gnss_fix2_publish(
+    const GnssFix2* const obj,
+    uint8_t* inout_transfer_id)
+{
+    uint8_t buffer[UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE];
+    size_t inout_buffer_size = UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE;
+    dronecan_equipment_gnss_fix2_serialize(obj, buffer, &inout_buffer_size);
+    uavcanPublish(UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE,
+                  UAVCAN_EQUIPMENT_GNSS_FIX2_ID,
+                  inout_transfer_id,
+                  CANARD_TRANSFER_PRIORITY_MEDIUM,
+                  buffer,
+                  UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE);
+
+    return 0;
+}
 
 #ifdef __cplusplus
 }
