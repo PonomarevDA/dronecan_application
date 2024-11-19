@@ -40,7 +40,7 @@ static inline int8_t dronecan_equipment_air_data_static_temperature_serialize(
     }
 
     canardEncodeFloat16(buffer, 0,  obj->static_temperature);
-    canardEncodeFloat16(buffer, 32, obj->static_temperature_variance);
+    canardEncodeFloat16(buffer, 16, obj->static_temperature_variance);
 
     return 0;
 }
