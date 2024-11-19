@@ -10,10 +10,11 @@
 
 #include "dronecan.h"
 #include "serialization_internal.h"
+#include "ECEFPositionVelocity.h"
 
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_ID                               1063
 #define UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE                        0xca41e7000f37435f
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE                     62
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE                     (62+27)  // (496+216) / 8
 #define UAVCAN_EQUIPMENT_GNSS_FIX2                                  UAVCAN_EXPAND(UAVCAN_EQUIPMENT_GNSS_FIX2)
 
 typedef enum {
@@ -42,13 +43,16 @@ typedef struct {
     float covariance[36];
 
     float pdop;
+
+    uint8_t ecef_size;
+    ECEFPositionVelocity ecef;
 } GnssFix2;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_gnss_fix2_serialize(
+static inline int32_t dronecan_equipment_gnss_fix2_serialize(
     const GnssFix2* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
@@ -113,12 +117,11 @@ static inline int8_t dronecan_equipment_gnss_fix2_serialize(
     canardEncodeFloat16(buffer, offset, obj->pdop);
     offset += 16;
 
-    uint8_t ecef_len = 0;
-    canardEncodeScalar(buffer, offset, 1,  &ecef_len);
-    offset += 1;
-    // fill ecef here
+    if (obj->ecef_size == 1) {
+        offset += dronecan_equipment_gnss_ecef_serialize(buffer+offset/8, &obj->ecef);
+    }
 
-    return 0;
+    return offset;  // either 496 bits (62 bytes) or 496+216 bits (89 bytes)
 }
 
 static inline int8_t dronecan_equipment_gnss_fix2_publish(
@@ -127,15 +130,21 @@ static inline int8_t dronecan_equipment_gnss_fix2_publish(
 {
     uint8_t buffer[UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE];
     size_t inout_buffer_size = UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE;
-    dronecan_equipment_gnss_fix2_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE,
-                  UAVCAN_EQUIPMENT_GNSS_FIX2_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE);
+    auto number_of_bits = dronecan_equipment_gnss_fix2_serialize(obj, buffer, &inout_buffer_size);
+    if (number_of_bits < 0) {
+        return -1;
+    }
 
-    return 0;
+    int32_t number_of_bytes = (number_of_bits + 7) / 8;
+
+    int16_t res = uavcanPublish(UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE,
+                                UAVCAN_EQUIPMENT_GNSS_FIX2_ID,
+                                inout_transfer_id,
+                                CANARD_TRANSFER_PRIORITY_MEDIUM,
+                                buffer,
+                                number_of_bytes);
+
+    return res;
 }
 
 #ifdef __cplusplus
