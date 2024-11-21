@@ -17,6 +17,7 @@
 #define UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_SIGNATURE                   0xBE9EA9FEC2B15D52ULL
 #define UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MAX_VALUE                   8192
 #define UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE                4
+#define UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND)
 
 typedef struct {
     float frequency;
@@ -87,6 +88,11 @@ static inline int8_t dronecan_equipment_indication_beep_command_publish(
 
     return 0;
 }
+
+static inline int8_t uavcanSubscribeIndicationBeepCommand(void (*transfer_callback)(CanardRxTransfer*)) {
+    return uavcanSubscribe(UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND, transfer_callback);
+}
+
 #ifdef __cplusplus
 }
 #endif

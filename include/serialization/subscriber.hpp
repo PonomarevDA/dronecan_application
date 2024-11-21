@@ -13,6 +13,7 @@
 #include "dronecan.h"
 #include "uavcan/equipment/esc/RawCommand.h"
 #include "uavcan/equipment/actuator/ArrayCommand.h"
+#include "uavcan/equipment/indication/BeepCommand.h"
 #include "uavcan/equipment/indication/LightsCommand.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
 #include "uavcan/equipment/safety/ArmingStatus.h"
@@ -39,6 +40,9 @@ DEFINE_SUBSCRIBER_TRAITS(RawCommand_t,
 DEFINE_SUBSCRIBER_TRAITS(ArrayCommand_t,
                          uavcanSubscribeActuatorArrayCommand,
                          dronecan_equipment_actuator_arraycommand_deserialize)
+DEFINE_SUBSCRIBER_TRAITS(BeepCommand_t,
+                         uavcanSubscribeIndicationBeepCommand,
+                         dronecan_equipment_indication_beep_command_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(LightsCommand_t,
                          uavcanSubscribeIndicationLightsCommand,
                          dronecan_equipment_indication_lights_command_deserialize)
