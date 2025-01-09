@@ -26,6 +26,8 @@
 #include "uavcan/equipment/power/BatteryInfo.h"
 #include "uavcan/equipment/device/Temperature.h"
 #include "dronecan/sensors/hygrometer/Hygrometer.h"
+#include "uavcan/equipment/indication/LightsCommand.h"
+#include "uavcan/equipment/range_sensor/Measurement.h"
 
 template <typename MessageType>
 struct DronecanPublisherTraits;
@@ -53,6 +55,9 @@ DEFINE_PUBLISHER_TRAITS(CircuitStatus_t,    dronecan_equipment_circuit_status_pu
 DEFINE_PUBLISHER_TRAITS(Temperature_t,      dronecan_equipment_temperature_publish)
 DEFINE_PUBLISHER_TRAITS(BatteryInfo_t,      dronecan_equipment_battery_info_publish)
 DEFINE_PUBLISHER_TRAITS(Hygrometer,         dronecan_sensors_hygrometer_hygrometer_publish)
+DEFINE_PUBLISHER_TRAITS(LightsCommand_t,    dronecan_equipment_indication_lights_command_publish)
+DEFINE_PUBLISHER_TRAITS(RangeSensorMeasurement_t,
+                                            dronecan_equipment_range_sensor_measurement_publish)
 
 
 template <typename MessageType>
