@@ -19,7 +19,6 @@
 #include "uavcan/equipment/safety/ArmingStatus.h"
 #include "uavcan/equipment/hardpoint/Command.h"
 
-
 template <typename MessageType>
 struct DronecanSubscriberTraits;
 
@@ -46,7 +45,7 @@ DEFINE_SUBSCRIBER_TRAITS(BeepCommand_t,
 DEFINE_SUBSCRIBER_TRAITS(LightsCommand_t,
                          uavcanSubscribeIndicationLightsCommand,
                          dronecan_equipment_indication_lights_command_deserialize)
-DEFINE_SUBSCRIBER_TRAITS(ArmingStatus,
+DEFINE_SUBSCRIBER_TRAITS(SafetyArmingStatus,
                          uavcanSubscribeArmingStatus,
                          dronecan_equipment_safety_arming_status_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(HardpointCommand,

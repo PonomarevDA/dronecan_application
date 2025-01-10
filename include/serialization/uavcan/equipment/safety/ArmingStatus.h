@@ -18,7 +18,7 @@
 #define UAVCAN_EQUIPMENT_SAFETY_ARMING_STATUS_MESSAGE_SIZE           1
 #define UAVCAN_EQUIPMENT_SAFETY_ARMING_STATUS UAVCAN_EXPAND(UAVCAN_EQUIPMENT_SAFETY_ARMING_STATUS)
 
-enum class ArmingStatus: uint8_t {
+enum class SafetyArmingStatus: uint8_t {
     STATUS_DISARMED     = 0,
     STATUS_FULLY_ARMED  = 255,
 };
@@ -29,7 +29,7 @@ extern "C" {
 
 
 static inline int8_t dronecan_equipment_safety_arming_status_deserialize(
-    const CanardRxTransfer* transfer, ArmingStatus* obj)
+    const CanardRxTransfer* transfer, SafetyArmingStatus* obj)
 {
     canardDecodeScalar(transfer, 0,      8, false, obj);
 
