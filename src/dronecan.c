@@ -314,12 +314,16 @@ static uint8_t uavcanProcessSending() {
 
 static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
     CanardCANFrame rx_frame;
-    int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
-    if (res) {
-        uint64_t crnt_time_us = crnt_time_ms * 1000;
-        canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
-        return true;
+    for (size_t idx = 0; idx < 10; idx++) {
+        int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
+        if (res) {
+            uint64_t crnt_time_us = crnt_time_ms * 1000;
+            canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
+        } else {
+            break;
+        }
     }
+
     return false;
 }
 
