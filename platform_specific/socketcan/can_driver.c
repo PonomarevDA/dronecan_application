@@ -24,12 +24,12 @@ int16_t canDriverInit(uint32_t can_speed, uint8_t can_driver_idx) {
 int16_t canDriverReceive(CanardCANFrame* const rx_frame, uint8_t can_driver_idx) {
     (void)can_driver_idx;
     rx_frame->iface_id = 0;
-    return socketcanReceive(&socket_can_instance, rx_frame, 10);
+    return socketcanReceive(&socket_can_instance, rx_frame, 0);
 }
 
 int16_t canDriverTransmit(const CanardCANFrame* const tx_frame, uint8_t can_driver_idx) {
     (void)can_driver_idx;
-    return socketcanTransmit(&socket_can_instance, tx_frame, 10);
+    return socketcanTransmit(&socket_can_instance, tx_frame, 0);
 }
 
 uint64_t canDriverGetErrorCount() {
