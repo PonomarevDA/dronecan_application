@@ -12,6 +12,7 @@
 #include "uavcan/protocol/restart_node.h"
 #include "uavcan/protocol/param/execute_opcode.h"
 #include "uavcan/protocol/param/getset.h"
+#include "uavcan/protocol/file/begin_firmware_update.h"
 #include "storage.h"
 #include "can_driver.h"
 
@@ -90,6 +91,7 @@ static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer);
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
+static void uavcanProtocolFileBeginFirmwareUpdateHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
@@ -111,6 +113,7 @@ int16_t uavcanInitApplication(uint8_t node_id) {
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandle);
+    uavcanSubscribe(UAVCAN_PROTOCOL_FILE_BEGIN_FIRMWARE_UPDATE, uavcanProtocolFileBeginFirmwareUpdateHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_NODE_STATUS,         uavcanProtocolNodeStatusHandle);
 
@@ -440,6 +443,11 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
 static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
     uint8_t response_buffer = platformSpecificRequestRestart() ? 128 : 0;
     uavcanRespond(transfer, UAVCAN_PROTOCOL_RESTART_NODE, &response_buffer, 1);
+}
+
+void platformSpecificRebootForce();
+static void uavcanProtocolFileBeginFirmwareUpdateHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
+    platformSpecificRebootForce();
 }
 
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
