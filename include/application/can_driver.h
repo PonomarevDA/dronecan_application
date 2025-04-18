@@ -42,10 +42,10 @@ inline CanProtocol canDriverGetProtocol(uint8_t can_driver_idx) {
     if (canDriverReceive(&rx_frame, can_driver_idx) == 0) {
         const uint8_t tail_byte = rx_frame.data[rx_frame.data_len - 1];
         if (IS_START_OF_TRANSFER(tail_byte) && IS_END_OF_TRANSFER(tail_byte)) {
-            return TOGGLE_BIT(tail_byte);
+            return TOGGLE_BIT(tail_byte) ? CAN_PROTOCOL_CYPHAL: CAN_PROTOCOL_DRONECAN;
         }
     }
-    return -1;
+    return CAN_PROTOCOL_UNKNOWN;
 }
 
 uint64_t canDriverGetRxOverflowCount();
