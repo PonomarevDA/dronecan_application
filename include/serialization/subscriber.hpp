@@ -17,6 +17,7 @@
 #include "uavcan/equipment/indication/LightsCommand.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
 #include "uavcan/equipment/safety/ArmingStatus.h"
+#include "uavcan/equipment/ahrs/Solution.h"
 #include "uavcan/equipment/hardpoint/Command.h"
 
 template <typename MessageType>
@@ -51,7 +52,9 @@ DEFINE_SUBSCRIBER_TRAITS(SafetyArmingStatus,
 DEFINE_SUBSCRIBER_TRAITS(HardpointCommand,
                          uavcanSubscribeHardpointCommand,
                          dronecan_equipment_hardpoint_command_deserialize)
-
+DEFINE_SUBSCRIBER_TRAITS(AhrsSolution_t,
+                         uavcanSubscribeAhrsSolution,
+                         dronecan_equipment_ahrs_solution_deserialize)
 
 template <typename MessageType>
 class DronecanSubscriber {
