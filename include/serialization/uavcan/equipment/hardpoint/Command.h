@@ -1,5 +1,5 @@
 /***
- * Copyright (C) 2024 Anastasiia Stepanova  <asiiapine96@gmail.com>
+ * Copyright (C) 2024 Anastasiia Stepanova  <asiiapine@gmail.com>
  *  Distributed under the terms of the GPL v3 license, available in the file
  *LICENSE.
  ***/
