@@ -56,11 +56,25 @@ static inline int8_t dronecan_equipment_ahrs_solution_deserialize(
         offset += 16;
         obj->orientation_xyzw[idx] = canardConvertFloat16ToNativeFloat(f16_dummy);
     }
+
+    offset+= 4;  // reserved void4
+
+    uint8_t covariance_len;
+    canardDecodeScalar(transfer, offset, 4, true, &covariance_len);
+    offset += 4;
+    offset += 16 * covariance_len;
+
     for (uint_fast8_t idx = 0; idx < 3; idx++) {
         canardDecodeScalar(transfer, offset, 16, true, &f16_dummy);
         offset += 16;
         obj->angular_velocity[idx] = canardConvertFloat16ToNativeFloat(f16_dummy);
     }
+
+    offset+= 4;  // reserved void4
+    canardDecodeScalar(transfer, offset, 4, true, &covariance_len);
+    offset += 4;
+
+    offset += 16 * covariance_len;
 
     for (uint_fast8_t idx = 0; idx < 3; idx++) {
         canardDecodeScalar(transfer, offset, 16, true, &f16_dummy);
@@ -90,15 +104,23 @@ static inline int8_t dronecan_equipment_ahrs_solution_serialize(
     canardEncodeScalar(buffer, 0,  56,  &obj->timestamp);
     offset += 56;
 
-
     for (uint_fast8_t idx = 0; idx < 3; idx++) {
         canardEncodeFloat16(buffer, offset, obj->orientation_xyzw[idx]);
         offset += 16;
     }
+
+    offset += 4;
+    canardEncodeScalar(buffer, offset, 4,  0);
+    offset += 4;  // covariance len
+
     for (uint_fast8_t idx = 0; idx < 2; idx++) {
         canardEncodeFloat16(buffer, offset, obj->angular_velocity[idx]);
         offset += 16;
     }
+
+    offset += 4;  // void4
+    canardEncodeScalar(buffer, offset, 4,  0);
+    offset += 4;  // covariance len
 
     for (uint_fast8_t idx = 0; idx < 2; idx++) {
         canardEncodeFloat16(buffer, offset, obj->linear_acceleration[idx]);
