@@ -61,6 +61,7 @@ static inline int8_t dronecan_equipment_ahrs_solution_deserialize(
 
     uint8_t covariance_len;
     canardDecodeScalar(transfer, offset, 4, true, &covariance_len);
+    offset += 4;
     offset += 16 * covariance_len;
 
     for (uint_fast8_t idx = 0; idx < 3; idx++) {
@@ -71,6 +72,8 @@ static inline int8_t dronecan_equipment_ahrs_solution_deserialize(
 
     offset+= 4;  // reserved void4
     canardDecodeScalar(transfer, offset, 4, true, &covariance_len);
+    offset += 4;
+
     offset += 16 * covariance_len;
 
     for (uint_fast8_t idx = 0; idx < 3; idx++) {
