@@ -53,9 +53,8 @@ static inline int8_t dronecan_equipment_hardpoint_status_serialize(
 
     canardEncodeScalar(buffer,  0,   8,  &obj->hardpoint_id);
     canardEncodeFloat16(buffer, 8,  obj->payload_weight);
-    canardEncodeFloat16(buffer, 24, obj->payload_weight);
-    canardEncodeFloat16(buffer, 40, obj->payload_weight_variance);
-    canardEncodeScalar(buffer,  56, 16,  &obj->status);
+    canardEncodeFloat16(buffer, 24, obj->payload_weight_variance);
+    canardEncodeScalar(buffer,  40, 16,  &obj->status);
 
     return 0;
 }
