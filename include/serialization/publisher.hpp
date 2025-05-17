@@ -23,6 +23,8 @@
 #include "uavcan/equipment/esc/Status.h"
 #include "uavcan/equipment/gnss/Fix2.h"
 #include "uavcan/equipment/hardpoint/Status.h"
+#include "uavcan/equipment/ice/FuelTankStatus.h"
+#include "uavcan/equipment/ice/Status.h"
 #include "uavcan/equipment/power/CircuitStatus.h"
 #include "uavcan/equipment/power/BatteryInfo.h"
 #include "uavcan/equipment/device/Temperature.h"
@@ -53,6 +55,8 @@ DEFINE_PUBLISHER_TRAITS(TrueAirspeed,       dronecan_equipment_air_data_true_air
 DEFINE_PUBLISHER_TRAITS(EscStatus_t,        dronecan_equipment_esc_status_publish)
 DEFINE_PUBLISHER_TRAITS(GnssFix2,           dronecan_equipment_gnss_fix2_publish)
 DEFINE_PUBLISHER_TRAITS(HardpointStatus,    dronecan_equipment_hardpoint_status_publish)
+DEFINE_PUBLISHER_TRAITS(FuelTankStatus_t,   dronecan_equipment_ice_fuel_tank_status_publish)
+DEFINE_PUBLISHER_TRAITS(IceReciprocatingStatus, dronecan_equipment_ice_status_publish)
 DEFINE_PUBLISHER_TRAITS(CircuitStatus_t,    dronecan_equipment_circuit_status_publish)
 DEFINE_PUBLISHER_TRAITS(Temperature_t,      dronecan_equipment_temperature_publish)
 DEFINE_PUBLISHER_TRAITS(BatteryInfo_t,      dronecan_equipment_battery_info_publish)
