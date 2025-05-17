@@ -11,7 +11,6 @@
 #include <string.h>
 #include "storage.h"
 #include "dronecan.h"
-#include "storage.h"
 #include "subscriber.hpp"
 #include "publisher.hpp"
 

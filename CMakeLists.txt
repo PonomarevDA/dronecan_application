@@ -7,13 +7,13 @@ set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 set(SUPPORTED_PLATFORMS "bxcan;fdcan;socketcan")
 if(NOT CAN_PLATFORM IN_LIST SUPPORTED_PLATFORMS)
-  message(SEND_ERROR "CAN_PLATFORM is not specified or unsupported! Options: bxcan, fdcan, socketcan.")
+    message(SEND_ERROR "CAN_PLATFORM is not specified or unsupported! Options: bxcan, fdcan, socketcan.")
 endif()
 include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
 
 if(NOT DEFINED LIBPARAMS_PATH)
-	message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
+    message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
 endif()
 include(${LIBPARAMS_PATH}/CMakeLists.txt)
 
