@@ -38,7 +38,7 @@ The library should support the following platforms:
 
 ## Dependencies
 
-- [libparams](https://github.com/PonomarevDA/libparams) v0.8.4 library.
+- [libparams](https://github.com/PonomarevDA/libparams) v0.10.0 library.
 - [dronecan/libcanard](https://github.com/dronecan/libcanard)
 
 ## How to integrate the library into a project
@@ -53,8 +53,8 @@ set(CAN_PLATFORM socketcan)
 set(LIBPARAMS_PATH        ../../build/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
 
-# 3. Include the CMakeLists.txt
-include(../../CMakeLists.txt)
+# 3. Include the dronecan.cmake
+include(../../dronecan.cmake)
 
 # 4. Add DroneCAN related source files and headers to you target.
 add_executable(${EXECUTABLE}

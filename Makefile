@@ -19,7 +19,7 @@ ubuntu: clone_dependencies
 
 clone_dependencies:
 	mkdir -p build
-	if [ ! -d "${LIBPARAMS_DIR}" ]; then git clone --depth 1 --branch v0.8.4 https://github.com/PonomarevDA/libparams.git ${LIBPARAMS_DIR}; fi
+	if [ ! -d "${LIBPARAMS_DIR}" ]; then git clone --depth 1 --branch v0.10.0 https://github.com/PonomarevDA/libparams.git ${LIBPARAMS_DIR}; fi
 
 clean:
 	rm -rf build/examples/

@@ -15,9 +15,11 @@ set(CAN_PLATFORM socketcan)
 # 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu
 set(LIBPARAMS_PATH        ${ROOT_DIR}/build/external/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
+set(LIBPARAMS_PARAMS_DIR="${CMAKE_CURRENT_BINARY_DIR}/params")
+add_definitions(-DLIBPARAMS_PARAMS_DIR="${CMAKE_CURRENT_BINARY_DIR}/params")
 
-# 3. Include the CMakeLists.txt
-include(${ROOT_DIR}/CMakeLists.txt)
+# 3. Include the dronecan.cmake
+include(${ROOT_DIR}/dronecan.cmake)
 
 # 4. Add DroneCAN related source files and headers to you target
 add_executable(application

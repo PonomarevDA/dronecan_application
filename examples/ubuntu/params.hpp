@@ -1,0 +1,11 @@
+#include "storage.h"
+#ifndef LIBPARAM_PARAMETERS_HPP_
+#define LIBPARAM_PARAMETERS_HPP_
+
+enum IntParamsIndexes {
+    PARAM_UAVCAN_NODE_ID,
+    INTEGER_PARAMS_AMOUNT
+};
+#define NUM_OF_STR_PARAMS 2
+
+#endif  // LIBPARAM_PARAMETERS_HPP_
