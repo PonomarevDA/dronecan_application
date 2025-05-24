@@ -1,10 +1,8 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=PonomarevDA_dronecan_application&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=PonomarevDA_dronecan_application) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=PonomarevDA_dronecan_application&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=PonomarevDA_dronecan_application) [![build](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/build.yml)  [![check_crlf](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml/badge.svg)](https://github.com/PonomarevDA/dronecan_application/actions/workflows/check_crlf.yml)
 
-# DroneCAN application
+# DroneCAN Node
 
-This is a C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform-specific drivers and serialization together to build a minimal DroneCAN application.
-
-A minimal application includes the following protocol-features:
+`libdcnode` is a C++ library that brings up the well tested [libcanard](https://github.com/dronecan/libcanard), platform-specific drivers and serialization together to build a minimal DroneCAN node application supporting the following protocol-features:
 
 | № | type      | message  |
 | - | --------- | -------- |
@@ -14,7 +12,7 @@ A minimal application includes the following protocol-features:
 | 4 | RPC-service | [uavcan.protocol.RestartNode](https://legacy.uavcan.org/Specification/7._List_of_standard_data_types/#restartnode) |
 | 5 | RPC-service | [uavcan.protocol.GetTransportStats](https://legacy.uavcan.org/Specification/7._List_of_standard_data_types/#gettransportstats) |
 
-The following auxiliary features should be provided as well:
+The library gives an easy way to extend a user's application with the following features:
 
 - [x] actuator
 - [x] airspeed
@@ -54,7 +52,7 @@ set(LIBPARAMS_PATH        ../../build/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
 
 # 3. Include the CMakeLists.txt
-include(../../CMakeLists.txt)
+include(../../dcnode.cmake)
 
 # 4. Add DroneCAN related source files and headers to you target.
 add_executable(${EXECUTABLE}
@@ -78,7 +76,7 @@ Include `dronecan.h` header and call `uavcanInitApplication` in the beginning of
 
 ```c++
 // Include dronecan.h header file
-#include "dronecan.h"
+#include "dcnode/dcnode.h"
 
 // Initialize the library somewhere
 const uint8_t node_id = 42;
@@ -97,11 +95,11 @@ while (true) {
 
 **2. Add publisher**
 
-Adding a publisher is very easy. Include `publisher.hpp` header, create an instance of the required publisher and just call `publish` when you need. Here is a BatteryInfo publisher example:
+Adding a publisher is very easy. Include `dcnode/publisher.hpp` header, create an instance of the required publisher and just call `publish` when you need. Here is a BatteryInfo publisher example:
 
 ```c++
-#include "dronecan.h"
-#include "publisher.hpp"
+#include "dcnode/dcnode.h"
+#include "dcnode/publisher.hpp"
 
 // Create an instance of the publisher
 DronecanPublisher<BatteryInfo_t> battery_info_pub;
@@ -128,12 +126,12 @@ while (true) {
 
 **3. Add subscriber**
 
-Adding a subscriber is easy as well. Let's consider a RawCommand subscriber example. Include `subscriber.hpp` header, create a callback for your application and instance of the required subscriber, then initilize it.
+Adding a subscriber is easy as well. Let's consider a RawCommand subscriber example. Include `dcnode/subscriber.hpp` header, create a callback for your application and instance of the required subscriber, then initilize it.
 
 ```c++
 // Include necessary header files
-#include "dronecan.h"
-#include "subscriber.hpp"
+#include "dcnode/dcnode.h"
+#include "dcnode/subscriber.hpp"
 
 // Add a callback handler function
 void rc_callback(const RawCommand_t& msg) {
@@ -190,34 +188,6 @@ In gui_tool you will see:
 ## Platform specific notes
 
 There are a few functions that require an implementation. They are declared in [include/application/dronecan_application_internal.h](include/application/dronecan_application_internal.h).
-
-A user must provide the following function implementation:
-
-```c++
-/**
-  * @return the time in milliseconds since the application started.
-  * @note This function must be provided by a user!
-  */
-uint32_t platformSpecificGetTimeMs();
-```
-
-A user may also provide the implementation of the optional functions. These function have a week implementation in [src/weak.c](src/weak.c).
-
-```c++
-/**
-  * @return whether the request will be processed
-  * True  - the application will be restarted soon.
-  * False - the restarted is not supported or can't be handled at the moment.
-  * @note Implementation is recommended, but optional.
-  */
-bool platformSpecificRequestRestart();
-
-/**
-  * @param[out] out_id - hardware Unique ID
-  * @note Implementation is recommended, but optional.
-  */
-void platformSpecificReadUniqueID(uint8_t out_uid[16]);
-```
 
 ## License
 

@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "can_driver.h"
+#include "dcnode/can_driver.h"
 #include "socketcan.h"
 
 #ifndef SOCKETCAN_INTERFACE_NAME

@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string.h>
-#include "dronecan.h"
+#include "dcnode/dcnode.h"
 
 void platformSpecificReadUniqueID(uint8_t out_uid[4]) {
     const uint32_t UNIQUE_ID_16_BYTES[4] = {

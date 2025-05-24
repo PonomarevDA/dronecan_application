@@ -3,7 +3,7 @@
 * Distributed under the terms of the GPL v3 license, available in the file LICENSE.
 */
 
-#include "logger.hpp"
+#include "dcnode/logger.hpp"
 #include "uavcan/protocol/debug/LogMessage.h"
 
 DronecanLogger::DronecanLogger(const char* source) {

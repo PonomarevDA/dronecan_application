@@ -5,7 +5,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "can_driver.h"
+#include "dcnode/can_driver.h"
 #include "canard_stm32.h"
 #include "main.h"
 

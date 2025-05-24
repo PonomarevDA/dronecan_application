@@ -10,9 +10,9 @@
 #include <chrono>
 #include <string.h>
 #include "storage.h"
-#include "dronecan.h"
-#include "subscriber.hpp"
-#include "publisher.hpp"
+#include "dcnode/dcnode.h"
+#include "dcnode/subscriber.hpp"
+#include "dcnode/publisher.hpp"
 
 /**
  * @brief Platform specific functions which should be provided by a user
@@ -66,7 +66,14 @@ void lights_callback(const LightsCommand_t& msg) {
  */
 int main() {
     paramsInit(1, 1, -1, 1);
-    auto init_res = uavcanInitApplication(42);
+
+    PlatformHooks platform_hooks = {
+        .getTimeMs = platformSpecificGetTimeMs,
+        .requestRestart = nullptr,  // Not supported by the platform
+        .readUniqueID = nullptr     // Not supported by the platform
+    };
+
+    auto init_res = uavcanInitApplication(platform_hooks, 42);
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
         return init_res;
