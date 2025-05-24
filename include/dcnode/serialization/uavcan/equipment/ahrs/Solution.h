@@ -109,9 +109,8 @@ static inline uint32_t dronecan_equipment_ahrs_solution_serialize(
         offset += 16;
     }
 
-    offset += 4;
-    canardEncodeScalar(buffer, offset, 4,  0);
-    offset += 4;  // covariance len
+    offset += 4;  // void4
+    offset += 4;  // angular_velocity_covariance len
 
     for (uint_fast8_t idx = 0; idx < 2; idx++) {
         canardEncodeFloat16(buffer, offset, obj->angular_velocity[idx]);
@@ -119,8 +118,7 @@ static inline uint32_t dronecan_equipment_ahrs_solution_serialize(
     }
 
     offset += 4;  // void4
-    canardEncodeScalar(buffer, offset, 4,  0);
-    offset += 4;  // covariance len
+    offset += 4;  // linear_acceleration_covariance len
 
     for (uint_fast8_t idx = 0; idx < 2; idx++) {
         canardEncodeFloat16(buffer, offset, obj->linear_acceleration[idx]);

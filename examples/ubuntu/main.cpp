@@ -6,9 +6,10 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <chrono>
 #include <string.h>
+#include <iostream>
+#include <memory>
+#include <chrono>
 #include "storage.h"
 #include "dcnode/dcnode.h"
 
@@ -107,12 +108,35 @@ int main() {
     DronecanSubscriber<RawCommand_t> raw_command_sub2;
     raw_command_sub2.init(&rc2_callback);
 
-    DronecanPeriodicPublisher<CircuitStatus_t> circuit_status(2.0f);
-    DronecanPeriodicPublisher<BatteryInfo_t> battery_info(1.0f);
+    std::array<std::unique_ptr<BaseDronecanPeriodicPublisher>, 21> publishers = {
+        std::make_unique<DronecanPeriodicPublisher<Hygrometer>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<ActuatorStatus_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<MagneticFieldStrength2>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<AhrsRawImu>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<AhrsSolution_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<IndicatedAirspeed>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<RawAirData_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<StaticPressure>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<StaticTemperature>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<TrueAirspeed>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<Temperature_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<EscStatus_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<GnssFix2>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<HardpointStatus>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<FuelTankStatus_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<IceReciprocatingStatus>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<IceReciprocatingStatus>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<CircuitStatus_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<BatteryInfo_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<LightsCommand_t>>(1.0f),
+        std::make_unique<DronecanPeriodicPublisher<RangeSensorMeasurement_t>>(1.0f),
+    };
 
     while (platformSpecificGetTimeMs() < 50000) {
-        circuit_status.spinOnce();
-        battery_info.spinOnce();
+        for (auto& pub : publishers) {
+            pub->spinOnce();
+        }
+
         DronecanNode::spinOnce();
     }
 

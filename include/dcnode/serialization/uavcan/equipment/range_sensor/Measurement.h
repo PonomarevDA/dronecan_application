@@ -41,8 +41,7 @@ extern "C" {
 static inline uint32_t dronecan_equipment_range_sensor_measurement_serialize(
     const RangeSensorMeasurement_t* const obj, uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes) {
-    if ((obj == NULL) || (buffer == NULL) ||
-        (inout_buffer_size_bytes == NULL)) {
+    if (obj == NULL || buffer == NULL || inout_buffer_size_bytes == NULL) {
         return 0;
     }
 

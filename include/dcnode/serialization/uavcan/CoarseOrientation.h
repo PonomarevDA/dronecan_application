@@ -45,7 +45,7 @@ static inline uint32_t dronecan_coarse_orientation_serialize(const CoarseOrienta
         return 0;
     }
 
-    uint32_t offset;
+    uint32_t offset = 0;
     for (int i = 0; i < 3; i++) {
         canardEncodeScalar(buffer, offset, 5, &obj->fixed_axis_roll_pitch_yaw[i]);
         offset += 5;

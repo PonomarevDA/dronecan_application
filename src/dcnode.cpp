@@ -46,7 +46,7 @@
 #endif
 
 #ifndef CANARD_BUFFER_SIZE
-    #define CANARD_BUFFER_SIZE      1024
+    #define CANARD_BUFFER_SIZE      2048
 #endif
 
 #define CAN_SPEED               1000000

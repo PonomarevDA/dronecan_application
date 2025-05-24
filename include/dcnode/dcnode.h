@@ -19,33 +19,7 @@
 #include <stdint.h>
 #include <array>
 #include <algorithm>
-#include "uavcan/equipment/actuator/Status.h"
-#include "uavcan/equipment/ahrs/MagneticFieldStrength2.h"
-#include "uavcan/equipment/ahrs/RawImu.h"
-#include "uavcan/equipment/ahrs/Solution.h"
-#include "uavcan/equipment/air_data/IndicatedAirspeed.h"
-#include "uavcan/equipment/air_data/RawAirData.h"
-#include "uavcan/equipment/air_data/StaticPressure.h"
-#include "uavcan/equipment/air_data/StaticTemperature.h"
-#include "uavcan/equipment/air_data/TrueAirspeed.h"
-#include "uavcan/equipment/esc/Status.h"
-#include "uavcan/equipment/gnss/Fix2.h"
-#include "uavcan/equipment/hardpoint/Status.h"
-#include "uavcan/equipment/ice/FuelTankStatus.h"
-#include "uavcan/equipment/ice/Status.h"
-#include "uavcan/equipment/power/CircuitStatus.h"
-#include "uavcan/equipment/power/BatteryInfo.h"
-#include "uavcan/equipment/device/Temperature.h"
-#include "dronecan/sensors/hygrometer/Hygrometer.h"
-#include "uavcan/equipment/indication/LightsCommand.h"
-#include "uavcan/equipment/range_sensor/Measurement.h"
-#include "uavcan/protocol/node_status.h"
-#include "uavcan/protocol/get_node_info.h"
-#include "uavcan/equipment/esc/RawCommand.h"
-#include "uavcan/equipment/actuator/ArrayCommand.h"
-#include "uavcan/equipment/indication/BeepCommand.h"
-#include "uavcan/equipment/safety/ArmingStatus.h"
-#include "uavcan/equipment/hardpoint/Command.h"
+#include "dcnode/data_types.hpp"
 
 #ifndef DRONECAN_MAX_SUBS_AMOUNT
     #define DRONECAN_MAX_SUBS_AMOUNT     10
@@ -253,6 +227,12 @@ struct DronecanPublisherTraits<MessageType> { \
     } \
 };
 
+DEFINE_PUBLISHER_TRAITS(Hygrometer,
+                        dronecan_sensors_hygrometer_hygrometer_serialize,
+                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_SIGNATURE,
+                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_ID,
+                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE
+)
 DEFINE_PUBLISHER_TRAITS(ActuatorStatus_t,
                         dronecan_equipment_actuator_status_serialize,
                         UAVCAN_EQUIPMENT_ACTUATOR_STATUS_SIGNATURE,
@@ -307,6 +287,12 @@ DEFINE_PUBLISHER_TRAITS(TrueAirspeed,
                         UAVCAN_EQUIPMENT_AIR_DATA_TRUE_AIRSPEED_ID,
                         UAVCAN_EQUIPMENT_AIR_DATA_TRUE_AIRSPEED_MESSAGE_SIZE
 )
+DEFINE_PUBLISHER_TRAITS(Temperature_t,
+                        dronecan_equipment_temperature_serialize,
+                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_SIGNATURE,
+                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_ID,
+                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE
+)
 DEFINE_PUBLISHER_TRAITS(EscStatus_t,
                         dronecan_equipment_esc_status_serialize,
                         UAVCAN_EQUIPMENT_ESC_STATUS_SIGNATURE,
@@ -343,23 +329,11 @@ DEFINE_PUBLISHER_TRAITS(CircuitStatus_t,
                         UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_ID,
                         UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE
 )
-DEFINE_PUBLISHER_TRAITS(Temperature_t,
-                        dronecan_equipment_temperature_serialize,
-                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_SIGNATURE,
-                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_ID,
-                        UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE
-)
 DEFINE_PUBLISHER_TRAITS(BatteryInfo_t,
                         dronecan_equipment_power_battery_info_serialize,
                         UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_SIGNATURE,
                         UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_ID,
                         UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE
-)
-DEFINE_PUBLISHER_TRAITS(Hygrometer,
-                        dronecan_sensors_hygrometer_hygrometer_serialize,
-                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_SIGNATURE,
-                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_ID,
-                        DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE
 )
 DEFINE_PUBLISHER_TRAITS(LightsCommand_t,
                         dronecan_equipment_indication_lights_command_serialize,
@@ -390,9 +364,13 @@ private:
     uint8_t inout_transfer_id{0};
 };
 
+class BaseDronecanPeriodicPublisher {
+public:
+    virtual void spinOnce() = 0;
+};
 
 template <typename MessageType>
-class DronecanPeriodicPublisher : public DronecanPublisher<MessageType> {
+class DronecanPeriodicPublisher : public BaseDronecanPeriodicPublisher, DronecanPublisher<MessageType> {
 public:
     DronecanPeriodicPublisher(float frequency) :
         DronecanPublisher<MessageType>(),
