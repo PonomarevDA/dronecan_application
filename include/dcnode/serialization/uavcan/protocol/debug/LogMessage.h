@@ -51,23 +51,23 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_protocol_debug_log_message_serialize(
+static inline uint32_t dronecan_protocol_debug_log_message_serialize(
     const DebugLogMessage_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     if (obj->source_size > UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN ||
             obj->text_size > UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN) {
-        return -4;
+        return 0;
     }
 
     canardEncodeScalar(buffer, 0,   3,  &obj->level);
@@ -75,7 +75,7 @@ static inline int8_t dronecan_protocol_debug_log_message_serialize(
     memcpy(&buffer[1], obj->source, obj->source_size);
     memcpy(&buffer[obj->source_size + 1], obj->text, obj->text_size);
 
-    return 0;
+    return 1 + obj->source_size + obj->text_size;
 }
 
 static inline int8_t dronecan_protocol_debug_log_message_set_severity_level(
@@ -124,12 +124,11 @@ static inline int8_t dronecan_protocol_debug_log_message_publish(
 {
     uint8_t buffer[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE];
     size_t inout_buffer_size = UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE;
-    int8_t res = dronecan_protocol_debug_log_message_serialize(obj, buffer, &inout_buffer_size);
-    if (res < 0) {
-        return res;
+    uint32_t required_size = dronecan_protocol_debug_log_message_serialize(obj, buffer, &inout_buffer_size);
+    if (required_size == 0) {
+        return -1;
     }
 
-    uint8_t required_size = 1 + obj->source_size + obj->text_size;
     uavcanPublish(UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_SIGNATURE,
                   UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_ID,
                   inout_transfer_id,

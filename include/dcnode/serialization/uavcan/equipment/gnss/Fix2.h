@@ -52,18 +52,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int32_t dronecan_equipment_gnss_fix2_serialize(
+static inline uint32_t dronecan_equipment_gnss_fix2_serialize(
     const GnssFix2* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint32_t offset = 0;
@@ -118,33 +118,10 @@ static inline int32_t dronecan_equipment_gnss_fix2_serialize(
     offset += 16;
 
     if (obj->ecef_size == 1) {
-        offset += dronecan_equipment_gnss_ecef_serialize(buffer+offset/8, &obj->ecef);
+        offset += 8 * dronecan_equipment_gnss_ecef_serialize(buffer + offset / 8, &obj->ecef);
     }
 
-    return offset;  // either 496 bits (62 bytes) or 496+216 bits (89 bytes)
-}
-
-static inline int8_t dronecan_equipment_gnss_fix2_publish(
-    const GnssFix2* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE;
-    auto number_of_bits = dronecan_equipment_gnss_fix2_serialize(obj, buffer, &inout_buffer_size);
-    if (number_of_bits < 0) {
-        return -1;
-    }
-
-    int32_t number_of_bytes = (number_of_bits + 7) / 8;
-
-    int16_t res = uavcanPublish(UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE,
-                                UAVCAN_EQUIPMENT_GNSS_FIX2_ID,
-                                inout_transfer_id,
-                                CANARD_TRANSFER_PRIORITY_MEDIUM,
-                                buffer,
-                                number_of_bytes);
-
-    return res;
+    return ((offset + 7) / 8);  // either 496 bits (62 bytes) or 496+216 bits (89 bytes)
 }
 
 #ifdef __cplusplus

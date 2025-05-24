@@ -34,17 +34,17 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_air_data_raw_air_data_serialize(
+static inline uint32_t dronecan_equipment_air_data_raw_air_data_serialize(
     const RawAirData_t* const obj, uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes) {
     if ((obj == NULL) || (buffer == NULL) ||
         (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint16_t differential_pressure_sensor_temperature = canardConvertNativeFloatToFloat16(
@@ -64,20 +64,7 @@ static inline int8_t dronecan_equipment_air_data_raw_air_data_serialize(
     canardEncodeScalar(buffer, 104, 16, &static_air_temperature);
     canardEncodeScalar(buffer, 120, 16, &pitot_temperature);
 
-    return 0;
-}
-
-static inline int8_t dronecan_equipment_air_data_raw_air_data_publish(
-    const RawAirData_t* const obj, uint8_t* inout_transfer_id) {
-    uint8_t buffer[UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE;
-    dronecan_equipment_air_data_raw_air_data_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_SIGNATURE,
-                  UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_ID, inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM, buffer,
-                  UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE);
-
-    return 0;
+    return UAVCAN_EQUIPMENT_AIR_DATA_RAW_AIR_DATA_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

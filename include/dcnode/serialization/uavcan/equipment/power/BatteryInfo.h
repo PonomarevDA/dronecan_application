@@ -40,18 +40,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_power_battery_info_serialize(
+static inline uint32_t dronecan_equipment_power_battery_info_serialize(
     const BatteryInfo_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     canardEncodeFloat16(buffer, 0,  obj->temperature);
@@ -69,26 +69,8 @@ static inline int8_t dronecan_equipment_power_battery_info_serialize(
     canardEncodeScalar(buffer, 144, 8,  &obj->battery_id);
     canardEncodeScalar(buffer, 152, 32,  &obj->model_instance_id);
 
-    return 0;
+    return UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE;
 }
-
-static inline int8_t dronecan_equipment_battery_info_publish(
-    const BatteryInfo_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE;
-    dronecan_equipment_power_battery_info_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_SIGNATURE,
-                  UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE);
-
-    return 0;
-}
-
 
 #ifdef __cplusplus
 }

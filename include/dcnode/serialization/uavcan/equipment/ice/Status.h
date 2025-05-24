@@ -80,18 +80,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_ice_status_serialize(
+static inline uint32_t dronecan_equipment_ice_status_serialize(
     const IceReciprocatingStatus* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint16_t float16;
@@ -131,30 +131,12 @@ static inline int8_t dronecan_equipment_ice_status_serialize(
     canardEncodeScalar(buffer, 264, 7, &obj->throttle_position_percent);
     canardEncodeScalar(buffer, 271, 6, &obj->ecu_index);
     canardEncodeScalar(buffer, 277, 3, &obj->spark_plug_usage);
-    return 0;
+
+    return UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE;
 }
-
-static inline int8_t dronecan_equipment_ice_status_publish(
-    const IceReciprocatingStatus* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE;
-    dronecan_equipment_ice_status_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_SIGNATURE,
-                  UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE);
-
-    return 0;
-}
-
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  // UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_H_

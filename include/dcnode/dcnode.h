@@ -8,7 +8,7 @@
 #ifndef DCNODE_DCNODE_H_
 #define DCNODE_DCNODE_H_
 
-// #include "dcnode/publisher.hpp"
+// #include "dcnode/subscriber.hpp"
 #include "uavcan/protocol/node_status.h"
 #include "uavcan/protocol/get_node_info.h"
 

@@ -51,22 +51,22 @@ static inline int8_t dronecan_equipment_indication_lights_command_deserialize(
     return obj->number_of_commands;
 }
 
-static inline int8_t dronecan_equipment_indication_lights_command_serialize(
+static inline uint32_t dronecan_equipment_indication_lights_command_serialize(
     const LightsCommand_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     if (obj->number_of_commands == 0) {
-        return -4;
+        return 0;
     }
 
     uint8_t red = obj->commands[0].color.red;
@@ -78,28 +78,7 @@ static inline int8_t dronecan_equipment_indication_lights_command_serialize(
     canardEncodeScalar(buffer, 13, 6,   &green);
     canardEncodeScalar(buffer, 19, 5,   &blue);
 
-    return 0;
-}
-
-static inline int8_t dronecan_equipment_indication_lights_command_publish(
-    const LightsCommand_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE];
-    size_t inout_size = UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE;
-    int8_t res = dronecan_equipment_indication_lights_command_serialize(obj, buffer, &inout_size);
-    if (res < 0) {
-        return res;
-    }
-
-    uavcanPublish(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE,
-                  UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  3);
-
-    return 0;
+    return UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

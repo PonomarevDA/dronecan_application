@@ -38,17 +38,17 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_range_sensor_measurement_serialize(
+static inline uint32_t dronecan_equipment_range_sensor_measurement_serialize(
     const RangeSensorMeasurement_t* const obj, uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes) {
     if ((obj == NULL) || (buffer == NULL) ||
         (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint16_t field_of_view = canardConvertNativeFloatToFloat16(obj->field_of_view);
@@ -63,8 +63,10 @@ static inline int8_t dronecan_equipment_range_sensor_measurement_serialize(
     canardEncodeScalar(buffer, offset, 8, &obj->sensor_id);
     offset += 8;
 
-    offset = dronecan_coarse_orientation_serialize(&obj->beam_orientation_in_body_frame, buffer,
-                                                        inout_buffer_size_bytes, offset);
+    offset += 8 * dronecan_coarse_orientation_serialize(&obj->beam_orientation_in_body_frame,
+                                                        buffer + 8,
+                                                        inout_buffer_size_bytes);
+
     canardEncodeScalar(buffer, offset, 16, &field_of_view);
     offset += 16;
     canardEncodeScalar(buffer, offset, 5, &sensor_type);
@@ -74,23 +76,7 @@ static inline int8_t dronecan_equipment_range_sensor_measurement_serialize(
     canardEncodeScalar(buffer, offset, 16, &range);
     offset +=16;
 
-    return offset;
-}
-
-static inline int8_t dronecan_equipment_range_sensor_measurement_publish(
-    const RangeSensorMeasurement_t* const obj, uint8_t* inout_transfer_id) {
-    uint8_t buffer[UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE;
-    auto res = dronecan_equipment_range_sensor_measurement_serialize(obj, buffer, &inout_buffer_size);
-    if (res != UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE * 8) {
-        return res;
-    }
-    uavcanPublish(UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_SIGNATURE,
-                  UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_ID, inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM, buffer,
-                  UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE);
-
-    return 0;
+    return UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

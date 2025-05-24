@@ -26,18 +26,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_sensors_hygrometer_hygrometer_serialize(
+static inline uint32_t dronecan_sensors_hygrometer_hygrometer_serialize(
     const Hygrometer* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint16_t temperature = canardConvertNativeFloatToFloat16(obj->temperature);
@@ -48,24 +48,7 @@ static inline int8_t dronecan_sensors_hygrometer_hygrometer_serialize(
 
     canardEncodeScalar(buffer, 32, 8, &obj->id);
 
-    return 0;
-}
-
-static inline int8_t dronecan_sensors_hygrometer_hygrometer_publish(
-    const Hygrometer* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE];
-    size_t inout_buffer_size = DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE;
-    dronecan_sensors_hygrometer_hygrometer_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(DRONECAN_SENSORS_HYGROMETER_HYGROMETER_SIGNATURE,
-                  DRONECAN_SENSORS_HYGROMETER_HYGROMETER_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE);
-
-    return 0;
+    return DRONECAN_SENSORS_HYGROMETER_HYGROMETER_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

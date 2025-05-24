@@ -37,38 +37,22 @@ static inline int8_t dronecan_equipment_hardpoint_command_deserialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_hardpoint_command_serialize(
+static inline uint32_t dronecan_equipment_hardpoint_command_serialize(
     const HardpointCommand* const obj, uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes) {
-    if ((obj == NULL) || (buffer == NULL) ||
-        (inout_buffer_size_bytes == NULL)) {
-        return -2;
+    if (obj == NULL || buffer == NULL || inout_buffer_size_bytes == NULL) {
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE) {
-        return -3;
+    if (capacity_bytes < UAVCAN_EQUIPMENT_HARDPOINT_COMMAND_MESSAGE_SIZE) {
+        return 0;
     }
 
     canardEncodeScalar(buffer, 0, 8, &obj->hardpoint_id);
     canardEncodeScalar(buffer, 8, 16, &obj->command);
 
-    return 0;
-}
-
-static inline int8_t dronecan_equipment_hardpoint_command_publish(
-    const HardpointCommand* const obj, uint8_t* inout_transfer_id) {
-    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE;
-    dronecan_equipment_hardpoint_command_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_HARDPOINT_COMMAND_SIGNATURE,
-                  UAVCAN_EQUIPMENT_HARDPOINT_COMMAND_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
-
-    return 0;
+    return UAVCAN_EQUIPMENT_HARDPOINT_COMMAND_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

@@ -13,9 +13,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_ID                     1129
-#define UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_SIGNATURE              0x286b4a387ba84bc4
-#define UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE           13
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_ID                      1129
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_SIGNATURE               0x286b4a387ba84bc4
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_MESSAGE_SIZE            13
 
 typedef struct {
     uint16_t reserved;                      // void9
@@ -30,18 +30,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_ice_fuel_tank_status_serialize(
+static inline uint32_t dronecan_equipment_ice_fuel_tank_status_serialize(
     const FuelTankStatus_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE) {
-        return -3;
+    if (capacity_bytes < UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_MESSAGE_SIZE) {
+        return 0;
     }
 
     canardEncodeScalar(buffer, 0,       9,  &obj->reserved);
@@ -54,26 +54,8 @@ static inline int8_t dronecan_equipment_ice_fuel_tank_status_serialize(
 
     canardEncodeScalar(buffer, 32+64,   8,  &obj->fuel_tank_id);
 
-    return 0;
+    return UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_MESSAGE_SIZE;
 }
-
-static inline int8_t dronecan_equipment_ice_fuel_tank_status_publish(
-    const FuelTankStatus_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE;
-    dronecan_equipment_ice_fuel_tank_status_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_SIGNATURE,
-                  UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_ICE_FUELTANK_STATUS_MESSAGE_SIZE);
-
-    return 0;
-}
-
 
 #ifdef __cplusplus
 }

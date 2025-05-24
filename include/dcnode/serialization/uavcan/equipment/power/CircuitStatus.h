@@ -37,18 +37,18 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int8_t dronecan_equipment_power_circuit_status_serialize(
+static inline uint32_t dronecan_equipment_power_circuit_status_serialize(
     const CircuitStatus_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     canardEncodeScalar(buffer, 0,  16,  &obj->circuit_id);
@@ -56,30 +56,11 @@ static inline int8_t dronecan_equipment_power_circuit_status_serialize(
     canardEncodeFloat16(buffer, 32,     obj->current);
     canardEncodeScalar(buffer, 48, 8,   &obj->error_flags);
 
-    return 0;
+    return UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE;
 }
-
-static inline int8_t dronecan_equipment_circuit_status_publish(
-    const CircuitStatus_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE;
-    dronecan_equipment_power_circuit_status_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_SIGNATURE,
-                  UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE);
-
-    return 0;
-}
-
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  // UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_H_

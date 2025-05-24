@@ -46,17 +46,17 @@ static inline int8_t dronecan_equipment_indication_beep_command_deserialize(
     return 0;
 }
 
-static inline int8_t dronecan_equipment_indication_beep_command_serialize(
+static inline uint32_t dronecan_equipment_indication_beep_command_serialize(
     const BeepCommand_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     uint16_t frequency = canardConvertNativeFloatToFloat16(obj->frequency);
@@ -65,28 +65,7 @@ static inline int8_t dronecan_equipment_indication_beep_command_serialize(
     canardEncodeScalar(buffer, 0,   16,   &frequency);
     canardEncodeScalar(buffer, 16,  16,   &duration);
 
-    return 0;
-}
-
-static inline int8_t dronecan_equipment_indication_beep_command_publish(
-    const BeepCommand_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE];
-    size_t inout_buf_size = UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE;
-    auto res = dronecan_equipment_indication_beep_command_serialize(obj, buffer, &inout_buf_size);
-    if (res < 0) {
-        return res;
-    }
-
-    uavcanPublish(UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_SIGNATURE,
-                  UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  4);
-
-    return 0;
+    return UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

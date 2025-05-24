@@ -86,18 +86,18 @@ static inline int8_t dronecan_equipment_ahrs_solution_deserialize(
 }
 
 
-static inline int8_t dronecan_equipment_ahrs_solution_serialize(
+static inline uint32_t dronecan_equipment_ahrs_solution_serialize(
     const AhrsSolution_t* const obj,
     uint8_t* const buffer,
     size_t* const inout_buffer_size_bytes)
 {
     if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return -2;
+        return 0;
     }
 
     const size_t capacity_bytes = *inout_buffer_size_bytes;
     if (capacity_bytes < UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
 
     size_t offset = 0;
@@ -127,24 +127,7 @@ static inline int8_t dronecan_equipment_ahrs_solution_serialize(
         offset += 16;
     }
 
-    return 0;
-}
-
-static inline int8_t dronecan_equipment_ahrs_solution_publish(
-    const AhrsSolution_t* const obj,
-    uint8_t* inout_transfer_id)
-{
-    uint8_t buffer[UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE;
-    dronecan_equipment_ahrs_solution_serialize(obj, buffer, &inout_buffer_size);
-    uavcanPublish(UAVCAN_EQUIPMENT_AHRS_SOLUTION_SIGNATURE,
-                  UAVCAN_EQUIPMENT_AHRS_SOLUTION_ID,
-                  inout_transfer_id,
-                  CANARD_TRANSFER_PRIORITY_MEDIUM,
-                  buffer,
-                  UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE);
-
-    return 0;
+    return ((offset + 7) / 8);
 }
 
 #ifdef __cplusplus

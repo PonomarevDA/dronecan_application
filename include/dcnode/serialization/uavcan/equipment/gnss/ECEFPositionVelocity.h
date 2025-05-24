@@ -25,12 +25,12 @@ typedef struct {
 extern "C" {
 #endif
 
-static inline int32_t dronecan_equipment_gnss_ecef_serialize(
+static inline uint32_t dronecan_equipment_gnss_ecef_serialize(
     uint8_t* const buffer,
     const ECEFPositionVelocity* const obj)
 {
     if ((obj == NULL) || (buffer == NULL)) {
-        return -2;
+        return 0;
     }
 
     uint32_t offset = 0;
@@ -54,7 +54,7 @@ static inline int32_t dronecan_equipment_gnss_ecef_serialize(
     canardEncodeScalar(buffer, offset, 6,  &covariance_len);
     offset += 6;
 
-    return offset;  ///< should be 216 bit (or 27 bytes)
+    return UAVCAN_EQUIPMENT_GNSS_ECEF_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus

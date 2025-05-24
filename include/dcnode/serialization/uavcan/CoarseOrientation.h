@@ -33,28 +33,28 @@ extern "C" {
 #endif
 
 
-static inline int8_t dronecan_coarse_orientation_serialize(
-    const CoarseOrientation_t* const obj, uint8_t* const buffer,
-    size_t* const inout_buffer_size_bytes, uint8_t buffer_offset) {
-        if ((obj == NULL) || (buffer == NULL) ||
-        (inout_buffer_size_bytes == NULL)) {
-        return -2;
+static inline uint32_t dronecan_coarse_orientation_serialize(const CoarseOrientation_t* const obj,
+                                                             uint8_t* const buffer,
+                                                             size_t* const buffer_size_bytes) {
+    if (obj == NULL || buffer == NULL || buffer_size_bytes == NULL) {
+        return 0;
     }
 
-    const size_t capacity_bytes = *inout_buffer_size_bytes - buffer_offset;
+    const size_t capacity_bytes = *buffer_size_bytes;
     if (capacity_bytes < UAVCAN_COARSE_ORIENTATION_MESSAGE_SIZE) {
-        return -3;
+        return 0;
     }
-    int8_t size = 0;
+
+    uint32_t offset;
     for (int i = 0; i < 3; i++) {
-        canardEncodeScalar(buffer, buffer_offset, 5, &obj->fixed_axis_roll_pitch_yaw[i]);
-        buffer_offset += 5;
-        size += 5;
+        canardEncodeScalar(buffer, offset, 5, &obj->fixed_axis_roll_pitch_yaw[i]);
+        offset += 5;
     }
     bool orientation_defined = obj->orientation_defined;
-    canardEncodeScalar(buffer, buffer_offset, 1, &orientation_defined);
-    buffer_offset += 1;
-    return buffer_offset;
+    canardEncodeScalar(buffer, offset, 1, &orientation_defined);
+    offset += 1;
+
+    return ((offset + 7) / 8);
 }
 
 #ifdef __cplusplus
