@@ -95,7 +95,7 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
 
-int16_t uavcanInitApplication(PlatformHooks platform_hooks, uint8_t node_id) {
+int16_t DronecanNode::init(PlatformHooks platform_hooks, uint8_t node_id) {
     hooks = platform_hooks;
 
     int16_t res = uavcanInit(node_id);
@@ -113,34 +113,35 @@ int16_t uavcanInitApplication(PlatformHooks platform_hooks, uint8_t node_id) {
         hooks.readUniqueID(hw_version.unique_id);
     }
 
-    uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandle);
-    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
-    uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandle);
-    uavcanSubscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandle);
-    uavcanSubscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandle);
-    uavcanSubscribe(UAVCAN_PROTOCOL_NODE_STATUS,         uavcanProtocolNodeStatusHandle);
+    DronecanNode::subscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandle);
+    DronecanNode::subscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
+    DronecanNode::subscribe(UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, uavcanParamExecuteOpcodeHandle);
+    DronecanNode::subscribe(UAVCAN_PROTOCOL_RESTART_NODE,        uavcanProtocolRestartNodeHandle);
+    DronecanNode::subscribe(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, uavcanProtocolGetTransportStatHandle);
+    DronecanNode::subscribe(UAVCAN_PROTOCOL_NODE_STATUS,         uavcanProtocolNodeStatusHandle);
 
     return 0;
 }
 
-void uavcanSpinOnce() {
-    uint32_t crnt_time_ms = uavcanGetTimeMs();
+void DronecanNode::spinOnce() {
+    uint32_t crnt_time_ms = getTimeMs();
     uavcanProcessSending();
     uavcanProcessReceiving(crnt_time_ms);
     uavcanSpinNodeStatus(crnt_time_ms);
 }
 
-int8_t uavcanSubscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
+int8_t DronecanNode::subscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
     if (subs_amount >= DRONECAN_MAX_SUBS_AMOUNT || signature == 0 || id == 0 || callback == NULL) {
         return -1;
     }
+
     subscribers[subs_amount].signature = signature;
     subscribers[subs_amount].id = id;
     subscribers[subs_amount].callback = callback;
     return subs_amount++;
 }
 
-int16_t uavcanPublish(uint64_t data_type_signature,
+int16_t DronecanNode::publish(uint64_t data_type_signature,
                       uint16_t data_type_id,
                       uint8_t* inout_transfer_id,
                       uint8_t priority,
@@ -155,7 +156,7 @@ int16_t uavcanPublish(uint64_t data_type_signature,
                            payload_len);
 }
 
-void uavcanRespond(CanardRxTransfer* transfer,
+void DronecanNode::respond(CanardRxTransfer* transfer,
                    uint64_t data_type_signature,
                    uint16_t data_type_id,
                    const uint8_t* payload,
@@ -174,7 +175,7 @@ void uavcanRespond(CanardRxTransfer* transfer,
                            len);
 }
 
-void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers) {
+void DronecanNode::configure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers) {
     sw_version.major = new_sw_vers->major;
     sw_version.minor = new_sw_vers->minor;
     sw_version.vcs_commit = new_sw_vers->vcs_commit;
@@ -182,59 +183,59 @@ void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* 
     hw_version.minor = new_hw_vers->minor;
 }
 
-void uavcanSetNodeName(const char* new_node_name) {
+void DronecanNode::setNodeName(const char* new_node_name) {
     node_name = new_node_name;
 }
 
-void uavcanStatsIncreaseCanErrors() {
+void DronecanNode::statsIncreaseCanErrors() {
     iface_stats.transfer_errors++;
 }
-void uavcanStatsIncreaseCanTx(uint8_t num_of_transfers) {
+void DronecanNode::statsIncreaseCanTx(uint8_t num_of_transfers) {
     iface_stats.transfers_tx += num_of_transfers;
 }
-void uavcanStatsIncreaseCanRx() {
+void DronecanNode::statsIncreaseCanRx() {
     iface_stats.transfers_rx++;
 }
-void uavcanStatsIncreaseUartErrors() {
+void DronecanNode::statsIncreaseUartErrors() {
     iface_stats.can_iface_stats[0].errors++;
 }
-void uavcanStatsIncreaseUartTx(uint32_t num) {
+void DronecanNode::statsIncreaseUartTx(uint32_t num) {
     iface_stats.can_iface_stats[0].frames_tx += num;
 }
-void uavcanStatsIncreaseUartRx(uint32_t num) {
+void DronecanNode::statsIncreaseUartRx(uint32_t num) {
     iface_stats.can_iface_stats[0].frames_rx += num;
 }
-uint64_t uavcanGetErrorCount() {
+uint64_t DronecanNode::getErrorCount() {
     return canDriverGetErrorCount();
 }
 
-void uavcanSetNodeHealth(NodeStatusHealth_t health) {
+void DronecanNode::setNodeHealth(NodeStatusHealth_t health) {
     if (node_status.health != NODE_STATUS_HEALTH_CRITICAL &&
             health <= NODE_STATUS_HEALTH_CRITICAL) {
         node_status.health = health;
     }
 }
-NodeStatusHealth_t uavcanGetNodeHealth() {
+NodeStatusHealth_t DronecanNode::getNodeHealth() {
     return node_status.health;
 }
 
-void uavcanSetNodeStatusMode(NodeStatusMode_t mode) {
+void DronecanNode::setNodeStatusMode(NodeStatusMode_t mode) {
     node_status.mode = mode;
 }
 
-NodeStatusMode_t uavcanGetNodeStatusMode() {
+NodeStatusMode_t DronecanNode::getNodeStatusMode() {
     return node_status.mode;
 }
 
-void uavcanSetVendorSpecificStatusCode(uint16_t vssc) {
+void DronecanNode::setVendorSpecificStatusCode(uint16_t vssc) {
     node_status.vendor_specific_status_code = vssc;
 }
 
-const NodeStatus_t* uavcanGetNodeStatus() {
+const NodeStatus_t* DronecanNode::getNodeStatus() {
     return &node_status;
 }
 
-uint32_t uavcanGetTimeMs() {
+uint32_t DronecanNode::getTimeMs() {
     if (hooks.getTimeMs == nullptr) {
         return 0;
     }
@@ -359,7 +360,7 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
         }
     }
     uavcanEncodeNodeStatus(node_status_buffer, &node_status);
-    uavcanPublish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
+    DronecanNode::publish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
                   UAVCAN_PROTOCOL_NODE_STATUS_ID,
                   &transfer_id,
                   CANARD_TRANSFER_PRIORITY_LOW,
@@ -369,9 +370,9 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
 
 static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer) {
     uint8_t buf[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE];
-    const NodeStatus_t* status = uavcanGetNodeStatus();
+    const NodeStatus_t* status = DronecanNode::getNodeStatus();
     uint16_t len = uavcanEncodeParamGetNodeInfo(buf, status, &sw_version, &hw_version, node_name);
-    uavcanRespond(transfer, UAVCAN_GET_NODE_INFO_DATA_TYPE, buf, len);
+    DronecanNode::respond(transfer, UAVCAN_GET_NODE_INFO_DATA_TYPE, buf, len);
 }
 
 static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
@@ -429,7 +430,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
         len = uavcanParamGetSetMakeEmptyResponse(resp);
     }
 
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_GETSET, resp, len);
+    DronecanNode::respond(transfer, UAVCAN_PROTOCOL_PARAM_GETSET, resp, len);
 }
 
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
@@ -449,7 +450,7 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
             break;
     }
     uavcanProtocolParamExecuteOpcodeEncode(opcode_buffer, ok);
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, opcode_buffer, 7);
+    DronecanNode::respond(transfer, UAVCAN_PROTOCOL_PARAM_EXECUTEOPCODE, opcode_buffer, 7);
 }
 
 static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
@@ -459,7 +460,7 @@ static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTran
     } else {
         ok = hooks.requestRestart() ? 128 : 0;
     }
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_RESTART_NODE, &ok, 1);
+    DronecanNode::respond(transfer, UAVCAN_PROTOCOL_RESTART_NODE, &ok, 1);
 }
 
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
@@ -467,7 +468,7 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
     iface_stats.transfer_errors = canDriverGetErrorCount();
 
     uavcanEncodeTransportStats(transport_stats_buffer, &iface_stats);
-    uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);
+    DronecanNode::respond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);
 }
 
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer) {

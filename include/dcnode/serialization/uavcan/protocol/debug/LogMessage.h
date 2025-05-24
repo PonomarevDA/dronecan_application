@@ -129,7 +129,7 @@ static inline int8_t dronecan_protocol_debug_log_message_publish(
         return -1;
     }
 
-    uavcanPublish(UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_SIGNATURE,
+    DronecanNode::publish(UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_SIGNATURE,
                   UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_ID,
                   inout_transfer_id,
                   CANARD_TRANSFER_PRIORITY_MEDIUM,

@@ -72,7 +72,7 @@ target_include_directories(${EXECUTABLE} PRIVATE
 
 **1. Initialize**
 
-Include `dronecan.h` header and call `uavcanInitApplication` in the beginning of the application. Call `uavcanSpinOnce` periodically.
+Include `dronecan.h` header and call `DronecanNode::init()` in the beginning of the application. Call `DronecanNode::spinOnce()` periodically.
 
 ```c++
 // Include dronecan.h header file
@@ -80,7 +80,7 @@ Include `dronecan.h` header and call `uavcanInitApplication` in the beginning of
 
 // Initialize the library somewhere
 const uint8_t node_id = 42;
-auto init_res = uavcanInitApplication(node_id);
+auto init_res = DronecanNode::init(node_id);
 if (init_res < 0) {
     // handle error here
 }
@@ -88,7 +88,7 @@ if (init_res < 0) {
 // Spin it periodically:
 while (true) {
     ...
-    uavcanSpinOnce();
+    DronecanNode::spinOnce();
     ...
 }
 ```

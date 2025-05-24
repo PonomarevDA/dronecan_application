@@ -1,8 +1,16 @@
 /*
- * Copyright (C) 2023 Dmitry Ponomarev <ponomarevda96@gmail.com>
+ * Copyright (C) 2023-2025 Dmitry Ponomarev <ponomarevda96@gmail.com>
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * DESIGN NOTES:
+ * - Designed for deeply embedded systems.
+ * - No dynamic memory allocation; no heap usage.
+ * - No use of RTTI (Run-Time Type Information).
+ * - No use of C++ exceptions.
+ * - All callbacks must be non-blocking and complete as fast as possible.
+ * - API is **not** thread-safe; assumes single-threaded or cooperative environment.
  */
 
 #ifndef DCNODE_DCNODE_H_
@@ -60,83 +68,91 @@ typedef struct {
     ReadUniqueIDFunc readUniqueID;
 } PlatformHooks;
 
-/**
-  * @brief Initialize the node and minimal required services
-  * @return 0 on success, otherwise negative error
-  */
-int16_t uavcanInitApplication(PlatformHooks platform_hooks, uint8_t node_id);
+class DronecanNode {
+public:
+    /**
+      * @brief Initialize the node and minimal required services
+      * @return 0 on success, otherwise negative error
+      */
+    static int16_t init(PlatformHooks platform_hooks, uint8_t node_id);
+
+    /**
+      * @brief Functions below should be called periodically to handle the application.
+      */
+    static void spinOnce();
+
+    /**
+    * @brief NodeInfo API
+    */
+    static void configure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
+    static void setNodeName(const char* new_node_name);
 
 
-/**
-  * @brief Functions below should be called periodically to handle the application.
-  */
-void uavcanSpinOnce();
+    /**
+    * @note TransportStats API
+    */
+    static void statsIncreaseCanErrors();
+    static void statsIncreaseCanTx(uint8_t num_of_transfers);
+    static void statsIncreaseCanRx();
+    static void statsIncreaseUartErrors();
+    static void statsIncreaseUartTx(uint32_t num);
+    static void statsIncreaseUartRx(uint32_t num);
+    static uint64_t getErrorCount();
 
+    /**
+    * @brief NodeStatus API
+    */
+    static void setNodeHealth(NodeStatusHealth_t health);
+    static NodeStatusHealth_t getNodeHealth();
 
-/**
-  * @brief Call this function once per each subscriber.
-  * The application will automatically handle callbacks.
-  * Callbacks should end ASAP.
-  */
-int8_t uavcanSubscribe(uint64_t signature,
-                       uint16_t id,
-                       void (callback)(CanardRxTransfer* transfer));
+    static NodeStatusMode_t getNodeStatusMode();
+    static void setNodeStatusMode(NodeStatusMode_t mode);
 
+    static void setVendorSpecificStatusCode(uint16_t vssc);
 
-/**
-  * @brief Broadcast a message.
-  */
-int16_t uavcanPublish(uint64_t data_type_signature,
-                      uint16_t data_type_id,
-                      uint8_t* inout_transfer_id,
-                      uint8_t priority,
-                      const void* payload,
-                      uint16_t payload_len);
+    static const NodeStatus_t* getNodeStatus();
 
+public:
+    /**
+    * @brief Call this function once per each subscriber.
+    * The application will automatically handle callbacks.
+    * Callbacks should end ASAP.
+    */
+    static int8_t subscribe(uint64_t signature,
+                            uint16_t id,
+                            void (callback)(CanardRxTransfer* transfer));
 
-/**
-  * @brief Respond on RPC-request.
-  */
-void uavcanRespond(CanardRxTransfer* transfer,
-                   uint64_t data_type_signature,
-                   uint16_t data_type_id,
-                   const uint8_t* payload,
-                   uint16_t len);
+    /**
+    * @brief Broadcast a message.
+    */
+    static int16_t publish(uint64_t data_type_signature,
+                           uint16_t data_type_id,
+                           uint8_t* inout_transfer_id,
+                           uint8_t priority,
+                           const void* payload,
+                           uint16_t payload_len);
 
+    /**
+    * @brief Respond on RPC-request.
+    */
+    static void respond(CanardRxTransfer* transfer,
+                        uint64_t data_type_signature,
+                        uint16_t data_type_id,
+                        const uint8_t* payload,
+                        uint16_t len);
 
-/**
-  * @brief NodeInfo API
-  */
-void uavcanConfigure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
-void uavcanSetNodeName(const char* new_node_name);
+private:
+    template <typename MessageType>
+    friend struct DronecanPeriodicPublisher;
 
+    template <typename MessageType>
+    friend struct DronecanSubscriberTraits;
 
-/**
-  * @note TransportStats API
-  */
-void uavcanStatsIncreaseCanErrors();
-void uavcanStatsIncreaseCanTx(uint8_t num_of_transfers);
-void uavcanStatsIncreaseCanRx();
-void uavcanStatsIncreaseUartErrors();
-void uavcanStatsIncreaseUartTx(uint32_t num);
-void uavcanStatsIncreaseUartRx(uint32_t num);
-uint64_t uavcanGetErrorCount();
+    template <typename MessageType>
+    friend struct DronecanPublisherTraits;
 
-
-/**
-  * @brief NodeStatus API
-  */
-void uavcanSetNodeHealth(NodeStatusHealth_t health);
-NodeStatusHealth_t uavcanGetNodeHealth();
-
-NodeStatusMode_t uavcanGetNodeStatusMode();
-void uavcanSetNodeStatusMode(NodeStatusMode_t mode);
-
-void uavcanSetVendorSpecificStatusCode(uint16_t vssc);
-
-const NodeStatus_t* uavcanGetNodeStatus();
-
-uint32_t uavcanGetTimeMs();
+    static uint32_t getTimeMs();
+};
 
 template <typename MessageType>
 struct DronecanSubscriberTraits;
@@ -145,7 +161,7 @@ struct DronecanSubscriberTraits;
 template <> \
 struct DronecanSubscriberTraits<MessageType> { \
     static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) { \
-        return uavcanSubscribe(DronecanConfig, callback); \
+        return DronecanNode::subscribe(DronecanConfig, callback); \
     } \
     static inline int8_t deserialize(CanardRxTransfer* transfer, MessageType* msg) { \
         return DeserializeFunction(transfer, msg); \
@@ -224,7 +240,7 @@ struct DronecanPublisherTraits<MessageType> { \
         if ((size_t)number_of_bytes > inout_buffer_size || number_of_bytes <= 0) {\
             return -1;\
         }\
-        int16_t res = uavcanPublish(Signature, \
+        int16_t res = DronecanNode::publish(Signature, \
                                     Id, \
                                     inout_transfer_id, \
                                     CANARD_TRANSFER_PRIORITY_MEDIUM, \
@@ -371,7 +387,7 @@ public:
 
     MessageType msg;
 private:
-    uint8_t inout_transfer_id;
+    uint8_t inout_transfer_id{0};
 };
 
 
@@ -383,7 +399,7 @@ public:
         PUB_PERIOD_MS(static_cast<uint32_t>(1000.0f / std::clamp(frequency, 0.001f, 1000.0f))) {};
 
     inline void spinOnce() {
-        auto crnt_time_ms = uavcanGetTimeMs();
+        auto crnt_time_ms = DronecanNode::getTimeMs();
         if (crnt_time_ms < next_pub_time_ms) {
             return;
         }

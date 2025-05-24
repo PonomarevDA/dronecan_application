@@ -15,10 +15,25 @@
 /**
  * @brief Platform specific functions which should be provided by a user
  */
-uint32_t platformSpecificGetTimeMs() {
+static uint32_t platformSpecificGetTimeMs() {
     static auto start_time = std::chrono::high_resolution_clock::now();
     auto crnt_time = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::milliseconds>(crnt_time - start_time).count();
+}
+
+static bool platformSpecificRequestRestart() {
+    std::cout << "Reboot is not supported by this platform" << std::endl;
+    return false;
+}
+
+void platformSpecificReadUniqueID(uint8_t out_uid[16]) {
+    const uint8_t UID[16] = {
+        0x00, 0x01, 0x02, 0x03,
+        0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0A, 0x0B,
+        0x0C, 0x0D, 0x0E, 0x0F,
+    };
+    memcpy(out_uid, UID, 16);
 }
 
 /**
@@ -67,11 +82,11 @@ int main() {
 
     PlatformHooks platform_hooks = {
         .getTimeMs = platformSpecificGetTimeMs,
-        .requestRestart = nullptr,  // Not supported by the platform
-        .readUniqueID = nullptr     // Not supported by the platform
+        .requestRestart = platformSpecificRequestRestart,
+        .readUniqueID = platformSpecificReadUniqueID
     };
 
-    auto init_res = uavcanInitApplication(platform_hooks, 42);
+    auto init_res = DronecanNode::init(platform_hooks, 42);
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
         return init_res;
@@ -98,7 +113,7 @@ int main() {
     while (platformSpecificGetTimeMs() < 50000) {
         circuit_status.spinOnce();
         battery_info.spinOnce();
-        uavcanSpinOnce();
+        DronecanNode::spinOnce();
     }
 
     std::cout << "Good. Enough." << std::endl;
