@@ -147,11 +147,6 @@ static inline int8_t dronecan_equipment_ahrs_solution_publish(
     return 0;
 }
 
-
-static inline int8_t uavcanSubscribeAhrsSolution(void (*transfer_callback)(CanardRxTransfer*)) {
-    return uavcanSubscribe(UAVCAN_EQUIPMENT_AHRS_SOLUTION, transfer_callback);
-}
-
 #ifdef __cplusplus
 }
 #endif

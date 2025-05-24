@@ -36,10 +36,6 @@ static inline int8_t dronecan_equipment_safety_arming_status_deserialize(
     return 0;
 }
 
-static inline int8_t uavcanSubscribeArmingStatus(void (*transfer_callback)(CanardRxTransfer*)) {
-    return uavcanSubscribe(UAVCAN_EQUIPMENT_SAFETY_ARMING_STATUS, transfer_callback);
-}
-
 #ifdef __cplusplus
 }
 #endif

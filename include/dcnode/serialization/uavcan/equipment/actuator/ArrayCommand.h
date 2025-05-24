@@ -122,10 +122,6 @@ static inline int8_t dronecan_equipment_actuator_arraycommand_publish(const Arra
     return 0;
 }
 
-static inline int8_t uavcanSubscribeActuatorArrayCommand(void (*transfer_callback)(CanardRxTransfer*)) {
-    return uavcanSubscribe(UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND, transfer_callback);
-}
-
 #ifdef __cplusplus
 }
 #endif

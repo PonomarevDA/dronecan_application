@@ -22,11 +22,11 @@
 template <typename MessageType>
 struct DronecanSubscriberTraits;
 
-#define DEFINE_SUBSCRIBER_TRAITS(MessageType, SubscribeFunction, DeserializeFunction) \
+#define DEFINE_SUBSCRIBER_TRAITS(MessageType, DronecanConfig, DeserializeFunction) \
 template <> \
 struct DronecanSubscriberTraits<MessageType> { \
     static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) { \
-        return SubscribeFunction(callback); \
+        return uavcanSubscribe(DronecanConfig, callback); \
     } \
     static inline int8_t deserialize(CanardRxTransfer* transfer, MessageType* msg) { \
         return DeserializeFunction(transfer, msg); \
@@ -34,25 +34,25 @@ struct DronecanSubscriberTraits<MessageType> { \
 };
 
 DEFINE_SUBSCRIBER_TRAITS(RawCommand_t,
-                         uavcanSubscribeEscRawCommand,
+                         UAVCAN_EQUIPMENT_ESC_RAWCOMMAND,
                          dronecan_equipment_esc_raw_command_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(ArrayCommand_t,
-                         uavcanSubscribeActuatorArrayCommand,
+                         UAVCAN_EQUIPMENT_ACTUATOR_ARRAY_COMMAND,
                          dronecan_equipment_actuator_arraycommand_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(BeepCommand_t,
-                         uavcanSubscribeIndicationBeepCommand,
+                         UAVCAN_EQUIPMENT_INDICATION_BEEPCOMMAND,
                          dronecan_equipment_indication_beep_command_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(LightsCommand_t,
-                         uavcanSubscribeIndicationLightsCommand,
+                         UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND,
                          dronecan_equipment_indication_lights_command_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(SafetyArmingStatus,
-                         uavcanSubscribeArmingStatus,
+                         UAVCAN_EQUIPMENT_SAFETY_ARMING_STATUS,
                          dronecan_equipment_safety_arming_status_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(HardpointCommand,
-                         uavcanSubscribeHardpointCommand,
+                         UAVCAN_EQUIPMENT_HARDPOINT_COMMAND,
                          dronecan_equipment_hardpoint_command_deserialize)
 DEFINE_SUBSCRIBER_TRAITS(AhrsSolution_t,
-                         uavcanSubscribeAhrsSolution,
+                         UAVCAN_EQUIPMENT_AHRS_SOLUTION,
                          dronecan_equipment_ahrs_solution_deserialize)
 
 template <typename MessageType>
