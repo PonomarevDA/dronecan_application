@@ -11,8 +11,6 @@
 #include <string.h>
 #include "storage.h"
 #include "dcnode/dcnode.h"
-#include "dcnode/subscriber.hpp"
-#include "dcnode/publisher.hpp"
 
 /**
  * @brief Platform specific functions which should be provided by a user

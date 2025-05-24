@@ -95,11 +95,10 @@ while (true) {
 
 **2. Add publisher**
 
-Adding a publisher is very easy. Include `dcnode/publisher.hpp` header, create an instance of the required publisher and just call `publish` when you need. Here is a BatteryInfo publisher example:
+Adding a publisher is very easy. Create an instance of the required publisher and just call `publish` when you need. Here is a BatteryInfo publisher example:
 
 ```c++
 #include "dcnode/dcnode.h"
-#include "dcnode/publisher.hpp"
 
 // Create an instance of the publisher
 DronecanPublisher<BatteryInfo_t> battery_info_pub;
@@ -126,12 +125,11 @@ while (true) {
 
 **3. Add subscriber**
 
-Adding a subscriber is easy as well. Let's consider a RawCommand subscriber example. Include `dcnode/subscriber.hpp` header, create a callback for your application and instance of the required subscriber, then initilize it.
+Adding a subscriber is easy as well. Let's consider a RawCommand subscriber example. Create a callback for your application and instance of the required subscriber, then initilize it.
 
 ```c++
 // Include necessary header files
 #include "dcnode/dcnode.h"
-#include "dcnode/subscriber.hpp"
 
 // Add a callback handler function
 void rc_callback(const RawCommand_t& msg) {
