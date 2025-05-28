@@ -11,9 +11,9 @@
 #include <stdbool.h>
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_ID                    1091
-#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_SIGNATURE             0x8313d33d0ddda115
-#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE          7  // 56 bits
+#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_ID                    1091U
+#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_SIGNATURE             0x8313d33d0ddda115ULL
+#define UAVCAN_EQUIPMENT_POWER_CIRCUIT_STATUS_MESSAGE_SIZE          7U
 
 typedef enum {
     ERROR_FLAG_CLEAR = 0,

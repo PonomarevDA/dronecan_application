@@ -12,9 +12,9 @@
 #include "serialization_internal.h"
 #include "ECEFPositionVelocity.h"
 
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_ID                               1063
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE                        0xca41e7000f37435f
-#define UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE                     (62+27)  // (496+216) / 8
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_ID                               1063U
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_SIGNATURE                        0xca41e7000f37435fULL
+#define UAVCAN_EQUIPMENT_GNSS_FIX2_MESSAGE_SIZE                     89U
 #define UAVCAN_EQUIPMENT_GNSS_FIX2                                  UAVCAN_EXPAND(UAVCAN_EQUIPMENT_GNSS_FIX2)
 
 typedef enum {

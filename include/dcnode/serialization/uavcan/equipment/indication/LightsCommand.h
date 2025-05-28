@@ -12,9 +12,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_ID               1081
-#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE        0x2031d93c8bdd1ec4
-#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE     485/8
+#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_ID               1081U
+#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_SIGNATURE        0x2031d93c8bdd1ec4ULL
+#define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND_MESSAGE_SIZE     60U
 
 #define UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND UAVCAN_EXPAND(UAVCAN_EQUIPMENT_INDICATION_LIGHTS_COMMAND)
 
@@ -32,7 +32,10 @@ extern "C" {
 static inline int8_t dronecan_equipment_indication_lights_command_deserialize(
     const CanardRxTransfer* transfer, LightsCommand_t* obj)
 {
-    uint8_t light_id, red, green, blue;
+    uint8_t light_id;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
     obj->number_of_commands = transfer->payload_len / 3;
     if (obj->number_of_commands > MAX_LIGHT_COMMAND_NUMBER) {
         obj->number_of_commands = MAX_LIGHT_COMMAND_NUMBER;

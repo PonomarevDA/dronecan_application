@@ -9,7 +9,7 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_ID                        1071
+#define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_ID                        1071U
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_SIGNATURE                 0x624a519d42553d82
 #define UAVCAN_EQUIPMENT_HARDPOINT_STATUS_MESSAGE_SIZE              7
 

@@ -13,9 +13,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_ID                      1092
-#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_SIGNATURE               0x249c26548a711966
-#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE            23  // from 23 up to 55
+#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_ID                      1092U
+#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_SIGNATURE               0x249c26548a711966ULL
+#define UAVCAN_EQUIPMENT_POWER_BATTERY_INFO_MESSAGE_SIZE            23U  // from 23 up to 55
 
 /**
  * @brief uavcan.equipment.power.BatteryInfo

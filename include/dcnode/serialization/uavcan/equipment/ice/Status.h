@@ -13,9 +13,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_ID                1120
-#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_SIGNATURE         0xd38aa3ee75537ec6
-#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE      (280/8)
+#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_ID                1120U
+#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_SIGNATURE         0xd38aa3ee75537ec6ULL
+#define UAVCAN_EQUIPMENT_ICE_RECIPROCATING_STATUS_MESSAGE_SIZE      35U
 
 /**
  * Abstract engine state. The flags defined below can provide further elaboration.

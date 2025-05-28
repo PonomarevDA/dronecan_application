@@ -14,12 +14,12 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_ID                        16383
-#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_SIGNATURE                 0xd654a48e0c049d75
-#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE              (983/8)
+#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_ID                        16383U
+#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_SIGNATURE                 0xd654a48e0c049d75ULL
+#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE              122U
 
-#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN            31
-#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN              90
+#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN            31U
+#define UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN              90U
 
 /**
  * @brief uavcan.protocol.debug.LogLevel

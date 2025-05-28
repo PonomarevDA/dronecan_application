@@ -32,6 +32,11 @@ cpplint:
 cppcheck: clone_dependencies
 	cppcheck --enable=all \
 			 --inconclusive \
+			 --std=c++17 \
+			 --addon=misra \
+			 --suppress=constParameterCallback \
+			 --suppress=constParameterPointer \
+			 --suppress=misra-c2012-12.3 \
 			 --check-level=exhaustive \
 			 --error-exitcode=1 \
 			 --suppress=missingIncludeSystem \
@@ -41,6 +46,7 @@ cppcheck: clone_dependencies
 			 -I include \
 			 -I include/dcnode/serialization \
 			 -I platform_specific/socketcan/ \
+			 -Dnullptr=0 \
 			 src/
 crlf:
 	./scripts/code_style/check_crlf.sh

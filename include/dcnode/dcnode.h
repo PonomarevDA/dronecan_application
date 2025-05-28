@@ -148,9 +148,10 @@ struct DronecanSubscriberTraits;
 template <> \
 struct DronecanSubscriberTraits<MessageType> { \
     static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) { \
+        callback = callback;\
         return DronecanNode::subscribe(DronecanConfig, callback); \
     } \
-    static inline int8_t deserialize(const CanardRxTransfer* transfer, MessageType* msg) { \
+    static inline int8_t deserialize(CanardRxTransfer* transfer, MessageType* msg) { \
         return DeserializeFunction(transfer, msg); \
     } \
 };
@@ -196,7 +197,7 @@ public:
             return;
         }
 
-        auto instance = static_cast<DronecanSubscriber*>(instances[transfer->sub_id]);
+        auto instance = getInstanceForSubId(transfer->sub_id);
         if (instance == nullptr) {
             return;
         }
@@ -208,7 +209,14 @@ public:
         instance->user_callback(msg);
     }
 
-    static inline std::array<void*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
+    static DronecanSubscriber* getInstanceForSubId(int sub_id) {
+        if (sub_id < 0 || sub_id >= DRONECAN_MAX_SUBS_AMOUNT) {
+            return nullptr;
+        }
+        return instances[sub_id];
+    }
+
+    static inline std::array<DronecanSubscriber*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
     static inline MessageType msg = {};
     void (*user_callback)(const MessageType&){nullptr};
     bool (*filter)(const MessageType&){nullptr};

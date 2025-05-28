@@ -11,9 +11,9 @@
 #include <stdbool.h>
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_ESC_STATUS_ID                              1034
-#define UAVCAN_EQUIPMENT_ESC_STATUS_SIGNATURE                       0xa9af28aea2fbb254
-#define UAVCAN_EQUIPMENT_ESC_STATUS_MESSAGE_SIZE                    14  // 110 / 8
+#define UAVCAN_EQUIPMENT_ESC_STATUS_ID                              1034U
+#define UAVCAN_EQUIPMENT_ESC_STATUS_SIGNATURE                       0xa9af28aea2fbb254ULL
+#define UAVCAN_EQUIPMENT_ESC_STATUS_MESSAGE_SIZE                    14U
 
 #define ESC_STATUS_MAX_IDX 31
 typedef struct {

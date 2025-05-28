@@ -11,9 +11,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_ID                           1000
-#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_SIGNATURE                    0x72a63a3c6f41fa9b
-#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE                 29  // 668 bits
+#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_ID                           1000U
+#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_SIGNATURE                    0x72a63a3c6f41fa9bULL
+#define UAVCAN_EQUIPMENT_AHRS_SOLUTION_MESSAGE_SIZE                 29U
 #define UAVCAN_EQUIPMENT_AHRS_SOLUTION                              UAVCAN_EXPAND(UAVCAN_EQUIPMENT_AHRS_SOLUTION)
 #define UAVCAN_EQUIPMENT_AHRS_SOLUTION UAVCAN_EXPAND(UAVCAN_EQUIPMENT_AHRS_SOLUTION)
 
@@ -95,29 +95,49 @@ static inline uint32_t dronecan_equipment_ahrs_solution_serialize(
     }
 
     size_t offset = 0;
+
+    // uavcan.Timestamp timestamp
     canardEncodeScalar(buffer, 0,  56,  &obj->timestamp);
     offset += 56;
 
-    for (uint_fast8_t idx = 0; idx < 3; idx++) {
+    // orientation_xyzw
+    for (uint_fast8_t idx = 0; idx < 4; idx++) {
         canardEncodeFloat16(buffer, offset, obj->orientation_xyzw[idx]);
         offset += 16;
     }
 
-    offset += 4;  // void4
-    offset += 4;  // angular_velocity_covariance len
+    // void4
+    offset += 4;
 
-    for (uint_fast8_t idx = 0; idx < 2; idx++) {
+    // orientation_covariance
+    uint8_t orientation_covariance_len = 0;
+    canardEncodeScalar(buffer, offset, 4, &orientation_covariance_len);
+    offset += 4;
+
+    // angular_velocity
+    for (uint_fast8_t idx = 0; idx < 3; idx++) {
         canardEncodeFloat16(buffer, offset, obj->angular_velocity[idx]);
         offset += 16;
     }
 
-    offset += 4;  // void4
-    offset += 4;  // linear_acceleration_covariance len
+    // void4
+    offset += 4;
 
-    for (uint_fast8_t idx = 0; idx < 2; idx++) {
+    // angular_velocity_covariance
+    uint8_t angular_velocity_covariance_len = 0;
+    canardEncodeScalar(buffer, offset, 4, &angular_velocity_covariance_len);
+    offset += 4;
+
+    // linear_acceleration
+    for (uint_fast8_t idx = 0; idx < 3; idx++) {
         canardEncodeFloat16(buffer, offset, obj->linear_acceleration[idx]);
         offset += 16;
     }
+
+    // linear_acceleration_covariance
+    uint8_t linear_acceleration_covariance_len = 0;
+    canardEncodeScalar(buffer, offset, 4, &linear_acceleration_covariance_len);
+    offset += 4;
 
     return ((offset + 7) / 8);
 }

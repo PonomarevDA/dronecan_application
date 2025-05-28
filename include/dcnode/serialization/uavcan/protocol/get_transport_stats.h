@@ -31,34 +31,38 @@ typedef struct {
     CANIfaceStats_t can_iface_stats[3];     // CAN bus statistics, for each interface
 } GetTransportStats_t;
 
-#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_ID          4
-#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_SIGNATURE   0xbe6f76a7ec312b04
-#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE    72  // (6 + 6 + 6) * 4
+#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_ID          4U
+#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_SIGNATURE   0xbe6f76a7ec312b04ULL
+#define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE    72U
 #define UAVCAN_PROTOCOL_GET_TRANSPORT_STATS     UAVCAN_EXPAND(UAVCAN_PROTOCOL_GET_TRANSPORT_STATS)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static inline void uavcanEncodeTransportStats(
+static inline uint32_t uavcanEncodeTransportStats(
     uint8_t buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE],
     const GetTransportStats_t* iface_stats)
 {
-    canardEncodeScalar(buffer, 48 * 0,  48, &iface_stats->transfers_tx);
-    canardEncodeScalar(buffer, 48 * 1,  48, &iface_stats->transfers_rx);
-    canardEncodeScalar(buffer, 48 * 2,  48, &iface_stats->transfer_errors);
+    uint32_t offset = 0;
 
-    canardEncodeScalar(buffer, 48 * 3,  48, &iface_stats->can_iface_stats[0].frames_tx);
-    canardEncodeScalar(buffer, 48 * 4,  48, &iface_stats->can_iface_stats[0].frames_rx);
-    canardEncodeScalar(buffer, 48 * 5,  48, &iface_stats->can_iface_stats[0].errors);
+    canardEncodeScalar(buffer, offset, 48, &iface_stats->transfers_tx);
+    offset += 48;
+    canardEncodeScalar(buffer, offset, 48, &iface_stats->transfers_rx);
+    offset += 48;
+    canardEncodeScalar(buffer, offset, 48, &iface_stats->transfer_errors);
+    offset += 48;
 
-    canardEncodeScalar(buffer, 48 * 6,  48, &iface_stats->can_iface_stats[1].frames_tx);
-    canardEncodeScalar(buffer, 48 * 7,  48, &iface_stats->can_iface_stats[1].frames_rx);
-    canardEncodeScalar(buffer, 48 * 8,  48, &iface_stats->can_iface_stats[1].errors);
+    for (size_t i = 0; i < 3; ++i) {
+        canardEncodeScalar(buffer, offset, 48, &iface_stats->can_iface_stats[i].frames_tx);
+        offset += 48;
+        canardEncodeScalar(buffer, offset, 48, &iface_stats->can_iface_stats[i].frames_rx);
+        offset += 48;
+        canardEncodeScalar(buffer, offset, 48, &iface_stats->can_iface_stats[i].errors);
+        offset += 48;
+    }
 
-    canardEncodeScalar(buffer, 48 * 9,  48, &iface_stats->can_iface_stats[2].frames_tx);
-    canardEncodeScalar(buffer, 48 * 10, 48, &iface_stats->can_iface_stats[2].frames_rx);
-    canardEncodeScalar(buffer, 48 * 11, 48, &iface_stats->can_iface_stats[2].errors);
+    return ((offset + 7) / 8);
 }
 
 #ifdef __cplusplus

@@ -11,7 +11,7 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_GNSS_ECEF_MESSAGE_SIZE                     27  // (32*3+36*3+6)/8 + 1
+#define UAVCAN_EQUIPMENT_GNSS_ECEF_MESSAGE_SIZE                     27U
 
 typedef struct {
     float velocity_xyz[3];          // float32[3]

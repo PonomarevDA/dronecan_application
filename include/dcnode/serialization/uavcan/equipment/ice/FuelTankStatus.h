@@ -13,9 +13,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_ID                      1129
-#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_SIGNATURE               0x286b4a387ba84bc4
-#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_MESSAGE_SIZE            13
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_ID                      1129U
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_SIGNATURE               0x286b4a387ba84bc4ULL
+#define UAVCAN_EQUIPMENT_ICE_FUELTANKSTATUS_MESSAGE_SIZE            13U
 
 typedef struct {
     uint16_t reserved;                      // void9

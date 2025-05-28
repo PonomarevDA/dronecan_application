@@ -11,9 +11,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_AHRS_RAW_IMU_ID                1003
+#define UAVCAN_EQUIPMENT_AHRS_RAW_IMU_ID                1003U
 #define UAVCAN_EQUIPMENT_AHRS_RAW_IMU_SIGNATURE         (0x8280632C40E574B5ULL)
-#define UAVCAN_EQUIPMENT_AHRS_RAW_IMU_MESSAGE_SIZE      (7 + 4 + 2*3 + 4*3 + 2*3 + 4*3)
+#define UAVCAN_EQUIPMENT_AHRS_RAW_IMU_MESSAGE_SIZE      47U
 #define UAVCAN_EQUIPMENT_AHRS_RAW_IMU                   UAVCAN_EXPAND(UAVCAN_EQUIPMENT_AHRS_RAW_IMU)
 
 /**

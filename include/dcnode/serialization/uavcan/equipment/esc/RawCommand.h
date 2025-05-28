@@ -13,9 +13,9 @@
 #include "dcnode/dcnode.h"
 #include "serialization_internal.h"
 
-#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_ID                          1030
-#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_SIGNATURE                   0x217f5c87d7ec951d
-#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_MAX_VALUE                   8192
+#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_ID                          1030U
+#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_SIGNATURE                   0x217f5c87d7ec951dULL
+#define UAVCAN_EQUIPMENT_ESC_RAWCOMMAND_MAX_VALUE                   8192U
 
 #define RAWCOMMAND_BIT_LEN                                          14
 #define NUMBER_OF_RAW_CMD_CHANNELS                                  20
