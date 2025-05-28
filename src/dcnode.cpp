@@ -196,8 +196,11 @@ void DronecanNode::configure(const SoftwareVersion* new_sw_vers, const HardwareV
     hw_version.minor = new_hw_vers->minor;
 }
 
-void DronecanNode::setNodeName(const char* new_node_name) {
+auto DronecanNode::setNodeName(const char* new_node_name) -> void {
     node_name = new_node_name;
+}
+auto DronecanNode::getNodeName() -> const char* {
+    return node_name;
 }
 
 void DronecanNode::statsIncreaseCanErrors() {
@@ -243,9 +246,8 @@ NodeStatusMode_t DronecanNode::getNodeStatusMode() {
 void DronecanNode::setVendorSpecificStatusCode(uint16_t vssc) {
     node_status.vendor_specific_status_code = vssc;
 }
-
-const NodeStatus_t* DronecanNode::getNodeStatus() {
-    return &node_status;
+uint16_t DronecanNode::getVendorSpecificStatusCode() {
+    return node_status.vendor_specific_status_code;;
 }
 
 uint32_t DronecanNode::getTimeMs() {
@@ -356,8 +358,7 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
 
 static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer) {
     uint8_t buf[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE];
-    const NodeStatus_t* status = DronecanNode::getNodeStatus();
-    uint16_t len = uavcanEncodeParamGetNodeInfo(buf, status, &sw_version, &hw_version, node_name);
+    uint16_t len = uavcanEncodeParamGetNodeInfo(buf, &node_status, &sw_version, &hw_version, node_name);
     DronecanNode::respond(transfer, UAVCAN_GET_NODE_INFO_DATA_TYPE, buf, len);
 }
 

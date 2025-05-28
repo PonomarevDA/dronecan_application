@@ -25,20 +25,32 @@
     #define DRONECAN_MAX_SUBS_AMOUNT     10
 #endif
 
-typedef uint32_t (*GetTimeMsFunc)(void);
-typedef bool (*RequestRestartFunc)(void);
-typedef void (*ReadUniqueIDFunc)(uint8_t out_uid[16]);
+using GetTimeMsFunc = uint32_t (*)();
+using RequestRestartFunc = bool (*)();
+using ReadUniqueIDFunc = void (*)(uint8_t out_uid[16]);
 
+/**
+ * PlatformHooks - a structure holds function pointers that allow the
+ * application to interact with platform-specific features.
+ *
+ * - getTimeMs (required):
+ *   A function that returns the number of milliseconds elapsed
+ *   since the application started.
+ *   The user must provide an implementation for this.
+ *
+ * - requestRestart (optional):
+ *   A function that, when called, attempts to request or trigger
+ *   a system/application restart.
+ *   Providing this implementation is recommended, but optional.
+ *
+ * - readUniqueID (optional):
+ *   A function that retrieves the hardware’s unique 16-byte identifier
+ *   and writes it into the provided out_uid buffer.
+ *   Providing this implementation is recommended, but optional.
+ */
 typedef struct {
-    // The time in milliseconds since the application started.
-    // This function must be provided by a user!
     GetTimeMsFunc getTimeMs;
-
-    // Implementation is recommended, but optional.
     RequestRestartFunc requestRestart;
-
-    // Hardware Unique ID.
-    // Implementation is recommended, but optional.
     ReadUniqueIDFunc readUniqueID;
 } PlatformHooks;
 
@@ -51,15 +63,29 @@ public:
     static int16_t init(PlatformHooks platform_hooks, uint8_t node_id);
 
     /**
-      * @brief Functions below should be called periodically to handle the application.
+      * @brief This should be periodically called to handle the application.
       */
     static void spinOnce();
 
     /**
+    * @brief NodeStatus
+    */
+    static void setNodeHealth(NodeStatusHealth_t health);
+    static NodeStatusHealth_t getNodeHealth();
+
+    static NodeStatusMode_t getNodeStatusMode();
+    static void setNodeStatusMode(NodeStatusMode_t mode);
+
+    static void setVendorSpecificStatusCode(uint16_t vssc);
+    static uint16_t getVendorSpecificStatusCode();
+
+    /**
     * @brief NodeInfo API
     */
+    static auto getNodeName() -> const char*;
+    static auto setNodeName(const char* new_node_name) -> void;
+
     static void configure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
-    static void setNodeName(const char* new_node_name);
 
 
     /**
@@ -72,19 +98,6 @@ public:
     static void statsIncreaseUartTx(uint32_t num);
     static void statsIncreaseUartRx(uint32_t num);
     static uint64_t getErrorCount();
-
-    /**
-    * @brief NodeStatus API
-    */
-    static void setNodeHealth(NodeStatusHealth_t health);
-    static NodeStatusHealth_t getNodeHealth();
-
-    static NodeStatusMode_t getNodeStatusMode();
-    static void setNodeStatusMode(NodeStatusMode_t mode);
-
-    static void setVendorSpecificStatusCode(uint16_t vssc);
-
-    static const NodeStatus_t* getNodeStatus();
 
 public:
     /**
