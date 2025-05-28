@@ -183,7 +183,7 @@ class DronecanSubscriber {
 public:
     DronecanSubscriber() = default;
 
-    int8_t init(void (*callback)(const MessageType&), bool (*filter_)(const MessageType&)=nullptr) {
+    int8_t init(void (*callback)(const MessageType&), bool (*filter_)(const MessageType&) = nullptr) {
         user_callback = callback;
         filter = filter_;
         auto sub_id = DronecanSubscriberTraits<MessageType>::subscribe(transfer_callback);
@@ -218,8 +218,8 @@ public:
 
     static inline std::array<DronecanSubscriber*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
     static inline MessageType msg = {};
-    void (*user_callback)(const MessageType&){nullptr};
-    bool (*filter)(const MessageType&){nullptr};
+    void (*user_callback)(const MessageType&){}
+    bool (*filter)(const MessageType&){}
 };
 
 template <typename MessageType>

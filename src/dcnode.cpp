@@ -148,7 +148,7 @@ int8_t DronecanNode::subscribe(uint64_t signature, uint16_t id, void (*callback)
         return -1;
     }
 
-    callback = callback; // dummy self-assignment
+    callback = callback;  // dummy self-assignment
 
     subscribers[subs_amount].signature = signature;
     subscribers[subs_amount].id = id;
