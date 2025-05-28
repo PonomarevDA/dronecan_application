@@ -10,6 +10,7 @@ Check code style with astyle
 """
 import os
 import sys
+import shutil
 import logging
 import subprocess
 from typing import Optional
@@ -112,4 +113,8 @@ if __name__=="__main__":
                         help="Optional path to astylerc file")
 
     args = parser.parse_args()
+
+    if shutil.which("astyle") is None:
+        sys.exit("Install astyle: sudo apt install astyle")
+
     main(args.directories, args.astylerc)

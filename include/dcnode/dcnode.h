@@ -218,8 +218,8 @@ public:
 
     static inline std::array<DronecanSubscriber*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
     static inline MessageType msg = {};
-    void (*user_callback)(const MessageType&){}
-    bool (*filter)(const MessageType&){}
+    void (*user_callback)(const MessageType&) = nullptr;
+    bool (*filter)(const MessageType&) = nullptr;
 };
 
 template <typename MessageType>

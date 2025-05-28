@@ -30,9 +30,9 @@ astyle:
 cpplint:
 	cpplint src/*.cpp \
 			include/dcnode/*.h \
-			include/dcnode/serialization/*.h \
-			include/dcnode/serialization/*/*/*.h \
-			include/dcnode/serialization/*/*/*/*.h
+			libs/serialization/*.h \
+			libs/serialization/*/*/*.h \
+			libs/serialization/*/*/*/*.h
 cppcheck: clone_dependencies
 	cppcheck --enable=all \
 			 --inconclusive \
@@ -48,7 +48,7 @@ cppcheck: clone_dependencies
 			 -I build/external/libparams/libparams \
 			 -I libs \
 			 -I include \
-			 -I include/dcnode/serialization \
+			 -I libs/serialization \
 			 -I platform_specific/socketcan/ \
 			 -Dnullptr=0 \
 			 src/

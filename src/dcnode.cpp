@@ -143,7 +143,9 @@ void DronecanNode::spinOnce() {
     uavcanSpinNodeStatus(crnt_time_ms);
 }
 
-int8_t DronecanNode::subscribe(uint64_t signature, uint16_t id, void (*callback)(CanardRxTransfer*)) {
+int8_t DronecanNode::subscribe(uint64_t signature,
+                               uint16_t id,
+                               void (*callback)(CanardRxTransfer*)) {
     if (subs_amount >= DRONECAN_MAX_SUBS_AMOUNT || signature == 0 || id == 0 || callback == NULL) {
         return -1;
     }
@@ -157,11 +159,11 @@ int8_t DronecanNode::subscribe(uint64_t signature, uint16_t id, void (*callback)
 }
 
 int16_t DronecanNode::publish(uint64_t data_type_signature,
-                      uint16_t data_type_id,
-                      uint8_t* inout_transfer_id,
-                      uint8_t priority,
-                      const void* payload,
-                      uint16_t payload_len) {
+                              uint16_t data_type_id,
+                              uint8_t* inout_transfer_id,
+                              uint8_t priority,
+                              const void* payload,
+                              uint16_t payload_len) {
     return canardBroadcast(&g_canard,
                            data_type_signature,
                            data_type_id,
@@ -190,7 +192,8 @@ void DronecanNode::respond(CanardRxTransfer* transfer,
                            len);
 }
 
-void DronecanNode::configure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers) {
+void DronecanNode::configure(const SoftwareVersion* new_sw_vers,
+                             const HardwareVersion* new_hw_vers) {
     sw_version.major = new_sw_vers->major;
     sw_version.minor = new_sw_vers->minor;
     sw_version.vcs_commit = new_sw_vers->vcs_commit;
@@ -457,7 +460,10 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
     iface_stats.transfer_errors = canDriverGetErrorCount();
 
     auto num_of_bytes = uavcanEncodeTransportStats(transport_stats_buffer, &iface_stats);
-    DronecanNode::respond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, num_of_bytes);
+    DronecanNode::respond(transfer,
+                          UAVCAN_PROTOCOL_GET_TRANSPORT_STATS,
+                          transport_stats_buffer,
+                          num_of_bytes);
 }
 
 // cppcheck-suppress constParameterCallback

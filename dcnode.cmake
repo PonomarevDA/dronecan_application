@@ -26,8 +26,8 @@ set(DRONECAN_SOURCES
 )
 
 set(DRONECAN_HEADERS
-    ${DRONECAN_LIB_DIR}/libs
     ${DRONECAN_LIB_DIR}/include
-    ${DRONECAN_LIB_DIR}/include/dcnode/serialization
+    ${DRONECAN_LIB_DIR}/libs
+    ${DRONECAN_LIB_DIR}/libs/serialization
     ${libparamsHeaders}
 )
