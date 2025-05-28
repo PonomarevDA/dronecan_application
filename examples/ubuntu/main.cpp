@@ -81,11 +81,10 @@ void lights_callback(const LightsCommand_t& msg) {
 int main() {
     paramsInit(1, 1, -1, 1);
 
-    PlatformHooks platform_hooks = {
-        .getTimeMs = platformSpecificGetTimeMs,
-        .requestRestart = platformSpecificRequestRestart,
-        .readUniqueID = platformSpecificReadUniqueID
-    };
+    PlatformHooks platform_hooks;
+    platform_hooks.getTimeMs = platformSpecificGetTimeMs;
+    platform_hooks.requestRestart = platformSpecificRequestRestart;
+    platform_hooks.readUniqueID = platformSpecificReadUniqueID;
 
     auto init_res = DronecanNode::init(platform_hooks, 42);
     if (init_res < 0) {

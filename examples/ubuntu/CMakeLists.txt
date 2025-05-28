@@ -43,6 +43,7 @@ target_compile_options(application PRIVATE
   -Wstrict-overflow=5
   -Wwrite-strings
   -Wswitch-default
+  -pedantic
 )
 
 # 5. (Recommended) Add GIT_HASH based on git repository

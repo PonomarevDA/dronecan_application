@@ -326,11 +326,14 @@ typedef struct
  * INTERNAL DEFINITION, DO NOT USE DIRECTLY.
  * Buffer block for received data.
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef struct CanardBufferBlock
 {
     struct CanardBufferBlock* next;
     uint8_t data[];
 } CanardBufferBlock;
+#pragma GCC diagnostic pop
 
 /**
  * INTERNAL DEFINITION, DO NOT USE DIRECTLY.
@@ -349,6 +352,8 @@ typedef struct
 /**
  * INTERNAL DEFINITION, DO NOT USE DIRECTLY.
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 struct CanardRxState
 {
     canard_buffer_idx_t next;
@@ -368,6 +373,7 @@ struct CanardRxState
     uint8_t  iface_id;
     uint8_t buffer_head[];
 };
+#pragma GCC diagnostic pop
 CANARD_STATIC_ASSERT(offsetof(CanardRxState, buffer_head) <= 27, "Invalid memory layout");
 CANARD_STATIC_ASSERT(CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE >= 5, "Invalid memory layout");
 

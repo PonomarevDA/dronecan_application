@@ -67,7 +67,6 @@ static NodeStatus_t node_status;
 static uint8_t buffer[CANARD_BUFFER_SIZE];
 static Subscriber_t subscribers[DRONECAN_MAX_SUBS_AMOUNT] = {};
 static uint8_t subs_amount = 0;
-static uint8_t transfer_id = 0;
 static GetTransportStats_t iface_stats = {};
 static const char* node_name = APP_NODE_NAME;
 static SoftwareVersion sw_version;
@@ -76,7 +75,6 @@ static bool id_duplication_detected = false;
 static uint64_t last_node_status_msg_us = 0;
 static PlatformHooks hooks = {};
 
-static int16_t uavcanInit(uint8_t node_id);
 static bool shouldAcceptTransfer(const CanardInstance* ins,
                                  uint64_t* out_data_type_signature,
                                  uint16_t data_type_id,
@@ -98,10 +96,25 @@ static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 int16_t DronecanNode::init(PlatformHooks platform_hooks, uint8_t node_id) {
     hooks = platform_hooks;
 
-    int16_t res = uavcanInit(node_id);
-    if (res < 0) {
+    if (int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST); res < 0) {
         return res;
     }
+
+    canardInit(&g_canard,
+               buffer,
+               CANARD_BUFFER_SIZE,
+               onTransferReceived,
+               shouldAcceptTransfer,
+               NULL);
+    canardSetLocalNodeID(&g_canard, node_id);
+
+#ifdef DEBUG
+    node_status.vendor_specific_status_code = 1;
+#else
+    node_status.vendor_specific_status_code = 2;
+#endif
+    node_status.mode = NODE_STATUS_MODE_OPERATIONAL;
+    node_status.sub_mode = 0;
 
     sw_version.vcs_commit = GIT_HASH >> 32;
     sw_version.major = APP_VERSION_MAJOR;
@@ -246,35 +259,6 @@ uint32_t DronecanNode::getTimeMs() {
 
 /// ********************************* PRIVATE *********************************
 /**
-  * @brief Call this function once during initialization.
-  * It will automatically configure STM32 CAN settings.
-  */
-static int16_t uavcanInit(uint8_t node_id) {
-    int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST);
-    if (res < 0) {
-        return res;
-    }
-
-    canardInit(&g_canard,
-               buffer,
-               CANARD_BUFFER_SIZE,
-               onTransferReceived,
-               shouldAcceptTransfer,
-               NULL);
-    canardSetLocalNodeID(&g_canard, node_id);
-
-#ifdef DEBUG
-    node_status.vendor_specific_status_code = 1;
-#else
-    node_status.vendor_specific_status_code = 2;
-#endif
-    node_status.mode = NODE_STATUS_MODE_OPERATIONAL;
-    node_status.sub_mode = 0;
-
-    return 0;
-}
-
-/**
   * @brief Must have canard callback.
   * The library calls this function on each transfer.
   * @return true if data type is supported and fill signature, otherwise return false
@@ -345,6 +329,8 @@ static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
 
 static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
     static uint32_t last_spin_time_ms = 0;
+    static uint8_t node_status_transfer_id = 0;
+
     if (crnt_time_ms < last_spin_time_ms + NODE_STATUS_SPIN_PERIOD_MS) {
         return;
     }
@@ -361,11 +347,11 @@ static void uavcanSpinNodeStatus(uint32_t crnt_time_ms) {
     }
     uavcanEncodeNodeStatus(node_status_buffer, &node_status);
     DronecanNode::publish(UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
-                  UAVCAN_PROTOCOL_NODE_STATUS_ID,
-                  &transfer_id,
-                  CANARD_TRANSFER_PRIORITY_LOW,
-                  node_status_buffer,
-                  UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
+                          UAVCAN_PROTOCOL_NODE_STATUS_ID,
+                          &node_status_transfer_id,
+                          CANARD_TRANSFER_PRIORITY_LOW,
+                          node_status_buffer,
+                          UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE);
 }
 
 static void uavcanProtocolGetNodeInfoHandle(CanardRxTransfer* transfer) {
