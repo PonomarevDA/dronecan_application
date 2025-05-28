@@ -10,6 +10,10 @@
 
 #include "serialization_internal.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief uavcan.protocol.NodeStatus
  * @note Abstract node status information.
@@ -34,8 +38,8 @@ typedef enum {
  */
 typedef struct {
     uint32_t uptime_sec;                    // uint32
-    NodeStatusHealth_t health;              // uint2
-    NodeStatusMode_t mode;                  // uint3
+    uint8_t health;                         // uint2
+    uint8_t mode;                           // uint3
     uint8_t sub_mode;                       // uint3
     uint16_t vendor_specific_status_code;   // uint16
 } NodeStatus_t;
@@ -47,18 +51,14 @@ typedef struct {
 #define NODE_STATUS_SPIN_PERIOD_MS                                  500
 #define UAVCAN_PROTOCOL_NODE_STATUS     UAVCAN_EXPAND(UAVCAN_PROTOCOL_NODE_STATUS)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 static inline void uavcanEncodeNodeStatus(
     uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE],
     const NodeStatus_t* node_status)
 {
     canardEncodeScalar(buffer,  0,  32, &node_status->uptime_sec);
-    canardEncodeScalar(buffer,  32, 2,  (uint8_t*)&node_status->health);
-    canardEncodeScalar(buffer,  34, 3,  (uint8_t*)&node_status->mode);
+    canardEncodeScalar(buffer,  32, 2,  &node_status->health);
+    canardEncodeScalar(buffer,  34, 3,  &node_status->mode);
     canardEncodeScalar(buffer,  37, 3,  &node_status->sub_mode);
     canardEncodeScalar(buffer,  40, 16, &node_status->vendor_specific_status_code);
 }

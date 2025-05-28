@@ -34,14 +34,8 @@ extern "C" {
 
 
 static inline uint32_t dronecan_coarse_orientation_serialize(const CoarseOrientation_t* const obj,
-                                                             uint8_t* const buffer,
-                                                             size_t* const buffer_size_bytes) {
-    if (obj == NULL || buffer == NULL || buffer_size_bytes == NULL) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_COARSE_ORIENTATION_MESSAGE_SIZE) {
+                                                             uint8_t* const buffer) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 

@@ -60,7 +60,7 @@ public:
       * @brief Initialize the node and minimal required services
       * @return 0 on success, otherwise negative error
       */
-    static int16_t init(PlatformHooks platform_hooks, uint8_t node_id);
+    static int16_t init(const PlatformHooks& platform_hooks, uint8_t node_id);
 
     /**
       * @brief This should be periodically called to handle the application.
@@ -150,7 +150,7 @@ struct DronecanSubscriberTraits<MessageType> { \
     static inline int8_t subscribe(void (*callback)(CanardRxTransfer*)) { \
         return DronecanNode::subscribe(DronecanConfig, callback); \
     } \
-    static inline int8_t deserialize(CanardRxTransfer* transfer, MessageType* msg) { \
+    static inline int8_t deserialize(const CanardRxTransfer* transfer, MessageType* msg) { \
         return DeserializeFunction(transfer, msg); \
     } \
 };
@@ -222,9 +222,8 @@ template <> \
 struct DronecanPublisherTraits<MessageType> { \
     static inline int8_t publish(const MessageType* const obj, uint8_t* inout_transfer_id) { \
         uint8_t buffer[MessageSize]; \
-        size_t inout_buffer_size = MessageSize; \
-        int32_t number_of_bytes = SerializeFunction(obj, buffer, &inout_buffer_size); \
-        if ((size_t)number_of_bytes > inout_buffer_size || number_of_bytes <= 0) {\
+        uint32_t number_of_bytes = SerializeFunction(obj, buffer); \
+        if (number_of_bytes > MessageSize || number_of_bytes == 0) {\
             return -1;\
         }\
         int16_t res = DronecanNode::publish(Signature, \
@@ -385,11 +384,11 @@ public:
 template <typename MessageType>
 class DronecanPeriodicPublisher : public BaseDronecanPeriodicPublisher, DronecanPublisher<MessageType> {
 public:
-    DronecanPeriodicPublisher(float frequency) :
+    explicit DronecanPeriodicPublisher(float frequency) :
         DronecanPublisher<MessageType>(),
         PUB_PERIOD_MS(static_cast<uint32_t>(1000.0f / std::clamp(frequency, 0.001f, 1000.0f))) {};
 
-    inline void spinOnce() {
+    inline void spinOnce() override {
         auto crnt_time_ms = DronecanNode::getTimeMs();
         if (crnt_time_ms < next_pub_time_ms) {
             return;

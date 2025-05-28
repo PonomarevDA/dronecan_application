@@ -54,7 +54,7 @@ static inline uint32_t dronecan_equipment_gnss_ecef_serialize(
     canardEncodeScalar(buffer, offset, 6,  &covariance_len);
     offset += 6;
 
-    return UAVCAN_EQUIPMENT_GNSS_ECEF_MESSAGE_SIZE;
+    return ((offset + 7) / 8);
 }
 
 #ifdef __cplusplus

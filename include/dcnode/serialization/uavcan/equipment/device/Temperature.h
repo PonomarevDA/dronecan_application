@@ -36,15 +36,9 @@ extern "C" {
 
 static inline uint32_t dronecan_equipment_temperature_serialize(
     const Temperature_t* const obj,
-    uint8_t* const buffer,
-    size_t* const inout_buffer_size_bytes)
+    uint8_t* const buffer)
 {
-    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_EQUIPMENT_DEVICE_TEMPERATURE_MESSAGE_SIZE) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 

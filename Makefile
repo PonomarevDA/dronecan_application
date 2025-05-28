@@ -30,7 +30,18 @@ astyle:
 cpplint:
 	cpplint src/*.c include/application/*.h include/serialization/*.h include/serialization/*/*/*.h include/serialization/*/*/*/*.h
 cppcheck: clone_dependencies
-	./scripts/code_style/cppcheck.sh
+	cppcheck --enable=all \
+			 --inconclusive \
+			 --check-level=exhaustive \
+			 --error-exitcode=1 \
+			 --suppress=missingIncludeSystem \
+			 --suppress=unusedFunction \
+			 -I build/external/libparams/libparams \
+			 -I libs \
+			 -I include \
+			 -I include/dcnode/serialization \
+			 -I platform_specific/socketcan/ \
+			 src/
 crlf:
 	./scripts/code_style/check_crlf.sh
 distclean:

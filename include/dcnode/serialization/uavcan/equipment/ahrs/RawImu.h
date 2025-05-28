@@ -35,15 +35,9 @@ extern "C" {
 
 static inline uint32_t dronecan_equipment_ahrs_raw_imu_serialize(
     const AhrsRawImu* const obj,
-    uint8_t* const buffer,
-    size_t* const inout_buffer_size_bytes)
+    uint8_t* const buffer)
 {
-    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_EQUIPMENT_AHRS_RAW_IMU_MESSAGE_SIZE) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 

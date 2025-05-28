@@ -90,10 +90,10 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer);
 static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
-static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
+static void uavcanProtocolNodeStatusHandle(const CanardRxTransfer* transfer);
 
 
-int16_t DronecanNode::init(PlatformHooks platform_hooks, uint8_t node_id) {
+int16_t DronecanNode::init(const PlatformHooks& platform_hooks, uint8_t node_id) {
     hooks = platform_hooks;
 
     if (int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST); res < 0) {
@@ -319,7 +319,7 @@ static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
     for (size_t idx = 0; idx < 10; idx++) {
         int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
         if (res) {
-            uint64_t crnt_time_us = crnt_time_ms * 1000;
+            uint64_t crnt_time_us = static_cast<uint64_t>(crnt_time_ms) * 1000;
             canardHandleRxFrame(&g_canard, &rx_frame, crnt_time_us);
         } else {
             break;
@@ -411,7 +411,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
             paramsSetStringValue(param_idx, str_len, val_string);
         }
-        char* str_value = (char*)paramsGetStringValue(param_idx);
+        const char* str_value = static_cast<char*>(paramsGetStringValue(param_idx));
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);
@@ -458,7 +458,7 @@ static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
     DronecanNode::respond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);
 }
 
-static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer) {
+static void uavcanProtocolNodeStatusHandle(const CanardRxTransfer* transfer) {
     if (transfer->source_node_id == g_canard.node_id) {
         id_duplication_detected = true;
         last_node_status_msg_us = transfer->timestamp_usec;

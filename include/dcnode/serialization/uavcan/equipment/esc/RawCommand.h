@@ -46,11 +46,10 @@ static inline int8_t dronecan_equipment_esc_raw_command_deserialize(
     }
 
     int offset = 0;
-    int16_t len;
     uint8_t ch_num;
     for (ch_num = 0; ch_num < NUMBER_OF_RAW_CMD_CHANNELS; ch_num++) {
         int16_t temp_raw_cmd;
-        len = canardDecodeScalar(transfer, offset, RAWCOMMAND_BIT_LEN, true, &temp_raw_cmd);
+        int16_t len = canardDecodeScalar(transfer, offset, RAWCOMMAND_BIT_LEN, true, &temp_raw_cmd);
         if (len != RAWCOMMAND_BIT_LEN) {
             break;
         }
@@ -81,13 +80,8 @@ static inline bool dronecan_equipment_esc_raw_command_channel_deserialize(
 }
 
 static inline uint32_t dronecan_equipment_esc_raw_command_serialize(
-    const RawCommand_t* const obj, uint8_t* const buffer, size_t* const inout_buffer_size_bytes,  uint8_t num_cmds) {
-    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < (num_cmds * RAWCOMMAND_BIT_LEN) / 8) {
+    const RawCommand_t* const obj, uint8_t* const buffer, uint8_t num_cmds) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 
@@ -97,7 +91,6 @@ static inline uint32_t dronecan_equipment_esc_raw_command_serialize(
         offset += RAWCOMMAND_BIT_LEN;
     }
 
-    *inout_buffer_size_bytes = (num_cmds * RAWCOMMAND_BIT_LEN) / 8;
     return ((offset + 7) / 8);
 }
 

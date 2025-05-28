@@ -39,14 +39,8 @@ extern "C" {
 #endif
 
 static inline uint32_t dronecan_equipment_range_sensor_measurement_serialize(
-    const RangeSensorMeasurement_t* const obj, uint8_t* const buffer,
-    size_t* const inout_buffer_size_bytes) {
-    if (obj == NULL || buffer == NULL || inout_buffer_size_bytes == NULL) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE) {
+    const RangeSensorMeasurement_t* const obj, uint8_t* const buffer) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 
@@ -63,8 +57,7 @@ static inline uint32_t dronecan_equipment_range_sensor_measurement_serialize(
     offset += 8;
 
     offset += 8 * dronecan_coarse_orientation_serialize(&obj->beam_orientation_in_body_frame,
-                                                        buffer + 8,
-                                                        inout_buffer_size_bytes);
+                                                        buffer + 8);
 
     canardEncodeScalar(buffer, offset, 16, &field_of_view);
     offset += 16;
@@ -75,7 +68,7 @@ static inline uint32_t dronecan_equipment_range_sensor_measurement_serialize(
     canardEncodeScalar(buffer, offset, 16, &range);
     offset +=16;
 
-    return UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE;
+    return ((offset + 7) / 8);
 }
 
 #ifdef __cplusplus

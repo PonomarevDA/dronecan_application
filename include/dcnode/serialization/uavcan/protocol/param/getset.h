@@ -30,7 +30,7 @@ typedef enum {
 extern "C" {
 #endif
 
-void canardEncodeI64(uint8_t* buf, uint32_t offset, int64_t* val)
+void canardEncodeI64(uint8_t* buf, uint32_t offset, const int64_t* val)
 {
     canardEncodeScalar(buf, offset, 64, val);
 }

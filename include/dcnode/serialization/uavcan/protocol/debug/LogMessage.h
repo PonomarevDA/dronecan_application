@@ -53,15 +53,9 @@ extern "C" {
 
 static inline uint32_t dronecan_protocol_debug_log_message_serialize(
     const DebugLogMessage_t* const obj,
-    uint8_t* const buffer,
-    size_t* const inout_buffer_size_bytes)
+    uint8_t* const buffer)
 {
-    if ((obj == NULL) || (buffer == NULL) || (inout_buffer_size_bytes == NULL)) {
-        return 0;
-    }
-
-    const size_t capacity_bytes = *inout_buffer_size_bytes;
-    if (capacity_bytes < UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE) {
+    if (obj == NULL || buffer == NULL) {
         return 0;
     }
 
@@ -100,7 +94,7 @@ static inline int8_t dronecan_protocol_debug_log_message_set_source(
 
     msg->source_size = strnlen(source, UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN);
     msg->source[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN - 1] = '\0';
-    memcpy((char*)msg->source, source,  msg->source_size);
+    memcpy(msg->source, source,  msg->source_size);
     return 0;
 }
 
@@ -114,7 +108,7 @@ static inline int8_t dronecan_protocol_debug_log_message_set_text(
 
     msg->text_size = strnlen(text, UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN);
     msg->text[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN - 1] = '\0';
-    memcpy((char*)msg->text, text,  msg->text_size);
+    memcpy(msg->text, text,  msg->text_size);
     return 0;
 }
 
@@ -123,8 +117,7 @@ static inline int8_t dronecan_protocol_debug_log_message_publish(
     uint8_t* inout_transfer_id)
 {
     uint8_t buffer[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE];
-    size_t inout_buffer_size = UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MESSAGE_SIZE;
-    uint32_t required_size = dronecan_protocol_debug_log_message_serialize(obj, buffer, &inout_buffer_size);
+    uint32_t required_size = dronecan_protocol_debug_log_message_serialize(obj, buffer);
     if (required_size == 0) {
         return -1;
     }

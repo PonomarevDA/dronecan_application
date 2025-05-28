@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-static inline uint8_t uavcanProtocolParamExecuteOpcodeDecode(CanardRxTransfer* transfer)
+static inline uint8_t uavcanProtocolParamExecuteOpcodeDecode(const CanardRxTransfer* transfer)
 {
     uint8_t opcode;
     canardDecodeScalar(transfer, 0,  8, false, &opcode);
