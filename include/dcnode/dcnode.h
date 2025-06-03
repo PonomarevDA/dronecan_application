@@ -87,19 +87,19 @@ public:
 
     static void configure(const SoftwareVersion* new_sw_vers, const HardwareVersion* new_hw_vers);
 
-
     /**
     * @note TransportStats API
     */
-    static void statsIncreaseCanErrors();
-    static void statsIncreaseCanTx(uint8_t num_of_transfers);
-    static void statsIncreaseCanRx();
-    static void statsIncreaseUartErrors();
-    static void statsIncreaseUartTx(uint32_t num);
-    static void statsIncreaseUartRx(uint32_t num);
+    static void statsIncreaseUavcanTransfersTx();
+    static void statsIncreaseUavcanTransfersRx();
+    static void statsIncreaseUavcanTransfersErrors();
+
+    static void statsIncreaseCanFrameTx();
+    static void statsIncreaseCanFrameRx();
+    static void statsIncreaseCanFrameErrors();
     static uint64_t getErrorCount();
 
-public:
+private:
     /**
     * @brief Call this function once per each subscriber.
     * The application will automatically handle callbacks.
@@ -108,6 +108,7 @@ public:
     static int8_t subscribe(uint64_t signature,
                             uint16_t id,
                             void (callback)(CanardRxTransfer* transfer));
+public:
 
     /**
     * @brief Broadcast a message.
@@ -177,6 +178,9 @@ DEFINE_SUBSCRIBER_TRAITS(HardpointCommand,
 DEFINE_SUBSCRIBER_TRAITS(AhrsSolution_t,
                          UAVCAN_EQUIPMENT_AHRS_SOLUTION,
                          dronecan_equipment_ahrs_solution_deserialize)
+DEFINE_SUBSCRIBER_TRAITS(uavcan_protocol_NodeStatus,
+                         UAVCAN_PROTOCOL_NODE_STATUS,
+                         uavcan_protocol_node_status_deserialize)
 
 template <typename MessageType>
 class DronecanSubscriber {
@@ -367,7 +371,12 @@ DEFINE_PUBLISHER_TRAITS(RangeSensorMeasurement_t,
                         UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_ID,
                         UAVCAN_EQUIPMENT_RANGE_SENSOR_MEASUREMENT_MESSAGE_SIZE
 )
-
+DEFINE_PUBLISHER_TRAITS(uavcan_protocol_NodeStatus,
+                        uavcan_protocol_node_status_serialize,
+                        UAVCAN_PROTOCOL_NODE_STATUS_SIGNATURE,
+                        UAVCAN_PROTOCOL_NODE_STATUS_ID,
+                        UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE
+)
 
 template <typename MessageType>
 class DronecanPublisher {
@@ -390,7 +399,7 @@ public:
 };
 
 template <typename MessageType>
-class DronecanPeriodicPublisher : public BaseDronecanPeriodicPublisher, DronecanPublisher<MessageType> {
+class DronecanPeriodicPublisher : public DronecanPublisher<MessageType>, public BaseDronecanPeriodicPublisher {
 public:
     explicit DronecanPeriodicPublisher(float frequency) :
         DronecanPublisher<MessageType>(),

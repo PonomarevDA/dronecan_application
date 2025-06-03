@@ -40,7 +40,7 @@ extern "C" {
 
 static inline uint16_t uavcanEncodeParamGetNodeInfo(
     uint8_t buffer[UAVCAN_GET_NODE_INFO_RESPONSE_MAX_SIZE],
-    const NodeStatus_t* status,
+    const uavcan_protocol_NodeStatus* status,
     const SoftwareVersion* software,
     const HardwareVersion* hardware,
     const char* name)
@@ -50,7 +50,7 @@ static inline uint16_t uavcanEncodeParamGetNodeInfo(
     }
 
     // 1. NodeStatus status. 7 bytes
-    uavcanEncodeNodeStatus(buffer, status);
+    uavcan_protocol_node_status_serialize(status, buffer);
 
     // 2. SoftwareVersion software_version. 15 bytes
     buffer[7] = software->major;

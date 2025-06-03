@@ -74,7 +74,6 @@ void lights_callback(const LightsCommand_t& msg) {
     std::cout << "Get LightsCommand_t with " << msg.number_of_commands << " commands." << std::endl;
 }
 
-
 /**
  * @brief Main application entry point
  */

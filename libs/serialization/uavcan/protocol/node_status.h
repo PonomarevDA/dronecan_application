@@ -42,7 +42,7 @@ typedef struct {
     uint8_t mode;                           // uint3
     uint8_t sub_mode;                       // uint3
     uint16_t vendor_specific_status_code;   // uint16
-} NodeStatus_t;
+} uavcan_protocol_NodeStatus;
 
 // uavcan.protocol.NodeStatus
 #define UAVCAN_PROTOCOL_NODE_STATUS_ID                              341U
@@ -51,16 +51,28 @@ typedef struct {
 #define NODE_STATUS_SPIN_PERIOD_MS                                  500U
 #define UAVCAN_PROTOCOL_NODE_STATUS     UAVCAN_EXPAND(UAVCAN_PROTOCOL_NODE_STATUS)
 
+static inline int8_t uavcan_protocol_node_status_deserialize(const CanardRxTransfer* transfer,
+                                                             uavcan_protocol_NodeStatus* obj) {
+    if ((transfer == NULL) || (obj == NULL)) {
+        return -2;
+    }
 
-static inline void uavcanEncodeNodeStatus(
-    uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE],
-    const NodeStatus_t* node_status)
-{
-    canardEncodeScalar(buffer,  0,  32, &node_status->uptime_sec);
-    canardEncodeScalar(buffer,  32, 2,  &node_status->health);
-    canardEncodeScalar(buffer,  34, 3,  &node_status->mode);
-    canardEncodeScalar(buffer,  37, 3,  &node_status->sub_mode);
-    canardEncodeScalar(buffer,  40, 16, &node_status->vendor_specific_status_code);
+    return 0;
+}
+
+static inline uint32_t uavcan_protocol_node_status_serialize(const uavcan_protocol_NodeStatus* const obj,
+                                                             uint8_t* const buffer) {
+    if (obj == NULL || buffer == NULL) {
+        return 0;
+    }
+
+    canardEncodeScalar(buffer,  0,  32, &obj->uptime_sec);
+    canardEncodeScalar(buffer,  32, 2,  &obj->health);
+    canardEncodeScalar(buffer,  34, 3,  &obj->mode);
+    canardEncodeScalar(buffer,  37, 3,  &obj->sub_mode);
+    canardEncodeScalar(buffer,  40, 16, &obj->vendor_specific_status_code);
+
+    return UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE;
 }
 
 #ifdef __cplusplus
