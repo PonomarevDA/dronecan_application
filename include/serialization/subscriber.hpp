@@ -87,7 +87,7 @@ public:
         instance->user_callback(msg);
     }
 
-    static inline std::array<void*, DRONECAN_MAX_SUBS_AMOUNT> instances{};
+    static inline std::array<void*, DRONECAN_MAX_SUBS_NUMBER> instances{};
     static inline MessageType msg = {};
     void (*user_callback)(const MessageType&){nullptr};
     bool (*filter)(const MessageType&){nullptr};

@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-#ifndef DRONECAN_MAX_SUBS_AMOUNT
-    #define DRONECAN_MAX_SUBS_AMOUNT     10
+#ifndef DRONECAN_MAX_SUBS_NUMBER
+    #define DRONECAN_MAX_SUBS_NUMBER     10
 #endif
 
 
@@ -27,6 +27,8 @@ extern "C" {
   */
 int16_t uavcanInitApplication(uint8_t node_id);
 
+void uavcanSetNodeId(uint8_t node_id);
+uint8_t uavcanGetNodeId();
 
 /**
   * @brief Functions below should be called periodically to handle the application.
