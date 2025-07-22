@@ -1,16 +1,10 @@
 name: code_style
 
-on:
-  push:
-    branches:
-    - main
-  pull_request:
-    branches:
-    - main
+on: [push]
 
 jobs:
   cpplint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 1
     steps:
       - uses: actions/checkout@v4
