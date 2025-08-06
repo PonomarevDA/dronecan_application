@@ -15,7 +15,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake
 if(NOT DEFINED LIBPARAMS_PATH)
     message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
 endif()
-include(${LIBPARAMS_PATH}/CMakeLists.txt)
+if(NOT DEFINED LIBPARAMS_CMAKE)
+    message(SEND_WARNING "LIBPARAMS_CMAKE is not specified! Use default value 'CMakeLists.txt'.")
+    set(LIBPARAMS_CMAKE CMakeLists.txt)
+endif()
+include(${LIBPARAMS_PATH}/${LIBPARAMS_CMAKE})
 
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
