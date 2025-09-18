@@ -104,7 +104,7 @@ int16_t uavcanInitApplication(ParamsApi params_api, PlatformApi platform_api, co
     params = params_api;
     platform = platform_api;
 
-    int16_t res = canDriverInit(1000000, CAN_DRIVER_FIRST);
+    int16_t res = platform.can.init(1000000, CAN_DRIVER_FIRST);
     if (res < 0) {
         return res;
     }
@@ -228,7 +228,7 @@ void uavcanStatsIncreaseUartRx(uint32_t num) {
     node.iface_stats.can_iface_stats[0].frames_rx += num;
 }
 uint64_t uavcanGetErrorCount() {
-    return canDriverGetErrorCount();
+    return platform.can.getErrorCount();
 }
 
 void uavcanSetNodeHealth(NodeStatusHealth_t health) {
@@ -300,7 +300,7 @@ static uint8_t uavcanProcessSending() {
     uint8_t tx_attempt = 0;
     uint8_t tx_frames_counter = 0;
     while (txf) {
-        const int tx_res = canDriverTransmit(txf, CAN_DRIVER_FIRST);
+        const int tx_res = platform.can.send(txf, CAN_DRIVER_FIRST);
         if (tx_res > 0) {
             canardPopTxQueue(&node.g_canard);
             txf = canardPeekTxQueue(&node.g_canard);
@@ -320,7 +320,7 @@ static uint8_t uavcanProcessSending() {
 static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
     CanardCANFrame rx_frame;
     for (size_t idx = 0; idx < 10; idx++) {
-        int16_t res = canDriverReceive(&rx_frame, CAN_DRIVER_FIRST);
+        int16_t res = platform.can.recv(&rx_frame, CAN_DRIVER_FIRST);
         if (res) {
             uint64_t crnt_time_us = crnt_time_ms * 1000;
             canardHandleRxFrame(&node.g_canard, &rx_frame, crnt_time_us);
@@ -451,7 +451,7 @@ static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTran
 
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer) {
     uint8_t transport_stats_buffer[UAVCAN_PROTOCOL_GET_TRANSPORT_STATS_MAX_SIZE];
-    node.iface_stats.transfer_errors = canDriverGetErrorCount();
+    node.iface_stats.transfer_errors = platform.can.getErrorCount();
 
     uavcanEncodeTransportStats(transport_stats_buffer, &node.iface_stats);
     uavcanRespond(transfer, UAVCAN_PROTOCOL_GET_TRANSPORT_STATS, transport_stats_buffer, 72);

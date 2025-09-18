@@ -3,24 +3,15 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-set(DRONECAN_LIB_DIR ${CMAKE_CURRENT_LIST_DIR})
-
-set(SUPPORTED_PLATFORMS "bxcan;fdcan;socketcan")
-if(NOT CAN_PLATFORM IN_LIST SUPPORTED_PLATFORMS)
-    message(SEND_ERROR "CAN_PLATFORM is not specified or unsupported! Options: bxcan, fdcan, socketcan.")
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
 set(DRONECAN_SOURCES
-    ${DRONECAN_PLATFORM_SOURCES}
-    ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
-    ${DRONECAN_LIB_DIR}/src/dronecan.c
-    ${DRONECAN_LIB_DIR}/src/logger.cpp
-    ${DRONECAN_LIB_DIR}/src/weak.c
+    ${CMAKE_CURRENT_LIST_DIR}/Libs/libcanard_v0/canard.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/dronecan.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/logger.cpp
 )
 
 set(DRONECAN_HEADERS
-    ${DRONECAN_LIB_DIR}/Libs
-    ${DRONECAN_LIB_DIR}/include/application
-    ${DRONECAN_LIB_DIR}/include/serialization
+    ${CMAKE_CURRENT_LIST_DIR}/Libs
+    ${CMAKE_CURRENT_LIST_DIR}/include/application
+    ${CMAKE_CURRENT_LIST_DIR}/include/serialization
 )

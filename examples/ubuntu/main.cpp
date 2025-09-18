@@ -11,6 +11,7 @@
 #include <string.h>
 #include "storage.h"
 #include "dronecan.h"
+#include "can_driver.h"
 #include "subscriber.hpp"
 #include "publisher.hpp"
 
@@ -157,6 +158,13 @@ int main() {
         .getTimeMs = platformSpecificGetTimeMs,
         .requestRestart = platformSpecificRequestRestart,
         .readUniqueId = platformSpecificReadUniqueID,
+        .can = {
+            .init = canDriverInit,
+            .recv = canDriverReceive,
+            .send = canDriverTransmit,
+            .getRxOverflowCount = canDriverGetRxOverflowCount,
+            .getErrorCount = canDriverGetErrorCount,
+        }
     };
 
     AppInfo app_info{

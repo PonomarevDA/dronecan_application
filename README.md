@@ -46,25 +46,30 @@ The library should support the following platforms:
 Add the following lines into CMakeLists.txt of your project:
 
 ```cmake
-# 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan.
-set(CAN_PLATFORM socketcan)
-include(../../libdcnode.cmake)
+# 1. libdcnode
+add_subdirectory(${ROOT_DIR} ${CMAKE_BINARY_DIR}/libdcnode)
 
-# 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu.
-set(LIBPARAMS_PATH        ../../build/libparams)
-set(LIBPARAMS_PLATFORM    ubuntu)
-include(${LIBPARAMS_PATH}/libparams.cmake)
+# 2. libcanver
+set(CAN_PLATFORM socketcan) # Options: bxcan, fdcan or socketcan
+include(${ROOT_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
-# 3. Add DroneCAN related source files and headers to you target.
-add_executable(${EXECUTABLE}
+# 3. libparams
+set(LIBPARAMS_PLATFORM    ubuntu) # Options: stm32f103, stm32g0b1, ubuntu
+include(libparams.cmake)
+
+# 4. Application
+add_executable(${PROJECT_NAME}
     ...
-    ${DRONECAN_SOURCES}
+    ${DRONECAN_PLATFORM_SOURCES}
     ...
 )
-target_include_directories(${EXECUTABLE} PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE
     ...
-    ${DRONECAN_HEADERS}
+    ${DRONECAN_PLATFORM_HEADERS}
     ...
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    libdcnode::libdcnode
 )
 ```
 
