@@ -10,7 +10,7 @@ define build_and_run_sitl
 	$(info Build example $(1)...)
 	mkdir -p $(BUILD_EXAMPLES_DIR)/$(1)
 	cd $(BUILD_EXAMPLES_DIR)/$(1) && cmake $(ROOT_DIR)/examples/$(1) && make -s
-	$(BUILD_EXAMPLES_DIR)/$(1)/application
+	$(BUILD_EXAMPLES_DIR)/$(1)/ubuntu
 endef
 
 ubuntu:
