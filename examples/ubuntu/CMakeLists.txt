@@ -8,11 +8,14 @@ project(ubuntu CXX C ASM)
 cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH EXAMPLES_DIR)
 cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
 
-# 1. Include the libdcnode.cmake
-set(CAN_PLATFORM socketcan) # Options: bxcan, fdcan or socketcan
-include(${ROOT_DIR}/libdcnode.cmake)
+# 1. libdcnode
+add_subdirectory(${ROOT_DIR} ${CMAKE_BINARY_DIR}/libdcnode)
 
-# 2. libparams
+# 2. libcanver
+set(CAN_PLATFORM socketcan) # Options: bxcan, fdcan or socketcan
+include(${ROOT_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
+
+# 3. libparams
 include(FetchContent)
 set(FETCHCONTENT_BASE_DIR "${ROOT_DIR}/build/external")
 FetchContent_Declare(
@@ -22,21 +25,21 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 if(POLICY CMP0169)
-  cmake_policy(SET CMP0169 OLD)
+    cmake_policy(SET CMP0169 OLD)
 endif()
 FetchContent_GetProperties(libparams)
 if(NOT libparams_POPULATED)
-  FetchContent_Populate(libparams)
+    FetchContent_Populate(libparams)
 endif()
 set(LIBPARAMS_PLATFORM    ubuntu)
 include(${ROOT_DIR}/build/external/libparams-src/CMakeLists.txt)
 
-# 3. Create application
+# 4. Create application
 execute_process(
-  COMMAND git rev-parse --short=16 HEAD
-  COMMAND_ERROR_IS_FATAL ANY
-  OUTPUT_VARIABLE GIT_HASH_SHORT
-  OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND git rev-parse --short=16 HEAD
+    COMMAND_ERROR_IS_FATAL ANY
+    OUTPUT_VARIABLE GIT_HASH_SHORT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 set(GIT_HASH "0x${GIT_HASH_SHORT}")
 add_definitions(-DGIT_HASH=${GIT_HASH})
@@ -47,25 +50,27 @@ add_definitions(-DHW_VERSION_MINOR=0)
 add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")
 
 add_executable(${PROJECT_NAME}
-  main.cpp
-  ${DRONECAN_SOURCES}
-  ${libparamsSrc}
+    main.cpp
+    ${DRONECAN_PLATFORM_SOURCES}
+    ${libparamsSrc}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE
-  .
-  ${DRONECAN_HEADERS}
-  ${libparamsHeaders}
+    .
+    ${libparamsHeaders}
 )
 target_compile_options(${PROJECT_NAME} PRIVATE
-  -Wall
-  -Wextra
-  -Wfloat-equal
-  -Werror
-  -Wundef
-  -Wshadow
-  -Wpointer-arith
-  -Wunreachable-code
-  -Wstrict-overflow=5
-  -Wwrite-strings
-  -Wswitch-default
+    -Wall
+    -Wextra
+    -Wfloat-equal
+    -Werror
+    -Wundef
+    -Wshadow
+    -Wpointer-arith
+    -Wunreachable-code
+    -Wstrict-overflow=5
+    -Wwrite-strings
+    -Wswitch-default
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    libdcnode::libdcnode
 )

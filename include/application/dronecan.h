@@ -34,10 +34,27 @@ typedef struct {
 typedef uint32_t (*PlatformSpecificGetTimeMsFunc)(void);
 typedef bool (*PlatformSpecificRequestRestartFunc)(void);
 typedef void (*PlatformSpecificReadUniqueIDFunc)(uint8_t out_uid[16]);
+
+typedef int16_t (*CanDriverInitFunc)(uint32_t can_speed, uint8_t can_driver_idx);
+typedef int16_t (*CanDriverReceiveFunc)(CanardCANFrame* const rx_frame, uint8_t can_driver_idx);
+typedef int16_t (*CanDriverTransmitFunc)(const CanardCANFrame* const tx_frame, uint8_t can_driver_idx);
+typedef uint64_t (*CanDriverGetRxOverflowCountFunc)(void);
+typedef uint64_t (*CanDriverGetErrorCountFunc)(void);
+
+typedef struct {
+    CanDriverInitFunc init;
+    CanDriverReceiveFunc recv;
+    CanDriverTransmitFunc send;
+    CanDriverGetRxOverflowCountFunc getRxOverflowCount;
+    CanDriverGetErrorCountFunc getErrorCount;
+} CanDriverApi;
+
 typedef struct {
     PlatformSpecificGetTimeMsFunc getTimeMs;
     PlatformSpecificRequestRestartFunc requestRestart;
     PlatformSpecificReadUniqueIDFunc readUniqueId;
+
+    CanDriverApi can;
 } PlatformApi;
 
 /**
