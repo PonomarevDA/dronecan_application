@@ -11,28 +11,16 @@ if(NOT CAN_PLATFORM IN_LIST SUPPORTED_PLATFORMS)
 endif()
 include(${CMAKE_CURRENT_LIST_DIR}/platform_specific/${CAN_PLATFORM}/config.cmake)
 
-
-if(NOT DEFINED LIBPARAMS_PATH)
-    message(SEND_ERROR "LIBPARAMS_PATH is not specified!")
-endif()
-if(NOT DEFINED LIBPARAMS_CMAKE)
-    message(SEND_WARNING "LIBPARAMS_CMAKE is not specified! Use default value 'CMakeLists.txt'.")
-    set(LIBPARAMS_CMAKE CMakeLists.txt)
-endif()
-include(${LIBPARAMS_PATH}/${LIBPARAMS_CMAKE})
-
 set(DRONECAN_SOURCES
     ${DRONECAN_PLATFORM_SOURCES}
     ${DRONECAN_LIB_DIR}/Libs/libcanard_v0/canard.c
     ${DRONECAN_LIB_DIR}/src/dronecan.c
     ${DRONECAN_LIB_DIR}/src/logger.cpp
     ${DRONECAN_LIB_DIR}/src/weak.c
-    ${libparamsSrc}
 )
 
 set(DRONECAN_HEADERS
     ${DRONECAN_LIB_DIR}/Libs
     ${DRONECAN_LIB_DIR}/include/application
     ${DRONECAN_LIB_DIR}/include/serialization
-    ${libparamsHeaders}
 )
