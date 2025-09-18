@@ -48,15 +48,14 @@ Add the following lines into CMakeLists.txt of your project:
 ```cmake
 # 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan.
 set(CAN_PLATFORM socketcan)
+include(../../libdcnode.cmake)
 
 # 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu.
 set(LIBPARAMS_PATH        ../../build/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
+include(${LIBPARAMS_PATH}/libparams.cmake)
 
-# 3. Include the CMakeLists.txt
-include(../../libdcnode.cmake)
-
-# 4. Add DroneCAN related source files and headers to you target.
+# 3. Add DroneCAN related source files and headers to you target.
 add_executable(${EXECUTABLE}
     ...
     ${DRONECAN_SOURCES}

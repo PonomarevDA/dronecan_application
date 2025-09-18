@@ -44,6 +44,10 @@
     #define HW_VERSION_MINOR    0
 #endif
 
+#ifndef MAX_PARAM_NAME_LENGTH
+#define MAX_PARAM_NAME_LENGTH 32
+#endif
+
 #ifndef CANARD_BUFFER_SIZE
     #define CANARD_BUFFER_SIZE      1024
 #endif

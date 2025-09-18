@@ -11,7 +11,6 @@ cppcheck --enable=all \
          --suppress=missingIncludeSystem \
          --suppress=unusedFunction \
          --suppress=toomanyconfigs \
-         -I ${REPO_DIR}/build/external/libparams/libparams \
          -I ${REPO_DIR}/Libs \
          -I ${REPO_DIR}/include/application \
          -I ${REPO_DIR}/include/serialization \

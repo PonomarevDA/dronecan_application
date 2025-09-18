@@ -9,20 +9,46 @@ cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH EXAMPLES_DIR)
 cmake_path(GET EXAMPLES_DIR PARENT_PATH ROOT_DIR)
 
 
-# 1. Specify the CAN_PLATFORM. Options: bxcan, fdcan or socketcan
-set(CAN_PLATFORM socketcan)
-
-# 2. Specify path to libparams and platform. Options: stm32f103, stm32g0b1, ubuntu
-set(LIBPARAMS_PATH        ${ROOT_DIR}/build/external/libparams)
-set(LIBPARAMS_PLATFORM    ubuntu)
-
-# 3. Include the libdcnode.cmake
+# 1. Include the libdcnode.cmake
+set(CAN_PLATFORM socketcan) # Options: bxcan, fdcan or socketcan
 include(${ROOT_DIR}/libdcnode.cmake)
+execute_process(
+  COMMAND git rev-parse --short=16 HEAD
+  COMMAND_ERROR_IS_FATAL ANY
+  OUTPUT_VARIABLE GIT_HASH_SHORT
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+set(GIT_HASH "0x${GIT_HASH_SHORT}")
+add_definitions(-DGIT_HASH=${GIT_HASH})
+add_definitions(-DAPP_VERSION_MAJOR=0)
+add_definitions(-DAPP_VERSION_MINOR=1)
+add_definitions(-DHW_VERSION_MAJOR=0)
+add_definitions(-DHW_VERSION_MINOR=0)
+add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")
 
-# 4. Add DroneCAN related source files and headers to you target
+# 2. libparams
+include(FetchContent)
+set(FETCHCONTENT_BASE_DIR "${ROOT_DIR}/build/external")
+FetchContent_Declare(
+    libparams
+    GIT_REPOSITORY https://github.com/PonomarevDA/libparams.git
+    GIT_TAG v0.8.4
+    GIT_SHALLOW TRUE
+)
+if(POLICY CMP0169)
+  cmake_policy(SET CMP0169 OLD)
+endif()
+FetchContent_GetProperties(libparams)
+if(NOT libparams_POPULATED)
+  FetchContent_Populate(libparams)
+endif()
+set(LIBPARAMS_PLATFORM    ubuntu)
+include(${ROOT_DIR}/build/external/libparams-src/CMakeLists.txt)
+
+
+# 3. Create application
 add_executable(application
   main.cpp
-  params.cpp
   ${DRONECAN_SOURCES}
   ${libparamsSrc}
 )
@@ -44,20 +70,3 @@ target_compile_options(application PRIVATE
   -Wwrite-strings
   -Wswitch-default
 )
-
-# 5. (Recommended) Add GIT_HASH based on git repository
-execute_process(
-  COMMAND git rev-parse --short=16 HEAD
-  COMMAND_ERROR_IS_FATAL ANY
-  OUTPUT_VARIABLE GIT_HASH_SHORT
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-set(GIT_HASH "0x${GIT_HASH_SHORT}")
-add_definitions(-DGIT_HASH=${GIT_HASH})
-add_definitions(-DAPP_VERSION_MAJOR=0)
-add_definitions(-DAPP_VERSION_MINOR=1)
-add_definitions(-DHW_VERSION_MAJOR=0)
-add_definitions(-DHW_VERSION_MINOR=0)
-
-# 6. (Recommended) Set node name
-add_definitions(-DAPP_NODE_NAME="${PROJECT_NAME}")
