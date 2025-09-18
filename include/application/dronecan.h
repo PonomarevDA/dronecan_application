@@ -11,6 +11,7 @@
 #include "dronecan_application_internal.h"
 #include "uavcan/protocol/node_status.h"
 #include "uavcan/protocol/get_node_info.h"
+#include "params.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +26,7 @@ extern "C" {
   * @brief Initialize the node and minimal required services
   * @return 0 on success, otherwise negative error
   */
-int16_t uavcanInitApplication(uint8_t node_id);
+int16_t uavcanInitApplication(ParamsApi params_handler, uint8_t node_id);
 
 void uavcanSetNodeId(uint8_t node_id);
 uint8_t uavcanGetNodeId();
