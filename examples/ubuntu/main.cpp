@@ -66,7 +66,8 @@ void lights_callback(const LightsCommand_t& msg) {
  */
 int main() {
     paramsInit(1, 1, -1, 1);
-    auto init_res = uavcanInitApplication(42);
+    ParamsApi ph;
+    auto init_res = uavcanInitApplication(ph, 42);
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
         return init_res;

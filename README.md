@@ -54,7 +54,7 @@ set(LIBPARAMS_PATH        ../../build/libparams)
 set(LIBPARAMS_PLATFORM    ubuntu)
 
 # 3. Include the CMakeLists.txt
-include(../../CMakeLists.txt)
+include(../../libdcnode.cmake)
 
 # 4. Add DroneCAN related source files and headers to you target.
 add_executable(${EXECUTABLE}

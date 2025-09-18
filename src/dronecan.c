@@ -12,7 +12,6 @@
 #include "uavcan/protocol/restart_node.h"
 #include "uavcan/protocol/param/execute_opcode.h"
 #include "uavcan/protocol/param/getset.h"
-#include "storage.h"
 #include "can_driver.h"
 
 
@@ -100,6 +99,7 @@ typedef struct {
 static_assert(sizeof(DronecanNodeInstance) == INSTANCE_SIZE);
 
 static DronecanNodeInstance node = {};
+static ParamsApi ph = {};
 
 static bool shouldAcceptTransfer(const CanardInstance* ins,
                                  uint64_t* out_data_type_signature,
@@ -118,7 +118,9 @@ static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
-int16_t uavcanInitApplication(uint8_t node_id) {
+int16_t uavcanInitApplication(ParamsApi params_handler, uint8_t node_id) {
+    ph = params_handler;
+
     int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST);
     if (res < 0) {
         return res;
@@ -408,7 +410,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     // uint13 index
     uint16_t param_idx;
     if (param_name_length) {
-        param_idx = paramsFind(recv_name, param_name_length);
+        param_idx = ph.find(recv_name, param_name_length);
     } else {
         param_idx = uavcanParamGetSetDecodeIndex(transfer);
     }
@@ -417,19 +419,25 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     uint8_t resp[96] = "";
     uint16_t len;
 
-    const char* name = paramsGetName(param_idx);
-    if (paramsGetType(param_idx) == PARAM_TYPE_INTEGER) {
+    const char* name = ph.getName(param_idx);
+    if (ph.isInteger(param_idx)) {
         if (set_value_type_tag == PARAM_VALUE_INTEGER) {
-            paramsSetIntegerValue(param_idx, val_int64);
+            ph.integer.setValue(param_idx, val_int64);
         }
-        const IntegerDesc_t* desc = paramsGetIntegerDesc(param_idx);
-        IntegerParamValue_t val = paramsGetIntegerValue(param_idx);
-        len = uavcanParamGetSetMakeIntResponse(resp, val, desc->def, desc->min, desc->max, name);
-    } else if (paramsGetType(param_idx) == PARAM_TYPE_STRING) {
+        IntegerParamValue_t val = ph.integer.getValue(param_idx);
+        len = uavcanParamGetSetMakeIntResponse(
+            resp,
+            val,
+            ph.integer.getDef(param_idx),
+            ph.integer.getMin(param_idx),
+            ph.integer.getMax(param_idx),
+            name
+        );
+    } else if (ph.isString(param_idx)) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
-            paramsSetStringValue(param_idx, str_len, val_string);
+            ph.string.setValue(param_idx, str_len, val_string);
         }
-        char* str_value = (char*)paramsGetStringValue(param_idx);
+        char* str_value = (char*)ph.string.getValue(param_idx);
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);
@@ -445,10 +453,10 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
     int8_t ok;
     switch (opcode) {
         case 0:
-            ok = (paramsSave() == -1) ? 0 : 1;
+            ok = (ph.save() == -1) ? 0 : 1;
             break;
         case 1:
-            ok = (paramsResetToDefault() < 0) ? 0 : 1;
+            ok = (ph.resetToDefault() < 0) ? 0 : 1;
             break;
         default:
             ok = -1;
