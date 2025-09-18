@@ -18,15 +18,23 @@ extern "C" {
 #endif
 
 #ifndef DRONECAN_MAX_SUBS_NUMBER
-    #define DRONECAN_MAX_SUBS_NUMBER     10
+    #define DRONECAN_MAX_SUBS_NUMBER    10
 #endif
 
+typedef struct {
+    const char* node_name;
+    uint64_t vcs_commit;
+    uint8_t sw_version_major;
+    uint8_t sw_version_minor;
+    uint8_t hw_version_major;
+    uint8_t hw_version_minor;
+} AppInfo;
 
 /**
   * @brief Initialize the node and minimal required services
   * @return 0 on success, otherwise negative error
   */
-int16_t uavcanInitApplication(ParamsApi params_handler, uint8_t node_id);
+int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info, uint8_t node_id);
 
 void uavcanSetNodeId(uint8_t node_id);
 uint8_t uavcanGetNodeId();

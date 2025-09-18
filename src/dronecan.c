@@ -14,45 +14,13 @@
 #include "uavcan/protocol/param/getset.h"
 #include "can_driver.h"
 
-
-#ifndef APP_NODE_NAME
-    #define APP_NODE_NAME       (char*)"default"
-#endif
-
-#ifndef GIT_HASH
-    #warning "GIT_HASH has been assigned to 0 by default."
-    #define GIT_HASH            (uint64_t)0
-#endif
-
-#ifndef APP_VERSION_MAJOR
-    #warning "APP_VERSION_MAJOR has been assigned to 0 by default."
-    #define APP_VERSION_MAJOR   0
-#endif
-
-#ifndef APP_VERSION_MINOR
-    #warning "APP_VERSION_MINOR has been assigned to 0 by default."
-    #define APP_VERSION_MINOR   0
-#endif
-
-#ifndef HW_VERSION_MAJOR
-    #warning "HW_VERSION_MAJOR has been assigned to 0 by default."
-    #define HW_VERSION_MAJOR    0
-#endif
-
-#ifndef HW_VERSION_MINOR
-    #warning "HW_VERSION_MINOR has been assigned to 0 by default."
-    #define HW_VERSION_MINOR    0
-#endif
-
 #ifndef MAX_PARAM_NAME_LENGTH
-#define MAX_PARAM_NAME_LENGTH 32
+    #define MAX_PARAM_NAME_LENGTH       32
 #endif
 
 #ifndef CANARD_BUFFER_SIZE
-    #define CANARD_BUFFER_SIZE      1024
+    #define CANARD_BUFFER_SIZE          1024
 #endif
-
-#define CAN_SPEED               1000000
 
 
 /**
@@ -122,10 +90,19 @@ static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
-int16_t uavcanInitApplication(ParamsApi params_handler, uint8_t node_id) {
+int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info, uint8_t node_id) {
+    if (app_info) {
+        uavcanSetNodeName(app_info->node_name);
+        node.sw_version.vcs_commit = app_info->vcs_commit;
+        node.sw_version.major = app_info->sw_version_major;
+        node.sw_version.minor = app_info->sw_version_minor;
+        node.hw_version.major = app_info->hw_version_major;
+        node.hw_version.minor = app_info->hw_version_minor;
+    }
+
     ph = params_handler;
 
-    int16_t res = canDriverInit(CAN_SPEED, CAN_DRIVER_FIRST);
+    int16_t res = canDriverInit(1000000, CAN_DRIVER_FIRST);
     if (res < 0) {
         return res;
     }
@@ -143,12 +120,6 @@ int16_t uavcanInitApplication(ParamsApi params_handler, uint8_t node_id) {
     node.node_status.mode = NODE_STATUS_MODE_OPERATIONAL;
     node.node_status.sub_mode = 0;
     node.node_status.vendor_specific_status_code = 0;
-
-    node.sw_version.vcs_commit = GIT_HASH >> 32;
-    node.sw_version.major = APP_VERSION_MAJOR;
-    node.sw_version.minor = APP_VERSION_MINOR;
-    node.hw_version.major = HW_VERSION_MAJOR;
-    node.hw_version.minor = HW_VERSION_MINOR;
 
     platformSpecificReadUniqueID(node.hw_version.unique_id);
 

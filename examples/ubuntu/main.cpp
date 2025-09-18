@@ -14,16 +14,59 @@
 #include "subscriber.hpp"
 #include "publisher.hpp"
 
+#ifndef GIT_HASH
+    #warning "GIT_HASH has been assigned to 0 by default."
+    #define GIT_HASH            (uint64_t)0
+#endif
+
+#ifndef APP_VERSION_MAJOR
+    #warning "APP_VERSION_MAJOR has been assigned to 0 by default."
+    #define APP_VERSION_MAJOR   0
+#endif
+
+#ifndef APP_VERSION_MINOR
+    #warning "APP_VERSION_MINOR has been assigned to 0 by default."
+    #define APP_VERSION_MINOR   0
+#endif
+
+#ifndef HW_VERSION_MAJOR
+    #warning "HW_VERSION_MAJOR has been assigned to 0 by default."
+    #define HW_VERSION_MAJOR    0
+#endif
+
+#ifndef HW_VERSION_MINOR
+    #warning "HW_VERSION_MINOR has been assigned to 0 by default."
+    #define HW_VERSION_MINOR    0
+#endif
+
 IntegerDesc_t __attribute__((weak)) integer_desc_pool[] = {
     {"uavcan.node.id", 0, 100, 50, true, false},
 };
 IntegerParamValue_t integer_values_pool[sizeof(integer_desc_pool) / sizeof(IntegerDesc_t)];
 
-
 StringDesc_t __attribute__((weak)) string_desc_pool[] = {
     {"system.name", "dronecan_application", true},
 };
 StringParamValue_t string_values_pool[sizeof(string_desc_pool) / sizeof(StringDesc_t)];
+
+bool paramsIsInteger(ParamIndex_t param_idx) {
+    return paramsGetType(param_idx) == PARAM_TYPE_INTEGER;
+}
+bool paramsIsString(ParamIndex_t param_idx) {
+    return paramsGetType(param_idx) == PARAM_TYPE_STRING;
+}
+IntegerParamValue_t paramsGetIntegerMin(ParamIndex_t param_idx) {
+    auto desc = paramsGetIntegerDesc(param_idx);
+    return desc != nullptr ? desc->min : 0;
+}
+IntegerParamValue_t paramsGetIntegerMax(ParamIndex_t param_idx) {
+    auto desc = paramsGetIntegerDesc(param_idx);
+    return desc != nullptr ? desc->max : 0;
+}
+IntegerParamValue_t paramsGetIntegerDef(ParamIndex_t param_idx) {
+    auto desc = paramsGetIntegerDesc(param_idx);
+    return desc != nullptr ? desc->def : 0;
+}
 
 
 /**
@@ -78,8 +121,37 @@ void lights_callback(const LightsCommand_t& msg) {
  */
 int main() {
     paramsInit(1, 1, -1, 1);
-    ParamsApi ph;
-    auto init_res = uavcanInitApplication(ph, 42);
+    paramsResetToDefault();
+    ParamsApi params_api = {
+        .getName = paramsGetName,
+        .isInteger = paramsIsInteger,
+        .isString = paramsIsString,
+        .find = paramsFind,
+        .save = paramsSave,
+        .resetToDefault = paramsResetToDefault,
+        .integer = {
+            .setValue = paramsSetIntegerValue,
+            .getValue = paramsGetIntegerValue,
+            .getMin = paramsGetIntegerMin,
+            .getMax = paramsGetIntegerMax,
+            .getDef = paramsGetIntegerDef,
+        },
+        .string = {
+            .setValue = paramsSetStringValue,
+            .getValue = paramsGetStringValue,
+        },
+    };
+
+    AppInfo app_info{
+        .node_name = "app",
+        .vcs_commit = GIT_HASH >> 32,
+        .sw_version_major = APP_VERSION_MAJOR,
+        .sw_version_minor = APP_VERSION_MINOR,
+        .hw_version_major = HW_VERSION_MAJOR,
+        .hw_version_minor = HW_VERSION_MINOR,
+    };
+
+    auto init_res = uavcanInitApplication(params_api, &app_info, paramsGetIntegerValue(0));
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
         return init_res;
