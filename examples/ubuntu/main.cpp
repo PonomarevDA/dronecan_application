@@ -19,6 +19,10 @@
     #define GIT_HASH            (uint64_t)0
 #endif
 
+#ifndef APP_NODE_NAME
+    #define APP_NODE_NAME       (char*)"default"
+#endif
+
 #ifndef APP_VERSION_MAJOR
     #warning "APP_VERSION_MAJOR has been assigned to 0 by default."
     #define APP_VERSION_MAJOR   0
@@ -77,6 +81,13 @@ uint32_t platformSpecificGetTimeMs() {
     auto crnt_time = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::milliseconds>(crnt_time - start_time).count();
 }
+bool platformSpecificRequestRestart() {
+    return false;
+}
+void platformSpecificReadUniqueID(uint8_t out_uid[16]) {
+    memset(out_uid, 0x00, 16);
+}
+
 
 /**
  * @brief Application specific functions
@@ -142,8 +153,15 @@ int main() {
         },
     };
 
+    PlatformApi platform_api{
+        .getTimeMs = platformSpecificGetTimeMs,
+        .requestRestart = platformSpecificRequestRestart,
+        .readUniqueId = platformSpecificReadUniqueID,
+    };
+
     AppInfo app_info{
-        .node_name = "app",
+        .node_id = static_cast<uint8_t>(paramsGetIntegerValue(0)),
+        .node_name = APP_NODE_NAME,
         .vcs_commit = GIT_HASH >> 32,
         .sw_version_major = APP_VERSION_MAJOR,
         .sw_version_minor = APP_VERSION_MINOR,
@@ -151,7 +169,7 @@ int main() {
         .hw_version_minor = HW_VERSION_MINOR,
     };
 
-    auto init_res = uavcanInitApplication(params_api, &app_info, paramsGetIntegerValue(0));
+    auto init_res = uavcanInitApplication(params_api, platform_api, &app_info);
     if (init_res < 0) {
         std::cout << "CAN interface could not be found. Exit with code " << init_res << std::endl;
         return init_res;

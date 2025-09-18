@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 typedef struct {
+    uint8_t node_id;
     const char* node_name;
     uint64_t vcs_commit;
     uint8_t sw_version_major;
@@ -30,11 +31,20 @@ typedef struct {
     uint8_t hw_version_minor;
 } AppInfo;
 
+typedef uint32_t (*PlatformSpecificGetTimeMsFunc)(void);
+typedef bool (*PlatformSpecificRequestRestartFunc)(void);
+typedef void (*PlatformSpecificReadUniqueIDFunc)(uint8_t out_uid[16]);
+typedef struct {
+    PlatformSpecificGetTimeMsFunc getTimeMs;
+    PlatformSpecificRequestRestartFunc requestRestart;
+    PlatformSpecificReadUniqueIDFunc readUniqueId;
+} PlatformApi;
+
 /**
   * @brief Initialize the node and minimal required services
   * @return 0 on success, otherwise negative error
   */
-int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info, uint8_t node_id);
+int16_t uavcanInitApplication(ParamsApi params_api, PlatformApi platform_api, const AppInfo* app_info);
 
 void uavcanSetNodeId(uint8_t node_id);
 uint8_t uavcanGetNodeId();

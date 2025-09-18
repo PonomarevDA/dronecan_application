@@ -71,7 +71,8 @@ typedef struct {
 static_assert(sizeof(DronecanNodeInstance) == INSTANCE_SIZE);
 
 static DronecanNodeInstance node = {};
-static ParamsApi ph = {};
+static ParamsApi params = {};
+PlatformApi platform = {};
 
 static bool shouldAcceptTransfer(const CanardInstance* ins,
                                  uint64_t* out_data_type_signature,
@@ -90,7 +91,7 @@ static void uavcanProtocolRestartNodeHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolGetTransportStatHandle(CanardRxTransfer* transfer);
 static void uavcanProtocolNodeStatusHandle(CanardRxTransfer* transfer);
 
-int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info, uint8_t node_id) {
+int16_t uavcanInitApplication(ParamsApi params_api, PlatformApi platform_api, const AppInfo* app_info) {
     if (app_info) {
         uavcanSetNodeName(app_info->node_name);
         node.sw_version.vcs_commit = app_info->vcs_commit;
@@ -100,7 +101,8 @@ int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info,
         node.hw_version.minor = app_info->hw_version_minor;
     }
 
-    ph = params_handler;
+    params = params_api;
+    platform = platform_api;
 
     int16_t res = canDriverInit(1000000, CAN_DRIVER_FIRST);
     if (res < 0) {
@@ -113,7 +115,8 @@ int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info,
                onTransferReceived,
                shouldAcceptTransfer,
                NULL);
-    canardSetLocalNodeID(&node.g_canard, node_id);
+
+    canardSetLocalNodeID(&node.g_canard, app_info ? app_info->node_id : 50);
 
     node.node_status.uptime_sec = 0;
     node.node_status.health = NODE_STATUS_HEALTH_OK;
@@ -121,7 +124,7 @@ int16_t uavcanInitApplication(ParamsApi params_handler, const AppInfo* app_info,
     node.node_status.sub_mode = 0;
     node.node_status.vendor_specific_status_code = 0;
 
-    platformSpecificReadUniqueID(node.hw_version.unique_id);
+    platform.readUniqueId(node.hw_version.unique_id);
 
     uavcanSubscribe(UAVCAN_GET_NODE_INFO_DATA_TYPE,      uavcanProtocolGetNodeInfoHandle);
     uavcanSubscribe(UAVCAN_PROTOCOL_PARAM_GETSET,        uavcanProtocolParamGetSetHandle);
@@ -142,7 +145,7 @@ uint8_t uavcanGetNodeId() {
 }
 
 void uavcanSpinOnce() {
-    uint32_t now_ms = platformSpecificGetTimeMs();
+    uint32_t now_ms = platform.getTimeMs();
     uavcanProcessSending();
     uavcanProcessReceiving(now_ms);
     uavcanSpinNodeStatus(now_ms);
@@ -385,7 +388,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     // uint13 index
     uint16_t param_idx;
     if (param_name_length) {
-        param_idx = ph.find(recv_name, param_name_length);
+        param_idx = params.find(recv_name, param_name_length);
     } else {
         param_idx = uavcanParamGetSetDecodeIndex(transfer);
     }
@@ -394,25 +397,25 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
     uint8_t resp[96] = "";
     uint16_t len;
 
-    const char* name = ph.getName(param_idx);
-    if (ph.isInteger(param_idx)) {
+    const char* name = params.getName(param_idx);
+    if (params.isInteger(param_idx)) {
         if (set_value_type_tag == PARAM_VALUE_INTEGER) {
-            ph.integer.setValue(param_idx, val_int64);
+            params.integer.setValue(param_idx, val_int64);
         }
-        IntegerParamValue_t val = ph.integer.getValue(param_idx);
+        IntegerParamValue_t val = params.integer.getValue(param_idx);
         len = uavcanParamGetSetMakeIntResponse(
             resp,
             val,
-            ph.integer.getDef(param_idx),
-            ph.integer.getMin(param_idx),
-            ph.integer.getMax(param_idx),
+            params.integer.getDef(param_idx),
+            params.integer.getMin(param_idx),
+            params.integer.getMax(param_idx),
             name
         );
-    } else if (ph.isString(param_idx)) {
+    } else if (params.isString(param_idx)) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
-            ph.string.setValue(param_idx, str_len, val_string);
+            params.string.setValue(param_idx, str_len, val_string);
         }
-        char* str_value = (char*)ph.string.getValue(param_idx);
+        char* str_value = (char*)params.string.getValue(param_idx);
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);
@@ -428,10 +431,10 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
     int8_t ok;
     switch (opcode) {
         case 0:
-            ok = (ph.save() == -1) ? 0 : 1;
+            ok = (params.save() == -1) ? 0 : 1;
             break;
         case 1:
-            ok = (ph.resetToDefault() < 0) ? 0 : 1;
+            ok = (params.resetToDefault() < 0) ? 0 : 1;
             break;
         default:
             ok = -1;
@@ -442,7 +445,7 @@ static void uavcanParamExecuteOpcodeHandle(CanardRxTransfer* transfer) {
 }
 
 static void uavcanProtocolRestartNodeHandle(__attribute__((unused)) CanardRxTransfer* transfer) {
-    uint8_t response_buffer = platformSpecificRequestRestart() ? 128 : 0;
+    uint8_t response_buffer = platform.requestRestart() ? 128 : 0;
     uavcanRespond(transfer, UAVCAN_PROTOCOL_RESTART_NODE, &response_buffer, 1);
 }
 
