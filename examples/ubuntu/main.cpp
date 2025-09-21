@@ -10,10 +10,10 @@
 #include <chrono>
 #include <string.h>
 #include "storage.h"
-#include "dronecan.h"
-#include "can_driver.h"
-#include "subscriber.hpp"
-#include "publisher.hpp"
+#include "libdcnode/dronecan.h"
+#include "libdcnode/can_driver.h"
+#include "libdcnode/subscriber.hpp"
+#include "libdcnode/publisher.hpp"
 
 #ifndef GIT_HASH
     #warning "GIT_HASH has been assigned to 0 by default."
