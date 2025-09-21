@@ -16,9 +16,8 @@ add_library(${PROJECT_NAME} STATIC
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
-  PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Libs
-         ${CMAKE_CURRENT_LIST_DIR}/include/application
-         ${CMAKE_CURRENT_LIST_DIR}/include/serialization
+    PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include
+           ${CMAKE_CURRENT_LIST_DIR}/Libs
 )
 target_compile_options(${PROJECT_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wno-address-of-packed-member>

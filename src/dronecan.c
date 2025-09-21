@@ -5,14 +5,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "dronecan.h"
+#include "libdcnode/dronecan.h"
 #include <string.h>
-#include "uavcan/protocol/get_transport_stats.h"
-#include "uavcan/protocol/node_status.h"
-#include "uavcan/protocol/restart_node.h"
-#include "uavcan/protocol/param/execute_opcode.h"
-#include "uavcan/protocol/param/getset.h"
-#include "can_driver.h"
+#include "libdcnode/uavcan/protocol/get_transport_stats.h"
+#include "libdcnode/uavcan/protocol/node_status.h"
+#include "libdcnode/uavcan/protocol/restart_node.h"
+#include "libdcnode/uavcan/protocol/param/execute_opcode.h"
+#include "libdcnode/uavcan/protocol/param/getset.h"
+#include "libdcnode/can_driver.h"
 
 #ifndef MAX_PARAM_NAME_LENGTH
     #define MAX_PARAM_NAME_LENGTH       32

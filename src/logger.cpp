@@ -3,8 +3,8 @@
 * Distributed under the terms of the GPL v3 license, available in the file LICENSE.
 */
 
-#include "logger.hpp"
-#include "uavcan/protocol/debug/LogMessage.h"
+#include "libdcnode/logger.hpp"
+#include "libdcnode/uavcan/protocol/debug/LogMessage.h"
 
 DronecanLogger::DronecanLogger(const char* source) {
     init(source);
