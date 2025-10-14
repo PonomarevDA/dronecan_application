@@ -322,7 +322,7 @@ static bool uavcanProcessReceiving(uint32_t crnt_time_ms) {
     for (size_t idx = 0; idx < 10; idx++) {
         int16_t res = platform.can.recv(&rx_frame, CAN_DRIVER_FIRST);
         if (res) {
-            uint64_t crnt_time_us = crnt_time_ms * 1000;
+            uint64_t crnt_time_us = crnt_time_ms * 1000UL;
             canardHandleRxFrame(&node.g_canard, &rx_frame, crnt_time_us);
         } else {
             break;
@@ -415,7 +415,7 @@ static void uavcanProtocolParamGetSetHandle(CanardRxTransfer* transfer) {
         if (set_value_type_tag == PARAM_VALUE_STRING) {
             params.string.setValue(param_idx, str_len, val_string);
         }
-        char* str_value = (char*)params.string.getValue(param_idx);
+        const char* str_value = (const char*)params.string.getValue(param_idx);
         len = uavcanParamGetSetMakeStringResponse(resp, str_value, name);
     } else {
         len = uavcanParamGetSetMakeEmptyResponse(resp);

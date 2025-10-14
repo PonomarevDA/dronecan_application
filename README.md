@@ -2,7 +2,7 @@
 
 # DroneCAN application
 
-This is a C library that brings up the [libcanard](https://github.com/dronecan/libcanard), platform-specific drivers and serialization together to build a minimal DroneCAN application.
+This is a C library with C++ helpers that brings up the [libcanard](https://github.com/dronecan/libcanard), platform-specific drivers and serialization together to build a minimal DroneCAN application.
 
 A minimal application includes the following protocol-features:
 
@@ -161,7 +161,7 @@ void ac_callback(const ArrayCommand_t& msg) {
 }
 bool ac_filter(const ArrayCommand_t& msg) {
     for (size_t idx = 0; idx < msg.size; idx++) {
-        if (msg.commads[idx].actuator_id == FILTER_ACTUATOR_ID) {
+        if (msg.commands[idx].actuator_id == FILTER_ACTUATOR_ID) {
             return true;
         }
     }
@@ -205,7 +205,7 @@ A user must provide the following function implementation:
 uint32_t platformSpecificGetTimeMs();
 ```
 
-A user may also provide the implementation of the optional functions. These function have a week implementation in [src/weak.c](src/weak.c).
+A user may also provide the implementation of the optional functions. These function have a weak implementation in [src/weak.c](src/weak.c).
 
 ```c++
 /**

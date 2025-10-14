@@ -14,6 +14,7 @@
 #include "libdcnode/uavcan/protocol/node_status.h"
 #include "libdcnode/uavcan/protocol/get_node_info.h"
 #include "params.h"
+#include "version.h"
 
 #ifdef __cplusplus
 extern "C" {

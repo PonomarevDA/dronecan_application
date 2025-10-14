@@ -3,7 +3,7 @@
 # Author: Dmitry Ponomarev <ponomarevda96@gmail.com>
 
 cmake_minimum_required(VERSION 3.15.3)
-project(libdcnode VERSION 0.2.0 LANGUAGES C CXX)
+project(libdcnode VERSION 0.6.0 LANGUAGES C CXX)
 
 #
 # 1. Create library
