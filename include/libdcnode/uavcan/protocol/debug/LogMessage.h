@@ -74,6 +74,8 @@ static inline int8_t dronecan_protocol_debug_log_message_serialize(
     memcpy(&buffer[1], obj->source, obj->source_size);
     memcpy(&buffer[obj->source_size + 1], obj->text, obj->text_size);
 
+    *inout_buffer_size_bytes = 1 + obj->source_size + obj->text_size;
+
     return 0;
 }
 
@@ -99,7 +101,7 @@ static inline int8_t dronecan_protocol_debug_log_message_set_source(
 
     msg->source_size = strnlen(source, UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN);
     msg->source[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_SOURCE_LEN - 1] = '\0';
-    memcpy((char*)msg->source, source,  msg->source_size);
+    memcpy(msg->source, source,  msg->source_size);
     return 0;
 }
 
@@ -113,7 +115,7 @@ static inline int8_t dronecan_protocol_debug_log_message_set_text(
 
     msg->text_size = strnlen(text, UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN);
     msg->text[UAVCAN_PROTOCOL_DEBUG_LOG_MESSAGE_MAX_TEXT_LEN - 1] = '\0';
-    memcpy((char*)msg->text, text,  msg->text_size);
+    memcpy(msg->text, text,  msg->text_size);
     return 0;
 }
 

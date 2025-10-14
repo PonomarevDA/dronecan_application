@@ -56,9 +56,12 @@ static inline void uavcanEncodeNodeStatus(
     uint8_t buffer[UAVCAN_PROTOCOL_NODE_STATUS_MESSAGE_SIZE],
     const NodeStatus_t* node_status)
 {
+
     canardEncodeScalar(buffer,  0,  32, &node_status->uptime_sec);
-    canardEncodeScalar(buffer,  32, 2,  (uint8_t*)&node_status->health);
-    canardEncodeScalar(buffer,  34, 3,  (uint8_t*)&node_status->mode);
+    const uint8_t health_u8 = (uint8_t)node_status->health;
+    canardEncodeScalar(buffer,  32, 2,  &health_u8);
+    const uint8_t mode_u8   = (uint8_t)node_status->mode;
+    canardEncodeScalar(buffer,  34, 3,  &mode_u8);
     canardEncodeScalar(buffer,  37, 3,  &node_status->sub_mode);
     canardEncodeScalar(buffer,  40, 16, &node_status->vendor_specific_status_code);
 }

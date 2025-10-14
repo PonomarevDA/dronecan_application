@@ -31,25 +31,20 @@ typedef enum {
 extern "C" {
 #endif
 
-void canardEncodeI64(uint8_t* buf, uint32_t offset, int64_t* val)
-{
-    canardEncodeScalar(buf, offset, 64, val);
-}
-
-void uavcanEncodeParamValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
+static inline void uavcanEncodeParamValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
 {
     const uint8_t tag_integer = PARAM_VALUE_INTEGER;
     int64_t value_i64 = value;
     canardEncodeScalar(buffer,  offset, 3, &tag_integer);
-    canardEncodeI64(buffer, offset + 3, &value_i64);
+    canardEncodeScalar(buffer, offset + 3, 64, &value_i64);
 }
 
-void uavcanEncodeParamNumericValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
+static inline void uavcanEncodeParamNumericValueInt32(uint8_t* buffer, uint16_t offset, int32_t value)
 {
     const uint8_t tag_integer = PARAM_VALUE_INTEGER;
     int64_t value_i64 = value;
     canardEncodeScalar(buffer,  offset, 2, &tag_integer);
-    canardEncodeI64(buffer, offset + 2, &value_i64);
+    canardEncodeScalar(buffer, offset + 2, 64, &value_i64);
 }
 
 uint16_t uavcanParamGetSetMakeIntResponse(

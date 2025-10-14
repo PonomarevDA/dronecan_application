@@ -12,8 +12,7 @@ cppcheck --enable=all \
          --suppress=unusedFunction \
          --suppress=toomanyconfigs \
          -I ${REPO_DIR}/Libs \
-         -I ${REPO_DIR}/include/application \
-         -I ${REPO_DIR}/include/serialization \
+         -I ${REPO_DIR}/include \
          -I ${REPO_DIR}/platform_specific/socketcan/ \
          -I /usr/include/ \
          ${REPO_DIR}/src/
